@@ -21,7 +21,8 @@ my $result = GetOptions(
   'config=s'          => \$opt->{'config'},
 );
 
+my $main_config=$opt->{'config'}||"/etc/nagios/nagios.cfg";
 my $n = Nagios::Config::Intelligent->new();
+my @object_files = $n->object_files($main_config);
 
-my @object_files = $n->object_files($opt->{'config'});
 while(my $file = shift(@object_files)){ print "$file\n"; }
