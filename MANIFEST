@@ -1,0 +1,6 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Nagios-Config-Intelligent.t
+lib/Nagios/Config/Intelligent.pm
