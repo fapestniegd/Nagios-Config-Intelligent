@@ -114,7 +114,7 @@ sub load_object_file{
                my $record = {};
                my $record_name = undef;
                foreach my $entry (@keyvalues){
-                   # remove comments at the beginning of the line
+                   # remove comments at the beginning of the line FIXME comments can be at the ends of lines too.
                    $entry=~s/\s*[;#].*$//;
                    next if($entry=~m/^\s*$/);
                    # remove leading/trailing whitespace
