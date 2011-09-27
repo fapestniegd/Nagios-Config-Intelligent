@@ -114,10 +114,8 @@ sub load_object_file{
                my $record = {};
                my $record_name = undef;
                foreach my $entry (@keyvalues){
-                   # remove hash comments /* FIXME this shoulde be unquoted hashmarks */
-                   $entry=~s/#.*$//;
-                   # remove semicolon comments /* FIXME this shoulde be unquoted semicolons */
-                   $entry=~s/;.*$//;
+                   # remove comments at the beginning of the line
+                   $entry=~s/\s*[;#].*$//;
                    next if($entry=~m/^\s*$/);
                    # remove leading/trailing whitespace
                    $entry=~s/^\s*//;
