@@ -21,9 +21,9 @@ my $result = GetOptions(
   'config=s'          => \$opt->{'config'},
 );
 
+my $main_config=$opt->{'config'}||"/etc/nagios/nagios.cfg";
 my $n = Nagios::Config::Intelligent->new();
-
-my @object_files = $n->object_files($opt->{'config'});
-while(my $file = shift(@object_files)){
-    print Data::Dumper->Dump([nagios_objects($file)]);
+foreach ($n->object_files($main_config)){
+    $n->load_object_file($_)
 }
+print Data::Dumper->Dump([$n]);
