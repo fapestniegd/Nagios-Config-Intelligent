@@ -137,6 +137,7 @@ sub load_object_file{
                        print STDERR "NOT SURE ABOUT:  $entry\n";
                    }
                }
+               push(@{ $self->{'objects'} },$entry);
 ################################################################################
 #               if($object_type eq "service"){
 #                   if(!defined($record_name)){
