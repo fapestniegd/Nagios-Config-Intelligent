@@ -39,36 +39,7 @@ sub new{
     return $self;
 }
 
-sub parse_cfg{ 
-    my $self = shift;
-    my $file = shift if @_;
-    my $fh = FileHandle->new;
-    if ($fh->open("< $file")) {
-    while(my $line=<$fh>){
-        chomp($line);
-        $line=~s/#.*//;
-        if($line=~m/([^=]+)\s*=\s*(.*)/){
-            my ($key,$value)=($1,$2);
-            if(!defined($self->{'config'}->{$key})){ 
-                $self->{'config'}->{$key}=$value; 
-            }else{
-                my $deref=$self->{'config'}->{$key};
-                if(ref(\$deref) eq "SCALAR"){
-                    my $tmp = $self->{'config'}->{$key};
-                    delete $self->{'config'}->{$key};
-                    push(@{ $self->{'config'}->{$key} },$tmp,$value);
-                }elsif(ref($self->{'config'}->{$key}) eq "ARRAY"){
-                    push(@{ $self->{'config'}->{$key} },$value);
-                }
-            }
-        }
-    }
-    $fh->close;
-    $self->load_object_files($self->{'config'}->{'cfg_file'}) if $self->{'config'}->{'cfg_file'};
-    } 
-    return $self;
-}
-
+# recursively return a list of nagios .cfg files per the nagios.cfg's cfg_dir directives
 sub get_cfgs {
     my $self = shift;
     my $path    = shift;
@@ -81,9 +52,10 @@ sub get_cfgs {
         @files;
 }
 
+# return a list of nagios config files per the nagios.cfg cfg_file & cfg_dir directives
 sub object_files {
     my $self = shift;
-    my $nagios_cfg = shift;
+    my $nagios_cfg = shift||"/etc/nagios/nagios.cfg";
     return undef unless $nagios_cfg;
     my $fh = FileHandle->new;
     my @cfg_files;
@@ -104,6 +76,7 @@ sub object_files {
     return @cfg_files;
 }
 
+# load one or many object files
 sub load_object_files{
     my $self = shift;
     my $files=shift if @_;
@@ -119,6 +92,7 @@ sub load_object_files{
     return $self;
 }
 
+# load one object file
 sub load_object_file{
     my $self = shift;
     my $file=shift if @_;
@@ -164,21 +138,21 @@ sub load_object_file{
                    }
                }
 ################################################################################
-               if($object_type eq "service"){
-                   if(!defined($record_name)){
-                       # it's a host service check append the host with it
-                       push(@{ $self->{'objects'}->{'service'}->{ $record->{'host_name'} } },$record);
-                   }else{
-                       # it's a template, treat it normally
-                       $self->{'objects'}->{$object_type}->{$record_name}=$record;
-                   }
-               }elsif($object_type eq "hostextinfo"){
-                       $self->{'objects'}->{'hostextinfo'}->{ $record->{'host_name'} } = $record;
-               }elsif($object_type eq "hostdependency"){
-                       $self->{'objects'}->{'hostdependency'}->{ $record->{'host_name'} } = $record;
-               }else{
-                   $self->{'objects'}->{$object_type}->{$record_name}=$record;
-               }
+#               if($object_type eq "service"){
+#                   if(!defined($record_name)){
+#                       # it's a host service check append the host with it
+#                       push(@{ $self->{'objects'}->{'service'}->{ $record->{'host_name'} } },$record);
+#                   }else{
+#                       # it's a template, treat it normally
+#                       $self->{'objects'}->{$object_type}->{$record_name}=$record;
+#                   }
+#               }elsif($object_type eq "hostextinfo"){
+#                       $self->{'objects'}->{'hostextinfo'}->{ $record->{'host_name'} } = $record;
+#               }elsif($object_type eq "hostdependency"){
+#                       $self->{'objects'}->{'hostdependency'}->{ $record->{'host_name'} } = $record;
+#               }else{
+#                   $self->{'objects'}->{$object_type}->{$record_name}=$record;
+#               }
 ################################################################################
                undef $record_name;
            }
@@ -187,6 +161,36 @@ sub load_object_file{
     }
     return $self;
 }
+
+#sub parse_cfg{ 
+#    my $self = shift;
+#    my $file = shift if @_;
+#    my $fh = FileHandle->new;
+#    if ($fh->open("< $file")) {
+#    while(my $line=<$fh>){
+#        chomp($line);
+#        $line=~s/#.*//;
+#        if($line=~m/([^=]+)\s*=\s*(.*)/){
+#            my ($key,$value)=($1,$2);
+#            if(!defined($self->{'config'}->{$key})){ 
+#                $self->{'config'}->{$key}=$value; 
+#            }else{
+#                my $deref=$self->{'config'}->{$key};
+#                if(ref(\$deref) eq "SCALAR"){
+#                    my $tmp = $self->{'config'}->{$key};
+#                    delete $self->{'config'}->{$key};
+#                    push(@{ $self->{'config'}->{$key} },$tmp,$value);
+#                }elsif(ref($self->{'config'}->{$key}) eq "ARRAY"){
+#                    push(@{ $self->{'config'}->{$key} },$value);
+#                }
+#            }
+#        }
+#    }
+#    $fh->close;
+#    $self->load_object_files($self->{'config'}->{'cfg_file'}) if $self->{'config'}->{'cfg_file'};
+#    } 
+#    return $self;
+#}
 
 sub unbalanced{
     my $self=shift;
@@ -458,3 +462,4 @@ at your option, any later version of Perl 5 you may have available.
 
 
 =cut
+
