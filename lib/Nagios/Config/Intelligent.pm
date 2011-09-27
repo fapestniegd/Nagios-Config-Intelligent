@@ -69,6 +69,41 @@ sub parse_cfg{
     return $self;
 }
 
+sub get_cfgs {
+    my $self = shift;
+    my $path    = shift;
+    opendir (DIR, $path) or die "Unable to open $path: $!";
+    my @files = map { $path . '/' . $_ } grep { !/^\.{1,2}$/ } readdir (DIR);
+    # Rather than using a for() loop, we can just return a directly filtered list.
+    return
+        grep { (/\.cfg$/) && (! -l $_) }
+        map { -d $_ ? get_cfgs ($_) : $_ }
+        @files;
+}
+
+sub object_files {
+    my $self = shift;
+    my $nagios_cfg = shift;
+    return undef unless $nagios_cfg;
+    my $fh = FileHandle->new;
+    my @cfg_files;
+    if ($fh->open("< $nagios_cfg")) {
+        while(my $line=<$fh>){
+            chomp($line);
+            $line=~s/#.*//;
+            next if($line=~m/^\s*$/);
+            next unless($line=~m/^\s*cfg_(file|dir)\s*=(.*)$/);
+            if($1 eq "file"){
+                push(@cfg_files,$2);
+            }elsif($1 eq "dir"){
+                push(@cfg_files,$self->get_cfgs($2));
+            }
+        }
+        $fh->close;
+    }
+    return @cfg_files;
+}
+
 sub load_object_files{
     my $self = shift;
     my $files=shift if @_;
