@@ -138,21 +138,21 @@ sub load_object_file{
                    }
                }
 ################################################################################
-#               if($object_type eq "service"){
-#                   if(!defined($record_name)){
-#                       # it's a host service check append the host with it
-#                       push(@{ $self->{'objects'}->{'service'}->{ $record->{'host_name'} } },$record);
-#                   }else{
-#                       # it's a template, treat it normally
-#                       $self->{'objects'}->{$object_type}->{$record_name}=$record;
-#                   }
-#               }elsif($object_type eq "hostextinfo"){
-#                       $self->{'objects'}->{'hostextinfo'}->{ $record->{'host_name'} } = $record;
-#               }elsif($object_type eq "hostdependency"){
-#                       $self->{'objects'}->{'hostdependency'}->{ $record->{'host_name'} } = $record;
-#               }else{
-#                   $self->{'objects'}->{$object_type}->{$record_name}=$record;
-#               }
+               if($object_type eq "service"){
+                   if(!defined($record_name)){
+                       # it's a host service check append the host with it
+                       push(@{ $self->{'objects'}->{'service'}->{ $record->{'host_name'} } },$record);
+                   }else{
+                       # it's a template, treat it normally
+                       $self->{'objects'}->{$object_type}->{$record_name}=$record;
+                   }
+               }elsif($object_type eq "hostextinfo"){
+                       $self->{'objects'}->{'hostextinfo'}->{ $record->{'host_name'} } = $record;
+               }elsif($object_type eq "hostdependency"){
+                       $self->{'objects'}->{'hostdependency'}->{ $record->{'host_name'} } = $record;
+               }else{
+                   $self->{'objects'}->{$object_type}->{$record_name}=$record;
+               }
 ################################################################################
                undef $record_name;
            }
