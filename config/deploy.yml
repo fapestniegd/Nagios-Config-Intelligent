@@ -1,5 +1,5 @@
 hubble:
   domain: "root@hubble"
   deploy_to: "/root/ncfg"
-  repository: "https://fapestniegd@github.com/fapestniegd/Nagios-Config-Intelligent.git"
+  repository: "git://github.com/fapestniegd/Nagios-Config-Intelligent.git"
   branch: "master"

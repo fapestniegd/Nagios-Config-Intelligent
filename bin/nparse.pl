@@ -25,5 +25,5 @@ my $n = Nagios::Config::Intelligent->new();
 
 my @object_files = $n->object_files($opt->{'config'});
 while(my $file = shift(@object_files)){
-    print Data::Dumper->Dump([nagios_objects($file)]);
+print;
 }
