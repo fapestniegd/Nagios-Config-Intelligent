@@ -256,7 +256,7 @@ sub find_service{
 sub entryname{
     my $self = shift;
     my $entry = shift;
-    foreach my $keys (keys(%{ $entry })){
+    foreach my $key (keys(%{ $entry })){
         # everything should have either a "name" or "service_name" or "host_name" or "*_name"
         if($key eq 'name'){ return $entry->{'name'}; }
         if($key =~m /(.*_name)$/){ return $entry->{$1}; }
