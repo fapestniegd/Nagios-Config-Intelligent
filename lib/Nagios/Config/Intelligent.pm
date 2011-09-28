@@ -284,6 +284,7 @@ sub detemplate{
     delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
     delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
     delete $new_entry->{'use'} if(defined($new_entry->{'use'})); 
+    print STDERR "returning merged template  $entry->{'use'} and entry ".$self->entry_name($entry)."\n";
     return $new_entry;
 }
 
