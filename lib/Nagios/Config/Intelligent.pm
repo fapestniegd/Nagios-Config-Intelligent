@@ -149,7 +149,6 @@ sub unbalanced{
     return $balance;
 }
 
-
 sub dump{
     my $self = shift;
     print YAML::Dump($self);
@@ -254,12 +253,30 @@ sub find_service{
     return $records;
 }
 
+sub detemplate{
+    my $self = shift; 
+    my $type = shift;
+    my $entry = shift;
+    return $entry unless(defined($entry->{'use'}));
+    my $template = $self->find_object($type,{ use => $entry->{'use'} });
+    warn "no such template: $template\n" unless(defined($template));
+    return $entry unless(defined($template));
+    my $new_entry = $self->detemplate($template); # templates can use templates
+    delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
+    delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
+    foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
+        $new_entry->{$key} = $entry->{$key};
+    }
+    return $new_entry;
+}
+
 sub find_object{
     my $self = shift;
     my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $records = undef;      # the list we'll be returning
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
+        $entry = $self->detemplate($type, $entry);
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
@@ -283,6 +300,7 @@ sub find_object_regex{
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $records = undef;      # the list we'll be returning
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
+        $entry = $self->detemplate($type, $entry);
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
