@@ -125,17 +125,18 @@ sub load_object_file{
                        my ($key,$value) = ($1,$2);
                        $record->{$key} = $value;
                        # services don't have names they have a host name and a description, ugh.
-#                           if(($key eq "name")||($key eq "${object_type}_name")){
-#                               $record_name = $value;
-#                               if(defined($self->{'objects'}->{$object_type}->{$record_name})){
-#                                   print STDERR "Redefinittion of $object_type : $record_name\n";
-#                               }
-#                           } 
+                           if(($key eq "name")||($key eq "${object_type}_name")){
+                               $record_name = $value;
+                               if(defined($self->{'index'}->{$object_type}->{$record_name})){
+                                   print STDERR "Redefinittion of $object_type : $record_name\n";
+                               }
+                           } 
                    }else{
                        print STDERR "NOT SURE ABOUT:  $entry\n";
                    }
                }
                push(@{ $self->{'objects'}->{$object_type} },$record);
+               $self->{'index'}->{$object_type}->{$record_name}= $self->{'objects'}->{$object_type}->[  $#{ $self->{'objects'}->{$object_type} } ];
 ################################################################################
 #               if($object_type eq "service"){
 #                   if(!defined($record_name)){
