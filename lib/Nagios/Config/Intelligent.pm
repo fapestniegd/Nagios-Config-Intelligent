@@ -281,7 +281,7 @@ sub find_object{
         if(defined($entry->{'use'})){
             if(defined($entry->$type.'_name')){
                 print STDERR "detemplating $entry->{$type.'_name'} with $entry->{'use'}\n";
-            }elsif(defined($entry->{'name')){
+            }elsif(defined($entry->{'name'})){
                 print STDERR "detemplating $entry->{'name'} with $entry->{'use'}\n";
             }
             $entry = $self->detemplate($type, $entry) if (defined($entry->{'use'}));
