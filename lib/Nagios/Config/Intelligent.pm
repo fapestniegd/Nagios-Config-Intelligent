@@ -277,6 +277,7 @@ sub find_object{
     my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $records = undef;      # the list we'll be returning
+        print STDERR Data::Dumper->Dump([$self->{'objects'}->{$type}]);
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
         print STDERR Data::Dumper->Dump([$entry]);
         my $expanded_entry = $entry;
