@@ -257,13 +257,13 @@ sub detemplate{
     my $self = shift; 
     my $type = shift;
     my $entry = shift;
-    print Data::Dumper->Dump(['detemplate',$type,$entry]);
     return $entry unless(defined($entry->{'use'}));
     my $template = $self->find_object($type,{ use => $entry->{'use'} });
     warn "no such template: $template\n" unless(defined($template));
     return $entry unless(defined($template));
     #my $new_entry = $self->detemplate($type, $template); # templates can use templates
     my $new_entry = $template;
+    print Data::Dumper->Dump(['detemplate',$type,$new_entry]);
     delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
     delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
     foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
