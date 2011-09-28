@@ -272,7 +272,12 @@ sub detemplate{
     return $entry unless(defined($entry->{'use'}));
     my $template; 
     print STDERR "Looking for the $type object with name $entry->{'use'}\n";
-    $template = $self->find_object($type,{ 'name' => $entry->{'use'} });
+
+    # cache the template if we don't have it cached, or we'll inifinite loop.
+    if(! defined($self->{'templates'}->$type->{$entry->{'use'}}) {
+        $self->{'templates'}->$type->{$entry->{'use'}} = $self->find_object($type,{ 'name' => $entry->{'use'} });
+        $template = $self->{'templates'}->$type->{$entry->{'use'}};
+    }
     warn "no such template: $template\n" unless(defined($template));
     return $entry unless(defined($template));
 
