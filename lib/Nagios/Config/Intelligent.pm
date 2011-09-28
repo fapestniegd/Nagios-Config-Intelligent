@@ -270,7 +270,8 @@ sub detemplate{
     my $type = shift;
     my $entry = shift;
     return $entry unless(defined($entry->{'use'}));
-    my $template = $self->find_object($type,{ use => $entry->{'use'} });
+    my $template; 
+    $template = $self->find_object($type,{ 'name' => $entry->{'use'} }||$self->find_object($type,{ $type.'_name' => $entry->{'use'} };
     warn "no such template: $template\n" unless(defined($template));
     return $entry unless(defined($template));
     #my $new_entry = $self->detemplate($type, $template); # templates can use templates
@@ -297,7 +298,7 @@ sub find_object{
             $entry = $self->detemplate($type, $entry) if (defined($entry->{'use'}));
             print STDERR Data::Dumper->Dump(['after',$entry]);
         }
-        sleep(1);
+        sleep(3);
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
