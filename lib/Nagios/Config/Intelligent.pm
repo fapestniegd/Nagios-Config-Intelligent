@@ -260,6 +260,7 @@ sub entry_name{
         # everything should have either a "name" or "service_name" or "host_name" or "*_name"
         if($key eq 'name'){ return $entry->{'name'}; }
         if($key =~m/(.*_name)$/){ return $entry->{$1}; }
+        print Data::Dumper->Dump([$entry]);
         return undef;
     }
 }
