@@ -272,16 +272,18 @@ sub detemplate{
     return $entry unless(defined($entry->{'use'}));
     my $template; 
     print STDERR "Looking for the template with name $entry->{'use'}\n";
-#    $template = $self->find_object($type,{ 'name' => $entry->{'use'} })||$self->find_object($type,{ $type.'_name' => $entry->{'use'} });
-#    warn "no such template: $template\n" unless(defined($template));
-#    return $entry unless(defined($template));
-    my $new_entry;
-#    print Data::Dumper->Dump(['detemplate',$type,$new_entry]);
-#    delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
-#    delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
+    $template = $self->find_object($type,{ 'name' => $entry->{'use'} });
+    warn "no such template: $template\n" unless(defined($template));
+    return $entry unless(defined($template));
+
+    my $new_entry = $template;     # start the new entry with the fetched template
     foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
         $new_entry->{$key} = $entry->{$key};
     }
+    # get rid of all the things that indicate this entry is a template
+    delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
+    delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
+    delete $new_entry->{'use'} if(defined($new_entry->{'use'})); 
     return $new_entry;
 }
 
@@ -298,7 +300,7 @@ sub find_objects{
             $entry = $self->detemplate($type, $entry);
             print STDERR Data::Dumper->Dump(['after',$entry]);
         }
-        #sleep(1);
+        sleep(1);
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
