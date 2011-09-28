@@ -257,6 +257,7 @@ sub detemplate{
     my $self = shift; 
     my $type = shift;
     my $entry = shift;
+    print Data::Dumper->Dump(['detemplate',$type,$entry]);
     return $entry unless(defined($entry->{'use'}));
     my $template = $self->find_object($type,{ use => $entry->{'use'} });
     warn "no such template: $template\n" unless(defined($template));
