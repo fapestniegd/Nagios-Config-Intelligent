@@ -263,6 +263,29 @@ sub find_object{
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
+                unless($entry->{$needle} eq $attrs->{$needle}){
+                    $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
+                }
+            }else{
+                $allmatch=0; # if we're missing a key in the attrs, then all don't match
+            }
+        }
+        if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
+            push(@{ $records },$entry);
+        }
+    }
+    return $records; # return the list of matched entries
+}
+
+sub find_object_regex{
+    my $self = shift;
+    my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
+    my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
+    my $records = undef;      # the list we'll be returning
+    foreach my $entry (@{ $self->{'objects'}->{$type} }){
+        my $allmatch=1;       # assume everything matches
+        foreach my $needle (keys(%{ $attrs })){
+            if(defined($entry->{$needle})){
                 unless($entry->{$needle}=~m/$attrs->{$needle}/){
                     $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
                 }
@@ -276,6 +299,7 @@ sub find_object{
     }
     return $records; # return the list of matched entries
 }
+
 
 #################################################################################
 ## Get statuses from the status.dat
