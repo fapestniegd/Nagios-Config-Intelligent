@@ -291,7 +291,7 @@ sub find_object{
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
         # replace expanded entry with the fully_expanded template;
         if(defined($entry->{'use'})){
-            print STDERR "expanding ".$self->entry_name($entry)." with ".$entry->use."\n";
+            print STDERR "expanding ".$self->entry_name($entry)." with ".$entry->{'use'}."\n";
             $entry = $self->detemplate($type, $entry) if (defined($entry->{'use'}));
         }
         sleep(1);
