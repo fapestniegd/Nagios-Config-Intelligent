@@ -292,12 +292,12 @@ sub find_object{
         # replace expanded entry with the fully_expanded template;
         if(defined($entry->{'use'})){
             print STDERR "expanding ".$self->entry_name($entry)." with ".$entry->use."\n";
-            $expanded_entry = $self->detemplate($type, $expanded_entry) if (defined($expanded_entry->{'use'}));
+            $entry = $self->detemplate($type, $entry) if (defined($entry->{'use'}));
         sleep(1);
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
-            if(defined($expanded_entry->{$needle})){
-                unless($expanded_entry->{$needle} eq $attrs->{$needle}){
+            if(defined($entry->{$needle})){
+                unless($entry->{$needle} eq $attrs->{$needle}){
                     $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
                 }
             }else{
@@ -305,8 +305,8 @@ sub find_object{
             }
         }
         if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
-            print STDERR Data::Dumper->Dump([$expanded_entry]);
-            push(@{ $records },$expanded_entry);
+            print STDERR Data::Dumper->Dump([$entry]);
+            push(@{ $records },$entry);
         }
     }
     return $records; # return the list of matched entries
