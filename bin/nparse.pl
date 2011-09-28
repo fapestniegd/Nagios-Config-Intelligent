@@ -27,4 +27,4 @@ foreach ($n->object_files($main_config)){
     $n->load_object_file($_)
 }
 #print $n->dump;
-print Data::Dumper->Dump([$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
+print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
