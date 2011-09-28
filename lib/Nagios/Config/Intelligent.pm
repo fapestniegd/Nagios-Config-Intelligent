@@ -278,6 +278,7 @@ sub find_object{
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $records = undef;      # the list we'll be returning
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
+        my $expanded_entry = $entry;
         if(defined($entry->{'use'})){
             print Data::Dumper->Dump([$entry]);
             if(defined($entry->{$type.'_name'})){
@@ -285,12 +286,12 @@ sub find_object{
             }elsif(defined($entry->{'name'})){
                 print STDERR "detemplating $entry->{'name'} with $entry->{'use'}\n";
             }
-            $entry = $self->detemplate($type, $entry) if (defined($entry->{'use'}));
+            $expanded_entry = $self->detemplate($type, $entry) if (defined($entry->{'use'}));
         }
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
-            if(defined($entry->{$needle})){
-                unless($entry->{$needle} eq $attrs->{$needle}){
+            if(defined($expanded_entry->{$needle})){
+                unless($expanded_entry->{$needle} eq $attrs->{$needle}){
                     $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
                 }
             }else{
@@ -298,7 +299,7 @@ sub find_object{
             }
         }
         if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
-            push(@{ $records },$entry);
+            push(@{ $records },$expanded_entry);
         }
     }
     return $records; # return the list of matched entries
