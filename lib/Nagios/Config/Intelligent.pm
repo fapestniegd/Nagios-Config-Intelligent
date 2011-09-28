@@ -293,7 +293,9 @@ sub find_object{
         # replace expanded entry with the fully_expanded template;
         if(defined($entry->{'use'})){
             print STDERR "expanding ".$self->entry_name($entry)." with ".$entry->{'use'}."\n";
+            print STDERR Data::Dumper->Dump(['before',$entry]);
             $entry = $self->detemplate($type, $entry) if (defined($entry->{'use'}));
+            print STDERR Data::Dumper->Dump(['after',$entry]);
         }
         sleep(1);
         my $allmatch=1;       # assume everything matches
