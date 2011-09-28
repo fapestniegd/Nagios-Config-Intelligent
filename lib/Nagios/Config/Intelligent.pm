@@ -263,7 +263,7 @@ sub find_object{
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
-                if( $attrs->{$needle} ne $entry->{$needle} ){
+                if( !  $entry->{$needle}=~m/$attrs->{$needle}/){
                     $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
                 }
             }else{
