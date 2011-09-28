@@ -265,25 +265,25 @@ sub entry_name{
     return undef;
 }
 
-sub detemplate{
-    my $self = shift; 
-    my $type = shift;
-    my $entry = shift;
-    return $entry unless(defined($entry->{'use'}));
-    my $template; 
-    print STDERR "Looking for the template with name $entry->{'use'}\n";
-    $template = $self->find_object($type,{ 'name' => $entry->{'use'} })||$self->find_object($type,{ $type.'_name' => $entry->{'use'} });
-    warn "no such template: $template\n" unless(defined($template));
-    return $entry unless(defined($template));
-    my $new_entry = $self->detemplate($type, $template); # templates can use templates
-    print Data::Dumper->Dump(['detemplate',$type,$new_entry]);
-    delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
-    delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
-    foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
-        $new_entry->{$key} = $entry->{$key};
-    }
-    return $new_entry;
-}
+#sub detemplate{
+#    my $self = shift; 
+#    my $type = shift;
+#    my $entry = shift;
+#    return $entry unless(defined($entry->{'use'}));
+#    my $template; 
+#    print STDERR "Looking for the template with name $entry->{'use'}\n";
+#    $template = $self->find_object($type,{ 'name' => $entry->{'use'} })||$self->find_object($type,{ $type.'_name' => $entry->{'use'} });
+#    warn "no such template: $template\n" unless(defined($template));
+#    return $entry unless(defined($template));
+#    my $new_entry = $self->detemplate($type, $template); # templates can use templates
+#    print Data::Dumper->Dump(['detemplate',$type,$new_entry]);
+#    delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
+#    delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
+#    foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
+#        $new_entry->{$key} = $entry->{$key};
+#    }
+#    return $new_entry;
+#}
 
 sub find_objects{
     my $self = shift;
@@ -295,7 +295,7 @@ sub find_objects{
         if(defined($entry->{'use'})){
             print STDERR "expanding ".$self->entry_name($entry)." with ".$entry->{'use'}."\n";
             print STDERR Data::Dumper->Dump(['before',$entry]);
-            $entry = $self->detemplate($type, $entry);
+            #$entry = $self->detemplate($type, $entry);
             print STDERR Data::Dumper->Dump(['after',$entry]);
         }
         sleep(1);
