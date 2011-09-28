@@ -285,7 +285,7 @@ sub detemplate{
     return $new_entry;
 }
 
-sub find_object{
+sub find_objects{
     my $self = shift;
     my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
@@ -310,11 +310,27 @@ sub find_object{
             }
         }
         if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
-            print STDERR Data::Dumper->Dump(['entry',$entry]);
+            print STDERR Data::Dumper->Dump(['entry_found',$entry]);
             push(@{ $records },$entry);
         }
     }
     return $records; # return the list of matched entries
+}
+
+sub find_object{
+    my $self = shift;
+    my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
+    my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
+    my $objects = $self->find_objects($type,$attrs);
+    if($#{ $objects } > 0){
+        print STDERR "more than one object matches the search, returning the first\n";
+        return shift(@{$objects});
+    }elsif($#{ $objects } == 0){
+        return shift(@{$objects});
+    }else{
+        print STDERR "no objects found matching search\n";
+        return undef;
+    }
 }
 
 sub find_object_regex{
