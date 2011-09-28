@@ -271,7 +271,7 @@ sub detemplate{
     my $entry = shift;
     return $entry unless(defined($entry->{'use'}));
     my $template; 
-    $template = $self->find_object($type,{ 'name' => $entry->{'use'} }||$self->find_object($type,{ $type.'_name' => $entry->{'use'} };
+    $template = $self->find_object($type,{ 'name' => $entry->{'use'} })||$self->find_object($type,{ $type.'_name' => $entry->{'use'} });
     warn "no such template: $template\n" unless(defined($template));
     return $entry unless(defined($template));
     #my $new_entry = $self->detemplate($type, $template); # templates can use templates
