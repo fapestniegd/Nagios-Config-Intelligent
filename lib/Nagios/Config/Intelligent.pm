@@ -275,8 +275,7 @@ sub detemplate{
     $template = $self->find_object($type,{ 'name' => $entry->{'use'} })||$self->find_object($type,{ $type.'_name' => $entry->{'use'} });
     warn "no such template: $template\n" unless(defined($template));
     return $entry unless(defined($template));
-    #my $new_entry = $self->detemplate($type, $template); # templates can use templates
-    my $new_entry = $template;
+    my $new_entry = $self->detemplate($type, $template); # templates can use templates
     print Data::Dumper->Dump(['detemplate',$type,$new_entry]);
     delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
     delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
