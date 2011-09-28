@@ -253,6 +253,17 @@ sub find_service{
     return $records;
 }
 
+sub entryname{
+    my $self = shift;
+    my $entry = shift;
+    foreach my $keys (keys(%{ $entry })){
+        # everything should have either a "name" or "service_name" or "host_name" or "*_name"
+        if($key eq 'name'){ return $entry->{'name'}; }
+        if($key =~m /(.*_name)$/){ return $entry->{$1}; }
+        return undef;
+    }
+}
+
 sub detemplate{
     my $self = shift; 
     my $type = shift;
@@ -277,11 +288,11 @@ sub find_object{
     my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $records = undef;      # the list we'll be returning
-    print STDERR Data::Dumper->Dump([$self->{'objects'}->{$type}]);
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
-        my $expanded_entry = $entry;
         # replace expanded entry with the fully_expanded template;
-        $expanded_entry = $self->detemplate($type, $expanded_entry) if (defined($expanded_entry->{'use'}));
+        if(defined($entry->{'use'})){
+            print STDERR "expanding ".$self->entry_name($entry)." with ".$entry->use."\n";
+            $expanded_entry = $self->detemplate($type, $expanded_entry) if (defined($expanded_entry->{'use'}));
         sleep(1);
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
