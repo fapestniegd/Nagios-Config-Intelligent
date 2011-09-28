@@ -298,7 +298,7 @@ sub find_objects{
             $entry = $self->detemplate($type, $entry);
             print STDERR Data::Dumper->Dump(['after',$entry]);
         }
-        sleep(1);
+        #sleep(1);
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
