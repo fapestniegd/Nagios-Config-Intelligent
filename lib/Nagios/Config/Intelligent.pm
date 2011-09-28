@@ -279,7 +279,7 @@ sub find_object{
     my $records = undef;      # the list we'll be returning
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
         if(defined($entry->{'use'})){
-            if(defined($entry->$type.'_name')){
+            if(defined($entry->{$type.'_name'})){
                 print STDERR "detemplating $entry->{$type.'_name'} with $entry->{'use'}\n";
             }elsif(defined($entry->{'name'})){
                 print STDERR "detemplating $entry->{'name'} with $entry->{'use'}\n";
