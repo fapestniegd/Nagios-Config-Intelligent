@@ -258,6 +258,7 @@ sub detemplate{
     my $type = shift;
     my $entry = shift;
     return $entry unless(defined($entry->{'use'}));
+    print STDERR "detemplating $type::$entry with $entry->{'use'}";
     my $template = $self->find_object($type,{ use => $entry->{'use'} });
     warn "no such template: $template\n" unless(defined($template));
     return $entry unless(defined($template));
