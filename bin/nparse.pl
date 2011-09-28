@@ -26,4 +26,4 @@ my $n = Nagios::Config::Intelligent->new();
 foreach ($n->object_files($main_config)){
     $n->load_object_file($_)
 }
-print Data::Dumper->Dump([$n->find_object('contact',{ 'email' => '^scottstuder$' }) ]);
+print Data::Dumper->Dump([$n->find_object('contact',{ 'email' => '^scottstuder@eftsource.com$' }) ]);
