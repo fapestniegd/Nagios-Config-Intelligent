@@ -271,7 +271,7 @@ sub detemplate{
     my $entry = shift;
     return $entry unless(defined($entry->{'use'}));
     my $template; 
-    print STDERR "Looking for the template with name $entry->{'use'}\n";
+    print STDERR "Looking for the $type object with name $entry->{'use'}\n";
     $template = $self->find_object($type,{ 'name' => $entry->{'use'} });
     warn "no such template: $template\n" unless(defined($template));
     return $entry unless(defined($template));
@@ -297,9 +297,9 @@ sub find_objects{
         # replace expanded entry with the fully_expanded template;
         if(defined($entry->{'use'})){
             print STDERR "expanding ".$self->entry_name($entry)." with ".$entry->{'use'}."\n";
-            print STDERR Data::Dumper->Dump(['before',$entry]);
+            #print STDERR Data::Dumper->Dump(['before',$entry]);
             $entry = $self->detemplate($type, $entry);
-            print STDERR Data::Dumper->Dump(['after',$entry]);
+            #print STDERR Data::Dumper->Dump(['after',$entry]);
         }
         sleep(1);
         my $allmatch=1;       # assume everything matches
@@ -313,7 +313,7 @@ sub find_objects{
             }
         }
         if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
-            print STDERR Data::Dumper->Dump(['entry_found',$entry]);
+            #print STDERR Data::Dumper->Dump(['entry_found',$entry]);
             push(@{ $records },$entry);
         }
     }
