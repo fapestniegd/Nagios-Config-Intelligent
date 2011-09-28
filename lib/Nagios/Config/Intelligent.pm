@@ -277,9 +277,8 @@ sub find_object{
     my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $records = undef;      # the list we'll be returning
-        print STDERR Data::Dumper->Dump([$self->{'objects'}->{$type}]);
+    print STDERR Data::Dumper->Dump([$self->{'objects'}->{$type}]);
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
-        print STDERR Data::Dumper->Dump([$entry]);
         my $expanded_entry = $entry;
         # replace expanded entry with the fully_expanded template;
         $expanded_entry = $self->detemplate($type, $expanded_entry) if (defined($expanded_entry->{'use'}));
@@ -295,6 +294,7 @@ sub find_object{
             }
         }
         if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
+            print STDERR Data::Dumper->Dump([$expanded_entry]);
             push(@{ $records },$expanded_entry);
         }
     }
