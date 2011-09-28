@@ -253,13 +253,13 @@ sub find_service{
     return $records;
 }
 
-sub entryname{
+sub entry_name{
     my $self = shift;
     my $entry = shift;
     foreach my $key (keys(%{ $entry })){
         # everything should have either a "name" or "service_name" or "host_name" or "*_name"
         if($key eq 'name'){ return $entry->{'name'}; }
-        if($key =~m /(.*_name)$/){ return $entry->{$1}; }
+        if($key =~m/(.*_name)$/){ return $entry->{$1}; }
         return undef;
     }
 }
@@ -293,6 +293,7 @@ sub find_object{
         if(defined($entry->{'use'})){
             print STDERR "expanding ".$self->entry_name($entry)." with ".$entry->use."\n";
             $entry = $self->detemplate($type, $entry) if (defined($entry->{'use'}));
+        }
         sleep(1);
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
