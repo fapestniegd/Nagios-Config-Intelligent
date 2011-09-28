@@ -12,9 +12,10 @@ Some thoughts on monitoring:
     * the names (and therefore the IPs and subnets) of the other nagios servers 
     * what the graph of the network(s) look like (am I closer to <monitored object> than <other nagios server>?
    
-  in order to accomplish this, we need a couple things.
+  in order to accomplish this, we need a couple things. (basically the bare-minimum to describe your network)
     * a list of all routers in the infrastructure (you would need this to monitor them anyway, right?)
-    * a list of all interfaces, and routes (default and otherwise) on these routers
+    * a list of all interfaces, and routes (default and otherwise) on these routers (you'd want these anyway to monitor the bytes in/out & errors, right?)
+    * a list of all subnets (networks with masks, or CIDRs, this is the only requirement you may not have already needed.)
 
   having these lets us create a graph like:
 
@@ -25,12 +26,10 @@ Some thoughts on monitoring:
                                                                                   { 192.168.12.0/24 } <---> [eth1:192.168.12.0/24]
 
 
-   (and so on)
+   (and so on, then network can get pretty big, so we'll be storing it in a graph)
 
    Now if an object needs monitored in 10.100.0.0/24, then we'd use the nagios server in 10.100.0.0/24 if available, 
    or either 192.168.10.0/24 or 172.16.0.0/24 (or both or whichever isn't the report server)
    if not, and failing that, use the one in 192.168.12.0/24, and so on, for an arbitrarily large network.
 
-   When a nagios server or servers become overloaded, just add more. 
-
-   If there are several nagios servers for a zone (or one zone away) we'll leverage hostgroups to decide which nagios server should poll what services.
+   When a nagios server or servers become overloaded, just add more nagios servers, and they'll adjust.
