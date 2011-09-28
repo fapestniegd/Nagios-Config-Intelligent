@@ -129,23 +129,6 @@ sub load_object_file{
                    }
                }
                push(@{ $self->{'objects'}->{$object_type} },$record);
-################################################################################
-#               if($object_type eq "service"){
-#                   if(!defined($record_name)){
-#                       # it's a host service check append the host with it
-#                       push(@{ $self->{'objects'}->{'service'}->{ $record->{'host_name'} } },$record);
-#                   }else{
-#                       # it's a template, treat it normally
-#                       $self->{'objects'}->{$object_type}->{$record_name}=$record;
-#                   }
-#               }elsif($object_type eq "hostextinfo"){
-#                       $self->{'objects'}->{'hostextinfo'}->{ $record->{'host_name'} } = $record;
-#               }elsif($object_type eq "hostdependency"){
-#                       $self->{'objects'}->{'hostdependency'}->{ $record->{'host_name'} } = $record;
-#               }else{
-#                   $self->{'objects'}->{$object_type}->{$record_name}=$record;
-#               }
-################################################################################
                undef $record_name;
            }
        }
@@ -153,36 +136,6 @@ sub load_object_file{
     }
     return $self;
 }
-
-#sub parse_cfg{ 
-#    my $self = shift;
-#    my $file = shift if @_;
-#    my $fh = FileHandle->new;
-#    if ($fh->open("< $file")) {
-#    while(my $line=<$fh>){
-#        chomp($line);
-#        $line=~s/#.*//;
-#        if($line=~m/([^=]+)\s*=\s*(.*)/){
-#            my ($key,$value)=($1,$2);
-#            if(!defined($self->{'config'}->{$key})){ 
-#                $self->{'config'}->{$key}=$value; 
-#            }else{
-#                my $deref=$self->{'config'}->{$key};
-#                if(ref(\$deref) eq "SCALAR"){
-#                    my $tmp = $self->{'config'}->{$key};
-#                    delete $self->{'config'}->{$key};
-#                    push(@{ $self->{'config'}->{$key} },$tmp,$value);
-#                }elsif(ref($self->{'config'}->{$key}) eq "ARRAY"){
-#                    push(@{ $self->{'config'}->{$key} },$value);
-#                }
-#            }
-#        }
-#    }
-#    $fh->close;
-#    $self->load_object_files($self->{'config'}->{'cfg_file'}) if $self->{'config'}->{'cfg_file'};
-#    } 
-#    return $self;
-#}
 
 sub unbalanced{
     my $self=shift;
@@ -203,203 +156,166 @@ sub dump{
     return $self;
 }
 
-# $ncfg->dereference_use($hostrecord,'host');
-# $ncfg->dereference_use($svcrecord,'service');
+sub load_status{
+    my $self=shift;
+    return undef if(!defined($self->{'config'}->{'status_file'}));
+    my $fh=new FileHandle->new;
+    if($fh->open("< $self->{'config'}->{'status_file'}")){
+       while(my $line=<$fh>){
+           chomp($line) if $line;
+           $line=~s/#.*//g;
+           $line=~s/^\s+$//g;
+           next if $line=~m/^$/;
+           if($line=~m/\s*(\S+)\s*{\s*$/){
+               my $item=$1;
+               my $definition="$line\n";
+               # read the file until the parenthesis is balanced
+               while( ($self->unbalanced($definition)) && ($definition.=<$fh>) ){}
+               $definition=~s/^[^{]+{//g;
+               $definition=~s/}[^}]*//g;
+               my @keyvalues=split(/\n/,$definition);
+               my $record = {};
+               my $record_name = undef;
+               foreach my $entry (@keyvalues){
+                   # remove hash comments /* FIXME this shoulde be unquoted hashmarks */
+                   $entry=~s/#.*$//;
+                   # remove semicolon comments /* FIXME this shoulde be unquoted semicolons */
+                   $entry=~s/;.*$//;
+                   next if($entry=~m/^\s*$/);
+                   # remove leading/trailing whitespace
+                   $entry=~s/^\s*//;
+                   $entry=~s/\s*$//;
+                   # break down the key/value pairs
+                   if($entry=~m/(\S+)\s*=\s*(.*)/){
+                       my ($key,$value) = ($1,$2);
+                       $record->{$key}=$value;
+                   }
+               }
+               if($item eq "info"){
+                   if(defined($self->{'status'}->{$item})){
+                       if($self->{'status'}->{$item}->{'created'} == $record->{'created'}){
+                           print STDERR "status has not changed since last parse\n";
+                           $fh->close;
+                           return $self;
+                       }
+                   }
+                   $self->{'status'}->{$item}=$record;
+               }elsif($item eq "program"){
+                   $self->{'status'}->{$item}=$record;
+               }elsif($item eq "host"){
+                   $self->{'status'}->{'host'}->{ $record->{'host_name'} } = $record;
+               }elsif($item eq "service"){
+                   push(@{ $self->{'status'}->{'service'}->{ $record->{'host_name'} } },$record);
+               }else{
+                    print STDERR "unknown item in status file [$item]\n";
+               }
+           }
+       }
+       $fh->close;
+    }
+    return $self;
+}
 
-#sub dereference_use{
-#    my $self = shift;
-#    my $record_name=shift if @_;
-#    my $record_type=shift if @_;
-#    return undef unless $self->{'objects'}->{$record_type}->{$record_name};
-#    my $new_record={};
-#    if(defined($self->{'objects'}->{$record_type}->{$record_name}->{'use'})){
-#        foreach my $key (keys(%{ $self->{'objects'}->{$record_type}->{ 
-#                                        $self->{'objects'}->{$record_type}->{$record_name}->{'use'} 
-#                                                                     } 
-#                               })){
-#            $new_record->{$key} = $self->{'objects'}->{$record_type}->{ $self->{'objects'}->{$record_type}->{$record_name}->{'use'} }->{$key};
-#        }
-#    }
-#    # Nested templates
-#    if(defined($new_record->{'use'})){
-#        $new_record=$self->dereference_use($self->{'objects'}->{$record_type}->{$record_name}->{'use'}, $record_type);
-#    }
-#    foreach my $key (keys(%{ $self->{'objects'}->{$record_type}->{$record_name} })){
-#        next if($key eq "use");
-#        $new_record->{$key} = $self->{'objects'}->{$record_type}->{$record_name}->{$key};
-#    }
-#    return $new_record;
-#}
-#
-#sub get_host{
-#    my $self=shift;
-#    my $name=shift if @_;
-#    if(defined($self->{'objects'}->{'host'}->{$name})){
-#        return $self->dereference_use($name,'host');
-#    }
-#    return undef;
-#}
-#
-#sub load_status{
-#    my $self=shift;
-#    return undef if(!defined($self->{'config'}->{'status_file'}));
-#    my $fh=new FileHandle->new;
-#    if($fh->open("< $self->{'config'}->{'status_file'}")){
-#       while(my $line=<$fh>){
-#           chomp($line) if $line;
-#           $line=~s/#.*//g;
-#           $line=~s/^\s+$//g;
-#           next if $line=~m/^$/;
-#           if($line=~m/\s*(\S+)\s*{\s*$/){
-#               my $item=$1;
-#               my $definition="$line\n";
-#               # read the file until the parenthesis is balanced
-#               while( ($self->unbalanced($definition)) && ($definition.=<$fh>) ){}
-#               $definition=~s/^[^{]+{//g;
-#               $definition=~s/}[^}]*//g;
-#               my @keyvalues=split(/\n/,$definition);
-#               my $record = {};
-#               my $record_name = undef;
-#               foreach my $entry (@keyvalues){
-#                   # remove hash comments /* FIXME this shoulde be unquoted hashmarks */
-#                   $entry=~s/#.*$//;
-#                   # remove semicolon comments /* FIXME this shoulde be unquoted semicolons */
-#                   $entry=~s/;.*$//;
-#                   next if($entry=~m/^\s*$/);
-#                   # remove leading/trailing whitespace
-#                   $entry=~s/^\s*//;
-#                   $entry=~s/\s*$//;
-#                   # break down the key/value pairs
-#                   if($entry=~m/(\S+)\s*=\s*(.*)/){
-#                       my ($key,$value) = ($1,$2);
-#                       $record->{$key}=$value;
-#                   }
-#               }
-#               if($item eq "info"){
-#                   if(defined($self->{'status'}->{$item})){
-#                       if($self->{'status'}->{$item}->{'created'} == $record->{'created'}){
-#                           print STDERR "status has not changed since last parse\n";
-#                           $fh->close;
-#                           return $self;
-#                       }
-#                   }
-#                   $self->{'status'}->{$item}=$record;
-#               }elsif($item eq "program"){
-#                   $self->{'status'}->{$item}=$record;
-#               }elsif($item eq "host"){
-#                   $self->{'status'}->{'host'}->{ $record->{'host_name'} } = $record;
-#               }elsif($item eq "service"){
-#                   push(@{ $self->{'status'}->{'service'}->{ $record->{'host_name'} } },$record);
-#               }else{
-#                    print STDERR "unknown item in status file [$item]\n";
-#               }
-#           }
-#       }
-#       $fh->close;
-#    }
-#    return $self;
-#}
-#
-#sub find_contact{
-#    my $self=shift;
-#    my $attrs=shift if @_;
-#    return $self->find_object('contact',$attrs);
-#}
-#
-#sub find_host{
-#    my $self=shift;
-#    my $attrs=shift if @_;
-#    return $self->find_object('host',$attrs);
-#}
-#
-#sub find_service{
-#    my $self=shift;
-#    my $attrs=shift if @_;
-#    my $type='service';
-#    my $records = undef;
-#    foreach my $host (keys(%{ $self->{'objects'}->{$type} })){
-#        next if(ref($self->{'objects'}->{$type}->{$host}) ne 'ARRAY');
-#        foreach my $service (@{ $self->{'objects'}->{$type}->{$host} }){
-#            my $allmatch=1;
-#            foreach my $needle (keys(%{ $attrs })){
-#                if(defined($service->{$needle})){
-#                    if( $attrs->{$needle} ne $service->{$needle} ){
-#                        $allmatch=0;
-#                    }
-#                }else{
-#                    $allmatch=0;
-#                }
-#            }
-#            if($allmatch == 1){
-#                push(@{ $records },$service);
-#            }
-#        }
-#    }
-#    return $records;
-#}
-#
-#sub find_object{
-#    my $self=shift;
-#    my $type=shift if @_;
-#    my $attrs=shift if @_;
-#    my $records = undef;
-#    foreach my $key (keys(%{ $self->{'objects'}->{$type} })){
-#        my $allmatch=1;
-#        foreach my $needle (keys(%{ $attrs })){
-#            if(defined($self->{'objects'}->{$type}->{$key}->{$needle})){
-#                if( $attrs->{$needle} ne $self->{'objects'}->{$type}->{$key}->{$needle} ){
-#                    $allmatch=0;
-#                }
-#            }else{
-#                $allmatch=0;
-#            }
-#        }
-#        if($allmatch == 1){
-#            push(@{ $records },$self->{'objects'}->{$type}->{$key});
-#        }
-#    }
-#    return $records;
-#}
-#
+sub find_contact{
+    my $self=shift;
+    my $attrs=shift if @_;
+    return $self->find_object('contact',$attrs);
+}
+
+sub find_host{
+    my $self=shift;
+    my $attrs=shift if @_;
+    return $self->find_object('host',$attrs);
+}
+
+sub find_service{
+    my $self=shift;
+    my $attrs=shift if @_;
+    my $type='service';
+    my $records = undef;
+    foreach my $host (keys(%{ $self->{'objects'}->{$type} })){
+        next if(ref($self->{'objects'}->{$type}->{$host}) ne 'ARRAY');
+        foreach my $service (@{ $self->{'objects'}->{$type}->{$host} }){
+            my $allmatch=1;
+            foreach my $needle (keys(%{ $attrs })){
+                if(defined($service->{$needle})){
+                    if( $attrs->{$needle} ne $service->{$needle} ){
+                        $allmatch=0;
+                    }
+                }else{
+                    $allmatch=0;
+                }
+            }
+            if($allmatch == 1){
+                push(@{ $records },$service);
+            }
+        }
+    }
+    return $records;
+}
+
+sub find_object{
+    my $self = shift;
+    my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
+    my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
+    my $records = undef;      # the list we'll be returning
+    foreach my $entry (@{ $self->{'objects'}->{$type} }){
+        my $allmatch=1;       # assume everything matches
+        foreach my $needle (keys(%{ $attrs })){
+            if(defined($entry->{$needle})){
+                if( $attr->{$needle} ne $entry->{$needle} ){
+                    $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
+                }
+            }else{
+                $allmatch=0; # if we're missing a key in the attrs, then all don't match
+            }
+        }
+        if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
+            push(@{ $records },$entry);
+        }
+    }
+    return $records; # return the list of matched entries
+}
+
 #################################################################################
 ## Get statuses from the status.dat
 #################################################################################
-#sub host_status{
-#    my $self=shift;
-#    my $hostname=shift;
-#    my $records = undef;
-#    $self->load_status() unless( defined ($self->{'status'}) );
-#    return $self->{'status'}->{'host'}->{$hostname} if(defined($self->{'status'}->{'host'}->{$hostname}));
-#    return undef;
-#} 
-#
-#sub service_status{
-#    my $self=shift;
-#    my $attrs=shift if @_;
-#    my $records = undef;
-#    my $allmatch;
-#    $self->load_status() unless( defined ($self->{'status'}) );
-#    foreach my $host (keys(%{ $self->{'status'}->{'service'} })){
-#        foreach my $service (@{ $self->{'status'}->{'service'}->{$host} }){
-#            $allmatch=1;
-#            foreach my $needle (keys(%{ $attrs })){
-#                if(defined($service->{$needle})){
-#                    if($service->{$needle} ne $attrs->{$needle}){
-#                        # They don't match if they don't match...
-#                        $allmatch=0;
-#                    }
-#                }else{
-#                    # They obviously don't match if it's not defined.
-#                    $allmatch=0;
-#                }
-#            }
-#            if($allmatch == 1){
-#                push(@{ $records }, $service);
-#            }
-#        }
-#    }
-#    return $records;
-#}
+sub host_status{
+    my $self=shift;
+    my $hostname=shift;
+    my $records = undef;
+    $self->load_status() unless( defined ($self->{'status'}) );
+    return $self->{'status'}->{'host'}->{$hostname} if(defined($self->{'status'}->{'host'}->{$hostname}));
+    return undef;
+} 
+
+sub service_status{
+    my $self=shift;
+    my $attrs=shift if @_;
+    my $records = undef;
+    my $allmatch;
+    $self->load_status() unless( defined ($self->{'status'}) );
+    foreach my $host (keys(%{ $self->{'status'}->{'service'} })){
+        foreach my $service (@{ $self->{'status'}->{'service'}->{$host} }){
+            $allmatch=1;
+            foreach my $needle (keys(%{ $attrs })){
+                if(defined($service->{$needle})){
+                    if($service->{$needle} ne $attrs->{$needle}){
+                        # They don't match if they don't match...
+                        $allmatch=0;
+                    }
+                }else{
+                    # They obviously don't match if it's not defined.
+                    $allmatch=0;
+                }
+            }
+            if($allmatch == 1){
+                push(@{ $records }, $service);
+            }
+        }
+    }
+    return $records;
+}
 #
 ## Autoload methods go after =cut, and are processed by the autosplit program.
 #
