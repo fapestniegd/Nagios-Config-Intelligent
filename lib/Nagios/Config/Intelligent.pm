@@ -271,6 +271,7 @@ sub detemplate{
     my $entry = shift;
     return $entry unless(defined($entry->{'use'}));
     my $template; 
+    print STDERR "Looking for the template with name $entry->{'use'}\n";
     $template = $self->find_object($type,{ 'name' => $entry->{'use'} })||$self->find_object($type,{ $type.'_name' => $entry->{'use'} });
     warn "no such template: $template\n" unless(defined($template));
     return $entry unless(defined($template));
@@ -295,7 +296,7 @@ sub find_object{
         if(defined($entry->{'use'})){
             print STDERR "expanding ".$self->entry_name($entry)." with ".$entry->{'use'}."\n";
             print STDERR Data::Dumper->Dump(['before',$entry]);
-            $entry = $self->detemplate($type, $entry) if (defined($entry->{'use'}));
+            $entry = $self->detemplate($type, $entry);
             print STDERR Data::Dumper->Dump(['after',$entry]);
         }
         sleep(1);
