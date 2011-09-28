@@ -261,7 +261,7 @@ sub entry_name{
         if($key eq 'name'){ return $entry->{'name'}; }
         if($key =~m/(.*_name)$/){ return $entry->{$1}; }
     }
-    print Data::Dumper->Dump([$entry]);
+    print Data::Dumper->Dump(['entry_name',$entry]);
     return undef;
 }
 
@@ -310,7 +310,7 @@ sub find_object{
             }
         }
         if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
-            print STDERR Data::Dumper->Dump([$entry]);
+            print STDERR Data::Dumper->Dump(['entry',$entry]);
             push(@{ $records },$entry);
         }
     }
