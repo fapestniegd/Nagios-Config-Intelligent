@@ -475,28 +475,25 @@ sub add_template{
 
 # we then create template_candidates from each of thes numbers
 # we check each of them against the existing contact templates, 
-# adding them if not exist.
+# adding them if not exist. ($self->add_template($type,$template)
 
 # we can then (for each object, iterate through the templates, 
 # find the one that matches the best, tell the object to "use"
 # it and remove it's key/value pairs from the object
 
-# the object should then be 
 ################################################################################
 
 sub reduce {
-    my $self=shift;
+    my $self = shift;
     my ($type,$sets) = @_;
-    my $global_results=[];
     my $template_candidates;
     for(my $i=0; $i<=$#{$sets};$i++){
-        my $results=[];
         for(my $j=0; $j<=$i;$j++){
             my $intersection = $self->clone($sets->[$i]);
             my $s_count = keys(%{ $intersection });
-            foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
+            foreach my $key (keys(%{ $intersection })){
                 if( (!defined($sets->[$j]->{$key})) || ($intersection->{$key} ne $sets->[$j]->{$key}) ){
-                    delete $intersection->{$key};
+                    delete $intersection->{$key}; # remove things in intersection that are not in the set being compared
                 }
             }
             my $i_count = keys(%{ $intersection });
@@ -511,7 +508,30 @@ sub reduce {
     foreach my $tpl (@{ $template_candidates }){
         $self->add_template($type,$tpl);
     }
-    return $global_results;
+    # now we want to reduce the actual object by the largest template of it's type that will fit it.
+    for(my $i=0; $i<=$#{$sets};$i++){
+        my $biggest_count = 0;
+        my $biggest_name = undef;
+        foreach my $tpl_name (keys(%{ $self->{'templates'}->{$type} })){
+           my $tmpl = $self->clone($self->{'templates'}->{$type}->{$tpl_name});
+           delete $tmpl->{'name'} if($tmpl->{'name'});
+           delete $tmpl->{'register'} if($tmpl->{'register'});
+           my $elements = keys($tmpl);
+           my $intersect = $self->intersection([$tmpl, $sets->[$i]])
+           my $i_elements = keys($intersect);
+           if ($i_elements == $elements){ # all of these match, and it's the biggest, save the name
+               if($biggest_count < $i_elements){
+                   $biggest_count=$i_elements;
+                   $biggest_name=$tpl_name;
+               }
+           }
+        }
+        # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
+        foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{})){
+            delete $sets->[$i]->{$tplkey} if(defined($sets->[$i]->{$tplkey}));
+        }
+        $sets->[$i]->{'use'} = $biggest_name;
+    }
 }
 
 #
