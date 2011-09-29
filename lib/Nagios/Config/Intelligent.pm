@@ -516,9 +516,9 @@ sub reduce {
            my $tmpl = $self->clone($self->{'templates'}->{$type}->{$tpl_name});
            delete $tmpl->{'name'} if($tmpl->{'name'});
            delete $tmpl->{'register'} if($tmpl->{'register'});
-           my $elements = keys($tmpl);
+           my $elements = keys(%{ $tmpl });
            my $intersect = $self->intersection([$tmpl, $sets->[$i]])
-           my $i_elements = keys($intersect);
+           my $i_elements = keys(%{ $intersect });
            if ($i_elements == $elements){ # all of these match, and it's the biggest, save the name
                if($biggest_count < $i_elements){
                    $biggest_count=$i_elements;
