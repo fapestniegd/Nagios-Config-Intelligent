@@ -439,7 +439,8 @@ sub reduce {
                     delete $intersection->{$key};
                 }
             }
-            print $#{ keys(%{ $intersection }) };
+            my @incommon =keys(%{ $intersection });
+            print "$#incommon ";
         }
         print "\n";
     }
