@@ -432,9 +432,10 @@ sub reduce {
     for(my $i=0; $i<=$#{$sets};$i++){
         my $results=[];
         for(my $j=0; $j<=$i;$j++){
-            my $intersection = $self->clone($sets->[$i]);
+            my $intersection = $self->clone($self->detemplate($sets->[$i]));
             foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
-                if( (!defined($sets->[$j]->{$key})) || ($intersection->{$key} ne $sets->[$j]->{$key}) ){
+                my $set2compare = $self->clone($self->detemplate($sets->[$j]));
+                if( (!defined($set2compare->{$key})) || ($intersection->{$key} ne $set2compare->{$key}) ){
                     delete $intersection->{$key};
                 }
             }
