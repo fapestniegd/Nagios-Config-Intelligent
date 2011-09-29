@@ -415,6 +415,21 @@ sub intersection {
     return $intersection;
 }
 
+# search a list of hashes for that hash return 1 if it's in there
+sub already_in{
+    my $self = shift;
+    my $list = shift;
+    my $hash = shift;
+    my $elements = keys(%{ $hash });
+    my $found_it=0;
+    foreach my $h (@{ list }){
+        my $intersection = $self->intersection($h, $hash);
+        my $count = keys(%{ intersection });
+        if($elements == $count){ return 1; }
+    }
+    return 0;
+}
+
 # create a matrix of commonalities between all entries
 # so if we have 5 sets [a, b, c, d, e] and they each have say, 9 elements, 
 # we'll get a matrix that looks like:
@@ -429,6 +444,7 @@ sub reduce {
     my $self=shift;
     my ($sets) = shift;
     my $global_results=[];
+    my $template_candidates;
     for(my $i=0; $i<=$#{$sets};$i++){
         my $results=[];
         for(my $j=0; $j<=$i;$j++){
@@ -438,10 +454,12 @@ sub reduce {
                     delete $intersection->{$key};
                 }
             }
-            my @incommon =keys(%{ $intersection });
+            push(@{ $template_candidates }, $intersection) unless $self->already_in($template_candidates,$intersection);
+            my @incommon = keys(%{ $intersection });
             print "$#incommon ";
         }
         print "\n";
+        print Data::Dumper->Dump([$template_candidates]);
     }
     return $global_results;
 }
