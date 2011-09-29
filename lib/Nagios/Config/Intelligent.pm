@@ -528,6 +528,7 @@ sub reduce {
         }
         # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
         if(defined($biggest_name)){
+            print STDERR Data::Dumper->Dump(['reduction', $self->{'templates'}->{$type}->{$biggest_name},  $sets->[$i] ]);
             foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
                 delete $sets->[$i]->{$tplkey} if(defined($sets->[$i]->{$tplkey}));
             }
