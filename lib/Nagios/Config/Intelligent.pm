@@ -130,7 +130,7 @@ sub load_object_file{
                # we have to separate templates from objects, and save them by name, or we end up with infinite recursion
                # what we *really* need instead is recursion depth detection in find_object
                if( defined($record->{'name'}) && defined($record->{'register'}) && ($record->{'register'} == 0)){
-                   push(@{ $self->{'templates'}->{$object_type}->{ $record->{'name'} } },$record);
+                   $self->{'templates'}->{$object_type}->{ $record->{'name'} } = $record;
                }else{
                    push(@{ $self->{'objects'}->{$object_type} },$record);
                }
