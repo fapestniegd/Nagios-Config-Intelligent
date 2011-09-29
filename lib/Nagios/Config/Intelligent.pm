@@ -112,7 +112,6 @@ sub load_object_file{
                $definition=~s/}[^}]*//g;
                my @keyvalues=split(/\n/,$definition);
                my $record = {};
-               my $record_name = undef;
                foreach my $entry (@keyvalues){
                    # remove hash comments /* FIXME this shoulde be unquoted hashmarks */
                    $entry=~s/#.*$//;
@@ -126,35 +125,16 @@ sub load_object_file{
                    if($entry=~m/(\S+)\s+(.*)/){
                        my ($key,$value) = ($1,$2);
                        $record->{$key} = $value;
-                       # services don't have names they have a host name and a description, ugh.
-                           if(($key eq "name")||($key eq "${object_type}_name")){
-                               $record_name = $value;
-                               if(defined($self->{'objects'}->{$object_type}->{$record_name})){
-                                   print STDERR "Redefinittion of $object_type : $record_name\n";
-                               }
-                           } 
                    }else{
                        print STDERR "NOT SURE ABOUT:  $entry\n";
                    }
                }
-################################################################################
-#               if($object_type eq "service"){
-#                   if(!defined($record_name)){
-#                       # it's a host service check append the host with it
-#                       push(@{ $self->{'objects'}->{'service'}->{ $record->{'host_name'} } },$record);
-#                   }else{
-#                       # it's a template, treat it normally
-#                       $self->{'objects'}->{$object_type}->{$record_name}=$record;
-#                   }
-#               }elsif($object_type eq "hostextinfo"){
-#                       $self->{'objects'}->{'hostextinfo'}->{ $record->{'host_name'} } = $record;
-#               }elsif($object_type eq "hostdependency"){
-#                       $self->{'objects'}->{'hostdependency'}->{ $record->{'host_name'} } = $record;
-#               }else{
-#                   $self->{'objects'}->{$object_type}->{$record_name}=$record;
-#               }
-################################################################################
-               undef $record_name;
+               if( defined($record->{'name'}) && defined($record->{'register'}) && ($record->{'register'} == 0)){
+                   push(@{ $self->{'templates'}->{$object_type} },$record);
+               }else{
+                   push(@{ $self->{'objects'}->{$object_type} },$record);
+               }
+               undef $record;
            }
        }
     $fh->close;
