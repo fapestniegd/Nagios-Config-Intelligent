@@ -1,1 +1,2 @@
-Comments at the ends of lines (not matching /^\s*[#;]/) will confuse the config reader.
+* Comments at the ends of lines (not matching /^\s*[#;]/) will confuse the config reader.
+* Templates need to have an attribute 'name' and 'register 0'

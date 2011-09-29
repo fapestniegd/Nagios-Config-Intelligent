@@ -128,6 +128,7 @@ sub load_object_file{
                    }
                }
                # we have to separate templates from objects, and save them by name, or we end up with infinite recursion
+               # what we *really* need instead is recursion depth detection in find_object
                if( defined($record->{'name'}) && defined($record->{'register'}) && ($record->{'register'} == 0)){
                    push(@{ $self->{'templates'}->{$object_type}->{ $record->{'name'} } },$record);
                }else{
@@ -275,11 +276,8 @@ sub detemplate{
     my $entry = shift;
     return $entry unless(defined($entry->{'use'}));
     my $template; 
-    print STDERR "Looking for the $type object with name $entry->{'use'}\n";
 
-    # cache the template if we don't have it cached, or we'll inifinite loop.
     if(! defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
-        $self->{'templates'}->{$type}->{$entry->{'use'}} = $self->find_object($type,{ 'name' => $entry->{'use'} });
         $template = $self->{'templates'}->{$type}->{$entry->{'use'}};
     }
     warn "no such template: $template\n" unless(defined($template));
