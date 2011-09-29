@@ -527,10 +527,12 @@ sub reduce {
            }
         }
         # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
-        foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
-            delete $sets->[$i]->{$tplkey} if(defined($sets->[$i]->{$tplkey}));
+        if(defined($biggest_name)){
+            foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
+                delete $sets->[$i]->{$tplkey} if(defined($sets->[$i]->{$tplkey}));
+            }
+            $sets->[$i]->{'use'} = $biggest_name;
         }
-        $sets->[$i]->{'use'} = $biggest_name;
     }
 }
 
