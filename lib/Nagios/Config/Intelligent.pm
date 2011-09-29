@@ -279,6 +279,7 @@ sub detemplate{
     if(defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
         $template = YAML::Load(YAML::Dump($self->detemplate($type,$self->{'templates'}->{$type}->{$entry->{'use'}})));
     }else{
+        $template = undef;
         warn "no such $type template: $entry->{'use'}\n" unless(defined($template));
         return $entry;
     }
