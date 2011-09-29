@@ -283,6 +283,7 @@ sub detemplate{
         return $entry;
     }
 
+    print Data::Dumper->Dump([$template]);
     my $new_entry = $template;     # start the new entry with the fetched template
     #foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
     #    $new_entry->{$key} = $entry->{$key};
