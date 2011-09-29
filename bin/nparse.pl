@@ -25,5 +25,5 @@ my $n = Nagios::Config::Intelligent->new({'cfg' => $main_config });
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
-$n->reduce($n->{'objects'}->{'contact'});
-print $n->dump; # the contacts should have new templates now
+$n->reduce('contact',$n->{'objects'}->{'contact'});
+print Data::Dumper->Dump([$n->{'templates'}->{'contact'}]); # the contacts should have new templates now
