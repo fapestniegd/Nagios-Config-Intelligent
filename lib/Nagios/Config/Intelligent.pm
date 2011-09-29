@@ -113,10 +113,8 @@ sub load_object_file{
                my @keyvalues=split(/\n/,$definition);
                my $record = {};
                foreach my $entry (@keyvalues){
-                   # remove hash comments /* FIXME this shoulde be unquoted hashmarks */
-                   $entry=~s/#.*$//;
-                   # remove semicolon comments /* FIXME this shoulde be unquoted semicolons */
-                   $entry=~s/;.*$//;
+                   # remove comments at the beginning of the line FIXME comments can be at the ends of lines too.
+                   $entry=~s/\s*[;#].*$//;
                    next if($entry=~m/^\s*$/);
                    # remove leading/trailing whitespace
                    $entry=~s/^\s*//;
@@ -142,36 +140,6 @@ sub load_object_file{
     return $self;
 }
 
-#sub parse_cfg{ 
-#    my $self = shift;
-#    my $file = shift if @_;
-#    my $fh = FileHandle->new;
-#    if ($fh->open("< $file")) {
-#    while(my $line=<$fh>){
-#        chomp($line);
-#        $line=~s/#.*//;
-#        if($line=~m/([^=]+)\s*=\s*(.*)/){
-#            my ($key,$value)=($1,$2);
-#            if(!defined($self->{'config'}->{$key})){ 
-#                $self->{'config'}->{$key}=$value; 
-#            }else{
-#                my $deref=$self->{'config'}->{$key};
-#                if(ref(\$deref) eq "SCALAR"){
-#                    my $tmp = $self->{'config'}->{$key};
-#                    delete $self->{'config'}->{$key};
-#                    push(@{ $self->{'config'}->{$key} },$tmp,$value);
-#                }elsif(ref($self->{'config'}->{$key}) eq "ARRAY"){
-#                    push(@{ $self->{'config'}->{$key} },$value);
-#                }
-#            }
-#        }
-#    }
-#    $fh->close;
-#    $self->load_object_files($self->{'config'}->{'cfg_file'}) if $self->{'config'}->{'cfg_file'};
-#    } 
-#    return $self;
-#}
-
 sub unbalanced{
     my $self=shift;
     my $string=shift;
@@ -184,47 +152,10 @@ sub unbalanced{
     return $balance;
 }
 
-
 sub dump{
     my $self = shift;
     print YAML::Dump($self);
     return $self;
-}
-
-# $ncfg->dereference_use($hostrecord,'host');
-# $ncfg->dereference_use($svcrecord,'service');
-sub dereference_use{
-    my $self = shift;
-    my $record_name=shift if @_;
-    my $record_type=shift if @_;
-    return undef unless $self->{'objects'}->{$record_type}->{$record_name};
-    my $new_record={};
-    if(defined($self->{'objects'}->{$record_type}->{$record_name}->{'use'})){
-        foreach my $key (keys(%{ $self->{'objects'}->{$record_type}->{ 
-                                        $self->{'objects'}->{$record_type}->{$record_name}->{'use'} 
-                                                                     } 
-                               })){
-            $new_record->{$key} = $self->{'objects'}->{$record_type}->{ $self->{'objects'}->{$record_type}->{$record_name}->{'use'} }->{$key};
-        }
-    }
-    # Nested templates
-    if(defined($new_record->{'use'})){
-        $new_record=$self->dereference_use($self->{'objects'}->{$record_type}->{$record_name}->{'use'}, $record_type);
-    }
-    foreach my $key (keys(%{ $self->{'objects'}->{$record_type}->{$record_name} })){
-        next if($key eq "use");
-        $new_record->{$key} = $self->{'objects'}->{$record_type}->{$record_name}->{$key};
-    }
-    return $new_record;
-}
-
-sub get_host{
-    my $self=shift;
-    my $name=shift if @_;
-    if(defined($self->{'objects'}->{'host'}->{$name})){
-        return $self->dereference_use($name,'host');
-    }
-    return undef;
 }
 
 sub load_status{
@@ -325,32 +256,114 @@ sub find_service{
     return $records;
 }
 
-sub find_object{
-    my $self=shift;
-    my $type=shift if @_;
-    my $attrs=shift if @_;
-    my $records = undef;
-    foreach my $key (keys(%{ $self->{'objects'}->{$type} })){
-        my $allmatch=1;
-        foreach my $needle (keys(%{ $attrs })){
-            if(defined($self->{'objects'}->{$type}->{$key}->{$needle})){
-                if( $attrs->{$needle} ne $self->{'objects'}->{$type}->{$key}->{$needle} ){
-                    $allmatch=0;
-                }
-            }else{
-                $allmatch=0;
-            }
-        }
-        if($allmatch == 1){
-            push(@{ $records },$self->{'objects'}->{$type}->{$key});
-        }
+sub entry_name{
+    my $self = shift;
+    my $entry = shift;
+    foreach my $key (keys(%{ $entry })){
+        # everything should have either a "name" or "service_name" or "host_name" or "*_name"
+        if($key eq 'name'){ return $entry->{'name'}; }
+        if($key =~m/(.*_name)$/){ return $entry->{$1}; }
     }
-    return $records;
+    print Data::Dumper->Dump(['entry_name',$entry]);
+    return undef;
 }
 
-################################################################################
-# Get statuses from the status.dat
-################################################################################
+sub detemplate{
+    my $self = shift; 
+    my $type = shift;
+    my $entry = shift;
+    return $entry unless(defined($entry->{'use'}));
+    my $template; 
+    print STDERR "Looking for the $type object with name $entry->{'use'}\n";
+
+    # cache the template if we don't have it cached, or we'll inifinite loop.
+    if(! defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
+        $self->{'templates'}->{$type}->{$entry->{'use'}} = $self->find_object($type,{ 'name' => $entry->{'use'} });
+        $template = $self->{'templates'}->{$type}->{$entry->{'use'}};
+    }
+    warn "no such template: $template\n" unless(defined($template));
+    return $entry unless(defined($template));
+
+    my $new_entry = $template;     # start the new entry with the fetched template
+    foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
+        $new_entry->{$key} = $entry->{$key};
+    }
+    # get rid of all the things that indicate this entry is a template
+    delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
+    delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
+    delete $new_entry->{'use'} if(defined($new_entry->{'use'})); 
+    print STDERR "returning merged template  $entry->{'use'} and entry ".$self->entry_name($entry)."\n";
+    return $new_entry;
+}
+
+sub find_objects{
+    my $self = shift;
+    my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
+    my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
+    my $records = undef;      # the list we'll be returning
+    foreach my $entry (@{ $self->{'objects'}->{$type} }){
+        my $allmatch=1;       # assume everything matches
+        foreach my $needle (keys(%{ $attrs })){
+            if(defined($entry->{$needle})){
+                unless($entry->{$needle} eq $attrs->{$needle}){
+                    $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
+                }
+            }else{
+                $allmatch=0; # if we're missing a key in the attrs, then all don't match
+            }
+        }
+        if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
+            #print STDERR Data::Dumper->Dump(['entry_found',$entry]);
+            push(@{ $records },$entry);
+        }
+    }
+    return $records; # return the list of matched entries
+}
+
+sub find_object{
+    my $self = shift;
+    my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
+    my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
+    my $objects = $self->find_objects($type,$attrs);
+    if($#{ $objects } > 0){
+        print STDERR "more than one object matches the search, returning the first\n";
+        return shift(@{$objects});
+    }elsif($#{ $objects } == 0){
+        return shift(@{$objects});
+    }else{
+        print STDERR "no objects found matching search\n";
+        return undef;
+    }
+}
+
+sub find_object_regex{
+    my $self = shift;
+    my $type = shift if @_;   # the type of entry we're looking for (e.g. 'contact', 'host', 'servicegroup', 'command')
+    my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
+    my $records = undef;      # the list we'll be returning
+    foreach my $entry (@{ $self->{'objects'}->{$type} }){
+        $entry = $self->detemplate($type, $entry);
+        my $allmatch=1;       # assume everything matches
+        foreach my $needle (keys(%{ $attrs })){
+            if(defined($entry->{$needle})){
+                unless($entry->{$needle}=~m/$attrs->{$needle}/){
+                    $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
+                }
+            }else{
+                $allmatch=0; # if we're missing a key in the attrs, then all don't match
+            }
+        }
+        if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
+            push(@{ $records },$entry);
+        }
+    }
+    return $records; # return the list of matched entries
+}
+
+
+#################################################################################
+## Get statuses from the status.dat
+#################################################################################
 sub host_status{
     my $self=shift;
     my $hostname=shift;
@@ -387,9 +400,9 @@ sub service_status{
     }
     return $records;
 }
-
-# Autoload methods go after =cut, and are processed by the autosplit program.
-
+#
+## Autoload methods go after =cut, and are processed by the autosplit program.
+#
 1;
 __END__
 # Below is stub documentation for your module. You'd better edit it!

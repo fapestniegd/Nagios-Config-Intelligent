@@ -1,0 +1,1 @@
+Comments at the ends of lines (not matching /^\s*[#;]/) will confuse the config reader.

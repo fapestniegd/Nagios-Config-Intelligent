@@ -26,4 +26,5 @@ my $n = Nagios::Config::Intelligent->new();
 foreach ($n->object_files($main_config)){
     $n->load_object_file($_)
 }
-print Data::Dumper->Dump([$n]);
+print $n->dump;
+#print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
