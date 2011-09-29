@@ -281,7 +281,7 @@ sub detemplate{
     if(! defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
         $template = $self->{'templates'}->{$type}->{$entry->{'use'}};
     }
-    warn "no such template: $entry->{'use'}\n" unless(defined($template));
+    warn "no such $type template: $entry->{'use'}\n" unless(defined($template));
     return $entry unless(defined($template));
 
     my $new_entry = $template;     # start the new entry with the fetched template
