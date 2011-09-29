@@ -277,6 +277,7 @@ sub detemplate{
     return $entry unless(defined($entry->{'use'}));
     my $template; 
 
+    print Data::Dumper->Dump(['before',$entry]);
     if(! defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
         $template = $self->{'templates'}->{$type}->{$entry->{'use'}};
     }
@@ -284,14 +285,17 @@ sub detemplate{
     return $entry unless(defined($template));
 
     my $new_entry = $template;     # start the new entry with the fetched template
+    print Data::Dumper->Dump(['template',$new_entry]);
     foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
         $new_entry->{$key} = $entry->{$key};
     }
+    print Data::Dumper->Dump(['new',$new_entry]);
     # get rid of all the things that indicate this entry is a template
     delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
     delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
     delete $new_entry->{'use'} if(defined($new_entry->{'use'})); 
     print STDERR "returning merged template  $entry->{'use'} and entry ".$self->entry_name($entry)."\n";
+    print Data::Dumper->Dump(['returned',$new_entry]);
     return $new_entry;
 }
 
@@ -301,9 +305,7 @@ sub find_objects{
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $records = undef;      # the list we'll be returning
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
-        print Data::Dumper->Dump(['before',$entry]);
         $entry = $self->detemplate($entry);
-        print Data::Dumper->Dump(['after',$entry]);
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
