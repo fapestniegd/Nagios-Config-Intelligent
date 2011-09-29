@@ -127,6 +127,7 @@ sub load_object_file{
                        print STDERR "NOT SURE ABOUT:  $entry\n";
                    }
                }
+               # we have to separate templates from objects, and save them by name
                if( defined($record->{'name'}) && defined($record->{'register'}) && ($record->{'register'} == 0)){
                    push(@{ $self->{'templates'}->{$object_type} },$record);
                }else{
