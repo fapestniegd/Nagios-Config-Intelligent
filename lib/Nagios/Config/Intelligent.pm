@@ -424,7 +424,7 @@ sub already_in{
     my $found_it=0;
     foreach my $h (@{ list }){
         my $intersection = $self->intersection($h, $hash);
-        my $count = keys(%{ intersection });
+        my $count = keys(%{ $intersection });
         if($elements == $count){ return 1; }
     }
     return 0;
