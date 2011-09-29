@@ -278,11 +278,12 @@ sub detemplate{
     my $template; 
 
     print Data::Dumper->Dump(['object',$entry]);
-    if(! defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
+    if(defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
         $template = $self->{'templates'}->{$type}->{$entry->{'use'}};
+    }else{
+        warn "no such $type template: $entry->{'use'}\n" unless(defined($template));
+        return $entry;
     }
-    warn "no such $type template: $entry->{'use'}\n" unless(defined($template));
-    return $entry unless(defined($template));
 
     my $new_entry = $template;     # start the new entry with the fetched template
     print Data::Dumper->Dump(['template',$new_entry]);
