@@ -291,8 +291,8 @@ sub detemplate{
         return $entry;
     }
 
-    print Data::Dumper->Dump([['cloned_template',$template]]);
-    my $new_entry = $template;     # start the new entry with the fetched template
+    my $new_entry = $self->clone($template);     # start the new entry with the fetched template
+    print Data::Dumper->Dump([['new_entry',$new_entry]]);
     #foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
     #    $new_entry->{$key} = $entry->{$key};
     #}
