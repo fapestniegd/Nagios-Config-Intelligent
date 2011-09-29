@@ -279,7 +279,7 @@ sub detemplate{
 
     print Data::Dumper->Dump(['object',$entry]);
     if(defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
-        $template = $self->{'templates'}->{$type}->{$entry->{'use'}};
+        $template = $self->detemplate($type,$self->{'templates'}->{$type}->{$entry->{'use'}});
     }else{
         warn "no such $type template: $entry->{'use'}\n" unless(defined($template));
         return $entry;
