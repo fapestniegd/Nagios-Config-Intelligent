@@ -235,27 +235,7 @@ sub find_host{
 sub find_service{
     my $self=shift;
     my $attrs=shift if @_;
-    my $type='service';
-    my $records = undef;
-    foreach my $host (keys(%{ $self->{'objects'}->{$type} })){
-        next if(ref($self->{'objects'}->{$type}->{$host}) ne 'ARRAY');
-        foreach my $service (@{ $self->{'objects'}->{$type}->{$host} }){
-            my $allmatch=1;
-            foreach my $needle (keys(%{ $attrs })){
-                if(defined($service->{$needle})){
-                    if( $attrs->{$needle} ne $service->{$needle} ){
-                        $allmatch=0;
-                    }
-                }else{
-                    $allmatch=0;
-                }
-            }
-            if($allmatch == 1){
-                push(@{ $records },$service);
-            }
-        }
-    }
-    return $records;
+    return $self->find_object('service',$attrs);
 }
 
 sub entry_name{
