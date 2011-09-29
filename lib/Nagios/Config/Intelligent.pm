@@ -422,7 +422,7 @@ sub already_in{
     my $hash = shift;
     my $elements = keys(%{ $hash });
     my $found_it=0;
-    foreach my $h (@{ list }){
+    foreach my $h (@{ $list }){
         my $intersection = $self->intersection($h, $hash);
         my $count = keys(%{ $intersection });
         if($elements == $count){ return 1; }
