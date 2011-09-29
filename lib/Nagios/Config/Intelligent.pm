@@ -41,6 +41,7 @@ sub new{
         $self->nagioscfg($cnstr->{'cfg'});
     }
     if($self->nagioscfg){ 
+        print STDERR "loading configs from ".$self->nagioscfg."\n";
         foreach ($self->object_files()){ $self->load_object_file($_); } 
     }
     return $self;
