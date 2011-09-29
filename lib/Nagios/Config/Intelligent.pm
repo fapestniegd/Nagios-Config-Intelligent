@@ -407,7 +407,6 @@ sub intersection {
     while(my $next = shift(@{ $sets })){
         foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
             if( (!defined($next->{$key})) || ($intersection->{$key} ne $next->{$key}) ){
-                print "deleting $key from intersection\n";
                 delete $intersection->{$key};
             }
         }
@@ -430,7 +429,41 @@ sub already_in{
     return 0;
 }
 
-# create a matrix of commonalities between all entries
+# add a new template unless one exists that matches everything but "name" and "register"
+# add it with a name of <type>_NNNN where NNNN is the next number that doesn't exist as
+# a template, and ensure "register 0" is set.
+sub add_template{
+    my $self = shift;
+    my $type = shift;
+    my $new_template = shift;
+    return undef unless $type;
+    return undef unless $template;
+    my $max_nnnn = 0000;
+    foreach my $tname (keys(%{ $self->{'templates'}->{$type} }){
+        my $already_have = 0;
+        if($tname=~m/${type}_([0-9]+)/){ $max_nnnn = $1 if($1 > $max_nnnn); } # get the max name so we can increment
+        my $template = $self->clone($self->{'templates'}->{$type});
+        delete $template->{'name'} if $template->{'name'};
+        delete $template->{'register'} if $template->{'register'};
+        my $existing_count = keys(%{ $template });
+        my $new_count = keys(%{ $new_template });
+        next unless($existing_count == $new_count); # they don't match if they have different key counts
+        my $intersection = $self->intersection([$template, $new_template]); 
+        my $in_count=keys(%{ $intersection });
+        if($i_count == $new_count){ # if their intersection key count is the same as the other two counts, we already have this template
+            return "$tname";
+        }  
+    }
+    # at this point we don't have already have the template or we would have returned the template name, so we add it
+    $max_nnnn++;
+    $new_template->{'name'} = "${type}_$max_nnnn";
+    $new_template->{'register'} = "0";
+    $self->{'templates'}->{$type}->{$new_template->{'name'}} = $new_template;
+    return "$new_template->{'name'}";
+}
+
+################################################################################
+# create a matrix of commonalities between all (de-templated FIXME) entries
 # so if we have 5 sets [a, b, c, d, e] and they each have say, 9 elements, 
 # we'll get a matrix that looks like:
 # _ a b c d e
@@ -439,6 +472,17 @@ sub already_in{
 # c 4 5 9 _ _
 # d 5 5 4 9 _
 # e 0 4 4 5 9
+
+# we then create template_candidates from each of thes numbers
+# we check each of them against the existing contact templates, 
+# adding them if not exist.
+
+# we can then (for each object, iterate through the templates, 
+# find the one that matches the best, tell the object to "use"
+# it and remove it's key/value pairs from the object
+
+# the object should then be 
+################################################################################
 
 sub reduce {
     my $self=shift;
