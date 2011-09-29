@@ -22,5 +22,7 @@ my $result = GetOptions(
 );
 my $main_config=$opt->{'config'}||"/etc/nagios/nagios.cfg";
 my $n = Nagios::Config::Intelligent->new({'cfg' => $main_config });
-print $n->dump;
+#print $n->dump;
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
+
+print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);

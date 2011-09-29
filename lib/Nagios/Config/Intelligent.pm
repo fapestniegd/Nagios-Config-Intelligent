@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use FileHandle;
 use YAML;
-
+use Set::Object;
 require Exporter;
 # use AutoLoader qw(AUTOLOAD);
 
@@ -399,6 +399,22 @@ sub service_status{
     }
     return $records;
 }
+
+sub intersection {
+    my $self=shift;
+    my (@sets) = @_;
+    my $intersection = shift; # the first one intersects fully with itself;
+    while(my $next = shift(@sets)){
+        foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
+            if( (!defined($next->{$key})) || ($intersection->{$key} ne $next->{$key}) ){
+                print "deleting $key from intersection\n";
+                delete $intersection->{$key};
+            }
+        }
+    }
+    return $intersection;
+}
+
 #
 ## Autoload methods go after =cut, and are processed by the autosplit program.
 #
