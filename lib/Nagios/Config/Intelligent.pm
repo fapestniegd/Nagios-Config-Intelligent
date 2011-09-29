@@ -437,7 +437,7 @@ sub add_template{
     my $type = shift;
     my $new_template = shift;
     return undef unless $type;
-    return undef unless $template;
+    return undef unless $new_template;
     my $max_nnnn = 0000;
     foreach my $tname (keys(%{ $self->{'templates'}->{$type} })){
         my $already_have = 0;
