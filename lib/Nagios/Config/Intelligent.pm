@@ -38,6 +38,7 @@ sub new{
     my $cnstr={};
     bless $self, $class;
     if($cnstr->{'cfg'}){
+print "$cnstr->{'cfg'}\n";
         $self->{'nagioscfg'} = $self->nagioscfg($cnstr->{'cfg'});
     }
     if($self->nagioscfg){ 
