@@ -35,8 +35,21 @@ our $VERSION = '0.01';
 sub new{
     my $class=shift;
     my $self={};
+    my $cnstr={};
     bless $self, $class;
+    if($cnstr->{'cfg'}){
+        $self->nagioscfg($cnstr->{'cfg'});
+    }
+    if($self->nagioscfg){ 
+        foreach ($self->object_files()){ $self->load_object_file($_); } 
+    }
     return $self;
+}
+
+sub nagioscfg{
+    my $self=shift;
+    $self->{'nagioscfg'}=shift if @_;
+    return $self->{'nagioscfg'};
 }
 
 # recursively return a list of nagios .cfg files per the nagios.cfg's cfg_dir directives
@@ -55,8 +68,8 @@ sub get_cfgs {
 # return a list of nagios config files per the nagios.cfg cfg_file & cfg_dir directives
 sub object_files {
     my $self = shift;
-    my $nagios_cfg = shift||"/etc/nagios/nagios.cfg";
-    return undef unless $nagios_cfg;
+    my $nagios_cfg = $self->{'nagioscfg'}||"/etc/nagios/nagios.cfg";
+    return undef unless(-f $nagios_cfg);
     my $fh = FileHandle->new;
     my @cfg_files;
     if ($fh->open("< $nagios_cfg")) {

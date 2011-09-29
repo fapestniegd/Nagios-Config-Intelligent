@@ -20,11 +20,7 @@ my $result = GetOptions(
   'help'              => \$opt->{'help'},
   'config=s'          => \$opt->{'config'},
 );
-
 my $main_config=$opt->{'config'}||"/etc/nagios/nagios.cfg";
-my $n = Nagios::Config::Intelligent->new();
-foreach ($n->object_files($main_config)){
-    $n->load_object_file($_)
-}
+my $n = Nagios::Config::Intelligent->new({'cfg' => $main_config });
 print $n->dump;
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
