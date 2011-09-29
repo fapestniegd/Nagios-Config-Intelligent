@@ -439,7 +439,7 @@ sub add_template{
     return undef unless $type;
     return undef unless $template;
     my $max_nnnn = 0000;
-    foreach my $tname (keys(%{ $self->{'templates'}->{$type} }){
+    foreach my $tname (keys(%{ $self->{'templates'}->{$type} })){
         my $already_have = 0;
         if($tname=~m/${type}_([0-9]+)/){ $max_nnnn = $1 if($1 > $max_nnnn); } # get the max name so we can increment
         my $template = $self->clone($self->{'templates'}->{$type});
