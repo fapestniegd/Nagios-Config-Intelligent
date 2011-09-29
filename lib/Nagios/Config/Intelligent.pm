@@ -269,6 +269,12 @@ sub entry_name{
     return undef;
 }
 
+sub clone {
+    my $self = shift;
+    my $object = shift;
+    return undef unless $object;
+    return YAML::Load(YAML::Dump($object));
+
 sub detemplate{
     my $self = shift; 
     my $type = shift;
@@ -277,7 +283,7 @@ sub detemplate{
     my $template; 
 
     if(defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
-        $template = YAML::Load(YAML::Dump($self->detemplate($type,$self->{'templates'}->{$type}->{$entry->{'use'}})));
+        $template = $self->clone($self->detemplate($type,$self->{'templates'}->{$type}->{$entry->{'use'}}));
     }else{
         $template = undef;
         warn "no such $type template: $entry->{'use'}\n" unless(defined($template));
