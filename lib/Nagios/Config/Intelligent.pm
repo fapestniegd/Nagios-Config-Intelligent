@@ -292,7 +292,6 @@ sub detemplate{
     }
 
     my $new_entry = $self->clone($template);     # start the new entry with the fetched template
-    print Data::Dumper->Dump([['new_entry',$new_entry,'entry',$entry]]);
     foreach my $key (keys(%{ $entry })){ # override the template with entries from the entry being templated
         $new_entry->{$key} = $entry->{$key};
     }
@@ -334,7 +333,7 @@ sub find_object{
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $objects = $self->find_objects($type,$attrs);
     if($#{ $objects } > 0){
-        print STDERR "more than one object matches the search, returning the first\n";
+        print STDERR "multiple objects matche the search, only returning the first\n";
         return shift(@{$objects});
     }elsif($#{ $objects } == 0){
         return shift(@{$objects});
