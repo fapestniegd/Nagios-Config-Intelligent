@@ -127,9 +127,9 @@ sub load_object_file{
                        print STDERR "NOT SURE ABOUT:  $entry\n";
                    }
                }
-               # we have to separate templates from objects, and save them by name
+               # we have to separate templates from objects, and save them by name, or we end up with infinite recursion
                if( defined($record->{'name'}) && defined($record->{'register'}) && ($record->{'register'} == 0)){
-                   push(@{ $self->{'templates'}->{$object_type} },$record);
+                   push(@{ $self->{'templates'}->{$object_type}->{ $record->{'name'} } },$record);
                }else{
                    push(@{ $self->{'objects'}->{$object_type} },$record);
                }
