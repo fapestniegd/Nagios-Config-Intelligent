@@ -274,6 +274,7 @@ sub clone {
     my $object = shift;
     return undef unless $object;
     return YAML::Load(YAML::Dump($object));
+}
 
 sub detemplate{
     my $self = shift; 
