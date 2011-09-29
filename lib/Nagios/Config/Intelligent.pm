@@ -277,7 +277,7 @@ sub detemplate{
     return $entry unless(defined($entry->{'use'}));
     my $template; 
 
-    print Data::Dumper->Dump(['before',$entry]);
+    print Data::Dumper->Dump(['object',$entry]);
     if(! defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
         $template = $self->{'templates'}->{$type}->{$entry->{'use'}};
     }
