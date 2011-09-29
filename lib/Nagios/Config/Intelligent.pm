@@ -431,7 +431,7 @@ sub reduce {
     my $global_results=[];
     for(my $i=0; $i<=$#{$sets};$i++){
         my $results=[];
-        my $intersection = $sets->{$i};
+        my $intersection = $sets->[$i];
         for(my $j=0; $j<=$i;$j++){
             foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
                 if( (!defined($sets->[$j]->{$key})) || ($intersection->{$key} ne $sets->[$j]->{$key}) ){
