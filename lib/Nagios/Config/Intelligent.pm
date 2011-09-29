@@ -35,7 +35,7 @@ our $VERSION = '0.01';
 sub new{
     my $class=shift;
     my $self={};
-    my $cnstr=shift if @_
+    my $cnstr=shift if @_;
     bless $self, $class;
     if(defined($cnstr->{'cfg'})){
         $self->nagioscfg($cnstr->{'cfg'});
