@@ -449,12 +449,16 @@ sub reduce {
         my $results=[];
         for(my $j=0; $j<=$i;$j++){
             my $intersection = $self->clone($sets->[$i]);
+            my $s_count = keys(%{ $intersection });
             foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
                 if( (!defined($sets->[$j]->{$key})) || ($intersection->{$key} ne $sets->[$j]->{$key}) ){
                     delete $intersection->{$key};
                 }
             }
-            push(@{ $template_candidates }, $intersection) unless $self->already_in($template_candidates,$intersection);
+            my $i_count = keys(%{ $intersection });
+            if($i_count < $s_count){ # only a candidate if it actually reduced
+                push(@{ $template_candidates }, $intersection) unless $self->already_in($template_candidates,$intersection);
+            }
             my @incommon = keys(%{ $intersection });
             print "$#incommon ";
         }
