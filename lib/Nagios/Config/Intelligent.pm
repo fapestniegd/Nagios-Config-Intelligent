@@ -401,9 +401,9 @@ sub service_status{
 
 sub intersection {
     my $self=shift;
-    my (@sets) = @_;
-    my $intersection = shift; # the first one intersects fully with itself;
-    while(my $next = shift(@sets)){
+    my ($sets) = (@_);
+    my $intersection = shift(@{ $sets });; # the first one intersects fully with itself;
+    while(my $next = shift(@{ $sets })){
         foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
             if( (!defined($next->{$key})) || ($intersection->{$key} ne $next->{$key}) ){
                 print "deleting $key from intersection\n";
