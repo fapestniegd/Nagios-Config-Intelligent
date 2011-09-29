@@ -399,9 +399,10 @@ sub service_status{
     return $records;
 }
 
+# find the key/value pairs that the listref of hashrefs have in common
 sub intersection {
     my $self=shift;
-    my ($sets) = (@_);
+    my ($sets) = shift;
     my $intersection = shift(@{ $sets });; # the first one intersects fully with itself;
     while(my $next = shift(@{ $sets })){
         foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
@@ -412,6 +413,37 @@ sub intersection {
         }
     }
     return $intersection;
+}
+
+# create a matrix of commonalities between all entries
+# so if we have 5 sets [a, b, c, d, e] and they each have say, 9 elements, 
+# we'll get a matrix that looks like:
+# _ a b c d e
+# a 9 _ _ _ _
+# b 5 9 _ _ _
+# c 4 5 9 _ _
+# d 5 5 4 9 _
+# e 0 4 4 5 9
+
+sub reduce {
+    my $self=shift;
+    my ($sets) = shift;
+    my $global_results=[];
+    for(my $i=0; $i<=$#{$sets};$i++){
+        my $results=[];
+        my $intersection = $sets->{$i};
+        for(my $j=0; $j<=$i;$j++){
+            foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
+                if( (!defined($sets->[$j]->{$key})) || ($intersection->{$key} ne $sets->[$j]->{$key}) ){
+                    print "deleting $key from intersection\n";
+                    delete $intersection->{$key};
+                }
+            }
+            print keys(%{ $intersection });
+        }
+        print "\n";
+    }
+    return $global_results;
 }
 
 #
