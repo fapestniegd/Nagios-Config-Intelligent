@@ -274,6 +274,7 @@ sub detemplate{
     my $self = shift; 
     my $type = shift;
     my $entry = shift;
+    print Data::Dumper->Dump([$type,$entry]);
     return $entry unless(defined($entry->{'use'}));
     my $template; 
 
@@ -318,7 +319,6 @@ sub find_objects{
             }
         }
         if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
-            #print STDERR Data::Dumper->Dump(['entry_found',$entry]);
             push(@{ $records },$entry);
         }
     }
