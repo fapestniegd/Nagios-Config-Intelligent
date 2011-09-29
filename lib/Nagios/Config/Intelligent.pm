@@ -486,7 +486,7 @@ sub add_template{
 
 sub reduce {
     my $self=shift;
-    my ($sets) = shift;
+    my ($type,$sets) = @_;
     my $global_results=[];
     my $template_candidates;
     for(my $i=0; $i<=$#{$sets};$i++){
@@ -504,10 +504,10 @@ sub reduce {
                 push(@{ $template_candidates }, $intersection) unless $self->already_in($template_candidates,$intersection);
             }
             my @incommon = keys(%{ $intersection });
-            print "$#incommon ";
+            # print "$#incommon ";
         }
-        print "\n";
-        print Data::Dumper->Dump([$template_candidates]);
+        #print "\n";
+        $self->add_template($type,$template_candidates);
     }
     return $global_results;
 }
