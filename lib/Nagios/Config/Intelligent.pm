@@ -439,7 +439,7 @@ sub reduce {
                     delete $intersection->{$key};
                 }
             }
-            print keys(%{ $intersection });
+            print $#{ keys(%{ $intersection }) };
         }
         print "\n";
     }
