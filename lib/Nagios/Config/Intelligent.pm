@@ -503,12 +503,14 @@ sub reduce {
             my $i_count = keys(%{ $intersection });
             if($i_count < $s_count){ # only a candidate if it actually reduced
                 push(@{ $template_candidates }, $intersection) unless $self->already_in($template_candidates,$intersection);
-                $self->add_template($type,$intersection); # add it to templates (won't add duplicates)
             }
             my @incommon = keys(%{ $intersection });
             # print "$#incommon ";
         }
         #print "\n";
+    }
+    foreach my $tpl (@{ $$template_candidates }){
+        $self->add_template($type,$tpl);
     }
     return $global_results;
 }
