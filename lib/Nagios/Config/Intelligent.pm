@@ -35,12 +35,10 @@ our $VERSION = '0.01';
 sub new{
     my $class=shift;
     my $self={};
-    my $cnstr={};
+    my $cnstr=shift if @_
     bless $self, $class;
-print "WTF?\n";
     if(defined($cnstr->{'cfg'})){
-print "$cnstr->{'cfg'}\n";
-        $self->{'nagioscfg'} = $self->nagioscfg($cnstr->{'cfg'});
+        $self->nagioscfg($cnstr->{'cfg'});
     }
     if($self->nagioscfg){ 
         print STDERR "loading configs from ".$self->nagioscfg."\n";
