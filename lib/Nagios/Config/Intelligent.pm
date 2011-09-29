@@ -5,7 +5,6 @@ use strict;
 use warnings;
 use FileHandle;
 use YAML;
-use Set::Object;
 require Exporter;
 # use AutoLoader qw(AUTOLOAD);
 
