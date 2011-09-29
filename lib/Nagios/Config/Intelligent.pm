@@ -293,7 +293,7 @@ sub detemplate{
 
     my $new_entry = $self->clone($template);     # start the new entry with the fetched template
     print Data::Dumper->Dump([['new_entry',$new_entry,'entry',$entry]]);
-    foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
+    foreach my $key (keys(%{ $entry })){ # override the template with entries from the entry being templated
         $new_entry->{$key} = $entry->{$key};
     }
      get rid of all the things that indicate this entry is a template
