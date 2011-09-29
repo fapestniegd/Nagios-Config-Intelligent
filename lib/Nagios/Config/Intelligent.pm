@@ -266,7 +266,6 @@ sub entry_name{
         if($key eq 'name'){ return $entry->{'name'}; }
         if($key =~m/(.*_name)$/){ return $entry->{$1}; }
     }
-    print Data::Dumper->Dump(['entry_name',$entry]);
     return undef;
 }
 
@@ -274,11 +273,9 @@ sub detemplate{
     my $self = shift; 
     my $type = shift;
     my $entry = shift;
-    print Data::Dumper->Dump([$type,$entry]);
     return $entry unless(defined($entry->{'use'}));
     my $template; 
 
-    print Data::Dumper->Dump(['object',$entry]);
     if(defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
         $template = $self->detemplate($type,$self->{'templates'}->{$type}->{$entry->{'use'}});
     }else{
@@ -287,17 +284,14 @@ sub detemplate{
     }
 
     my $new_entry = $template;     # start the new entry with the fetched template
-    print Data::Dumper->Dump(['template',$new_entry]);
     foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
         $new_entry->{$key} = $entry->{$key};
     }
-    print Data::Dumper->Dump(['new',$new_entry]);
     # get rid of all the things that indicate this entry is a template
     delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
     delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
     delete $new_entry->{'use'} if(defined($new_entry->{'use'})); 
     print STDERR "returning merged template  $entry->{'use'} and entry ".$self->entry_name($entry)."\n";
-    print Data::Dumper->Dump(['returned',$new_entry]);
     return $new_entry;
 }
 
