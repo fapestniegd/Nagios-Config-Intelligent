@@ -449,7 +449,7 @@ sub add_template{
         my $new_count = keys(%{ $new_template });
         next unless($existing_count == $new_count); # they don't match if they have different key counts
         my $intersection = $self->intersection([$template, $new_template]); 
-        my $in_count=keys(%{ $intersection });
+        my $i_count=keys(%{ $intersection });
         if($i_count == $new_count){ # if their intersection key count is the same as the other two counts, we already have this template
             return "$tname";
         }  
