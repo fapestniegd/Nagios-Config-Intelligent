@@ -287,16 +287,16 @@ sub detemplate{
         $template = $self->clone($self->detemplate($type,$self->{'templates'}->{$type}->{$entry->{'use'}}));
     }else{
         $template = undef;
-        warn "no such $type template: $entry->{'use'}\n" unless(defined($template));
+        warn "no such $type template: $entry->{'use'}\n";
         return $entry;
     }
 
     my $new_entry = $self->clone($template);     # start the new entry with the fetched template
-    print Data::Dumper->Dump([['new_entry',$new_entry]]);
-    #foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
-    #    $new_entry->{$key} = $entry->{$key};
-    #}
-    # get rid of all the things that indicate this entry is a template
+    print Data::Dumper->Dump([['new_entry',$new_entry,'entry',$entry]]);
+    foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
+        $new_entry->{$key} = $entry->{$key};
+    }
+     get rid of all the things that indicate this entry is a template
     delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
     delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
     delete $new_entry->{'use'} if(defined($new_entry->{'use'})); 
