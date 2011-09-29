@@ -509,7 +509,7 @@ sub reduce {
         }
         #print "\n";
     }
-    foreach my $tpl (@{ $$template_candidates }){
+    foreach my $tpl (@{ $template_candidates }){
         $self->add_template($type,$tpl);
     }
     return $global_results;
