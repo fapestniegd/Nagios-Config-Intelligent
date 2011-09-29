@@ -38,7 +38,7 @@ sub new{
     my $cnstr={};
     bless $self, $class;
     if($cnstr->{'cfg'}){
-        $self->nagioscfg($cnstr->{'cfg'});
+        $self->{'nagioscfg'} = $self->nagioscfg($cnstr->{'cfg'});
     }
     if($self->nagioscfg){ 
         print STDERR "loading configs from ".$self->nagioscfg."\n";
