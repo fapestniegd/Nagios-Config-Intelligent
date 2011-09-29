@@ -37,7 +37,7 @@ sub new{
     my $self={};
     my $cnstr={};
     bless $self, $class;
-    if($cnstr->{'cfg'}){
+    if(defined($cnstr->{'cfg'})){
 print "$cnstr->{'cfg'}\n";
         $self->{'nagioscfg'} = $self->nagioscfg($cnstr->{'cfg'});
     }
