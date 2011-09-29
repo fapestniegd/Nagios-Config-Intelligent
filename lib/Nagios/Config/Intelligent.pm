@@ -283,10 +283,10 @@ sub detemplate{
         return $entry;
     }
 
-    my $new_entry = $template;     # start the new entry with the fetched template
-    foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
-        $new_entry->{$key} = $entry->{$key};
-    }
+    #my $new_entry = $template;     # start the new entry with the fetched template
+    #foreach my $key (%{ $entry }){ # override the template with entries from the entry being templated
+    #    $new_entry->{$key} = $entry->{$key};
+    #}
     # get rid of all the things that indicate this entry is a template
     delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
     delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
