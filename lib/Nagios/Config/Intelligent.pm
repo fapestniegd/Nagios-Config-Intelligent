@@ -518,8 +518,8 @@ sub reduce {
            # make a copy...
            my $tmpl = $self->clone($self->{'templates'}->{$type}->{$tpl_name});
            # remvove the items that make it a template from the clone
-           delete $tmpl->{'name'} if($tmpl->{'name'});
-           delete $tmpl->{'register'} if($tmpl->{'register'});
+           delete $tmpl->{'name'} if(defined($tmpl->{'name'}));
+           delete $tmpl->{'register'} if(defined($tmpl->{'register'}));
            # get an element count
            my $t_elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
