@@ -520,16 +520,16 @@ sub reduce {
            delete $tmpl->{'name'} if($tmpl->{'name'});
            delete $tmpl->{'register'} if($tmpl->{'register'});
            # get an element count
-           my $elements = keys($tmpl);
+           my $elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
            my $intersect = $self->intersection([ $tmpl, $self->{'objects'}->{$type}->[$i] ]);
            my $i_elements = keys(%{ $intersect });
 print Data::Dumper->Dump([ { 
                              'tmpl' => $tmpl,  
                              'elements' => $elements
-                             #'object' => $self->{'objects'}->{$type}->[$i] , 
-                             #'intersect' => $intersect, 
-                             #'i_elements' => $i_elements, 
+                             'object' => $self->{'objects'}->{$type}->[$i] , 
+                             'intersect' => $intersect, 
+                             'i_elements' => $i_elements, 
                          } ]);
            if ($i_elements == $elements){ # all of these match, and it's the biggest, save the name
                if($biggest_count < $i_elements){
