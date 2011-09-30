@@ -489,7 +489,7 @@ sub reduce {
     my $type = shift;
     return undef unless $type;
 print STDERR "-=[$type]=-\n";
-    my $sets $self->{'objects'}->{ $type };
+    my $sets = $self->{'objects'}->{ $type };
     my $template_candidates;
     for(my $i=0; $i<=$#{$sets};$i++){
         for(my $j=0; $j<=$i;$j++){
