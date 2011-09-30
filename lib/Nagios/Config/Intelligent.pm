@@ -509,11 +509,14 @@ sub reduce {
         $self->add_template($type,$tpl);
     }
     # now we want to reduce the actual object by the largest template of it's type that will fit it.
+    print "$type:\n";
     for(my $i=0; $i<=$#{ $self->{'objects'}->{$type} };$i++){
+        print "    $self->{'objects'}->{$type}->[$i]->{$type.'_name'}\n";
         my $biggest_count = 0;
         my $biggest_name = undef;
         # for each template of this type
         foreach my $tpl_name (keys(%{ $self->{'templates'}->{$type} })){
+           print "        $tpl_name\n";
            # make a copy...
            my $tmpl = $self->clone($self->{'templates'}->{$type}->{$tpl_name});
            # remvove the items that make it a template from the clone
