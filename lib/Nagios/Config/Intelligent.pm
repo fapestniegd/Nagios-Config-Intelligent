@@ -509,31 +509,37 @@ sub reduce {
         $self->add_template($type,$tpl);
     }
     # now we want to reduce the actual object by the largest template of it's type that will fit it.
-    for(my $i=0; $i<=$#{$sets};$i++){
+    for(my $i=0; $i<=$#{ $self->{'objects'}->{$type} };$i++){
         my $biggest_count = 0;
         my $biggest_name = undef;
+        # for each template of this type
         foreach my $tpl_name (keys(%{ $self->{'templates'}->{$type} })){
+           # make a copy...
            my $tmpl = $self->clone($self->{'templates'}->{$type}->{$tpl_name});
+           # remvove the items that make it a template from the clone
            delete $tmpl->{'name'} if($tmpl->{'name'});
            delete $tmpl->{'register'} if($tmpl->{'register'});
+           # get an element count
            my $elements = keys(%{ $tmpl });
-           my $intersect = $self->intersection([$tmpl, $sets->[$i]]);
+           #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
+           my $intersect = $self->intersection([$tmpl, $self->{'objects'}->{$type}->[$i]);
            my $i_elements = keys(%{ $intersect });
            if ($i_elements == $elements){ # all of these match, and it's the biggest, save the name
                if($biggest_count < $i_elements){
+                   print "$self->{'objects'}->{$type}->[$i]->{ $type .'_name' } matches all $i_elements of $tpl_name \n";
                    $biggest_count=$i_elements;
                    $biggest_name=$tpl_name;
                }
            }
         }
-        # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
-        if(defined($biggest_name)){
-            print STDERR Data::Dumper->Dump(['reduction', $self->{'templates'}->{$type}->{$biggest_name},  $sets->[$i] ]);
-            foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
-                delete $sets->[$i]->{$tplkey} if(defined($sets->[$i]->{$tplkey}));
-            }
-            $sets->[$i]->{'use'} = $biggest_name;
-        }
+#        # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
+#        if(defined($biggest_name)){
+#            print STDERR Data::Dumper->Dump(['reduction', $self->{'templates'}->{$type}->{$biggest_name},  $sets->[$i] ]);
+#            foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
+#                delete $sets->[$i]->{$tplkey} if(defined($sets->[$i]->{$tplkey}));
+#            }
+#            $sets->[$i]->{'use'} = $biggest_name;
+#        }
     }
 }
 
