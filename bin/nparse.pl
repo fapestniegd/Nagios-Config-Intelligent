@@ -25,5 +25,6 @@ my $n = Nagios::Config::Intelligent->new({'cfg' => $main_config });
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
-$n->reduce('contact');
+$n->reduce_objects;
+#$n->reduce('contact');
 print $n->dump();

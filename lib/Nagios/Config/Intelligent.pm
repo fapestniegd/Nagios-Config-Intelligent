@@ -488,7 +488,6 @@ sub reduce {
     my $self = shift;
     my $type = shift;
     return undef unless $type;
-print STDERR "-=[$type]=-\n";
     my $sets = $self->{'objects'}->{ $type };
     my $template_candidates;
     for(my $i=0; $i<=$#{$sets};$i++){
@@ -549,6 +548,13 @@ print STDERR "-=[$type]=-\n";
             }
             $sets->[$i]->{'use'} = $biggest_name;
         }
+    }
+}
+
+sub reduce_objects{
+    my $self = shift;
+    foreach my $object_type (keys(%{ $self->{'objects'} })){
+        print "-=[$object_type]=-\n";
     }
 }
 
