@@ -516,7 +516,6 @@ sub reduce {
         foreach my $tpl_name (keys(%{ $self->{'templates'}->{$type} })){
            # make a copy...
            my $tmpl = $self->clone($self->{'templates'}->{$type}->{$tpl_name});
-           print ref($tmpl)."\n";
            # remvove the items that make it a template from the clone
            delete $tmpl->{'name'} if($tmpl->{'name'});
            delete $tmpl->{'register'} if($tmpl->{'register'});
