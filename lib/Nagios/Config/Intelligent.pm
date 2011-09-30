@@ -524,8 +524,8 @@ sub reduce {
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
            my $intersect = $self->intersection([ $tmpl, $self->{'objects'}->{$type}->[$i] ]);
            my $i_elements = keys(%{ $intersect });
-print Data::Dumper->Dump([ $tmpl, $self->{'objects'}->{$type}->[$i] ,$intersect, $i_elements ]);
            if ($i_elements == $elements){ # all of these match, and it's the biggest, save the name
+print Data::Dumper->Dump([ $tmpl, $self->{'objects'}->{$type}->[$i] ,$intersect, $i_elements, $elements ]);
                if($biggest_count < $i_elements){
                    print "$self->{'objects'}->{$type}->[$i]->{ $type .'_name' } matches all $i_elements of $tpl_name \n";
                    $biggest_count=$i_elements;
