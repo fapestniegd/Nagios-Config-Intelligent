@@ -79,7 +79,7 @@ sub write_object_cfgs{
 
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
-                        print "    $key      $self->{'templates'}->{ $object_type }->{ $template_name }->{$key}\n";
+                        print $fh "    $key      $self->{'templates'}->{ $object_type }->{ $template_name }->{$key}\n";
                     }
                     print $fh "}\n\n";
 
@@ -87,7 +87,7 @@ sub write_object_cfgs{
                 foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ ${object} })){
-                        print "    $key      $object->{$key}\n";
+                        print $fh "    $key      $object->{$key}\n";
                     }
                     print $fh "}\n\n";
                 }
