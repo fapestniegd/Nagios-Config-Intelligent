@@ -525,11 +525,11 @@ sub reduce {
            my $intersect = $self->intersection([ $tmpl, $self->{'objects'}->{$type}->[$i] ]);
            my $i_elements = keys(%{ $intersect });
 print Data::Dumper->Dump([ { 
-                             'template' => $tmpl,  
-                             'entry' => $self->{'objects'}->{$type}->[$i] , 
-                             'intersection' => $intersect, 
-                             'intersection_elements' => $i_elements, 
-                             'template_elements' => $elements
+                             'tmpl' => $tmpl,  
+                             'object' => $self->{'objects'}->{$type}->[$i] , 
+                             'intersect' => $intersect, 
+                             'i_elements' => $i_elements, 
+                             'elements' => $elements
                          } ]);
            if ($i_elements == $elements){ # all of these match, and it's the biggest, save the name
                if($biggest_count < $i_elements){
