@@ -515,7 +515,8 @@ sub reduce {
         # for each template of this type
         foreach my $tpl_name (keys(%{ $self->{'templates'}->{$type} })){
            # make a copy...
-           my $tmpl = $self->{'templates'}->{$type}->{$tpl_name};
+           my $tmpl = $self->clone($self->{'templates'}->{$type}->{$tpl_name});
+           print ref($tmpl)."\n";
            # remvove the items that make it a template from the clone
            delete $tmpl->{'name'} if($tmpl->{'name'});
            delete $tmpl->{'register'} if($tmpl->{'register'});
@@ -524,13 +525,13 @@ sub reduce {
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
            my $intersect = $self->intersection([ $tmpl, $self->{'objects'}->{$type}->[$i] ]);
            my $i_elements = keys(%{ $intersect });
-print Data::Dumper->Dump([ { 
-                             'tmpl' => $tmpl,  
-                             't_elements' => $t_elements,
+#print Data::Dumper->Dump([ { 
+#                             'tmpl' => $tmpl,  
+#                             't_elements' => $t_elements,
 #                             'object' => $self->{'objects'}->{$type}->[$i], 
 #                             'intersect' => $intersect, 
 #                             'i_elements' => $i_elements, 
-                         } ]);
+#                         } ]);
            if ($i_elements == $t_elements){ # all of these match, and it's the biggest, save the name
                if($biggest_count < $i_elements){
                    print "$self->{'objects'}->{$type}->[$i]->{ $type .'_name' } matches all $i_elements of $tpl_name \n";
