@@ -554,7 +554,7 @@ sub reduce {
 sub reduce_objects{
     my $self = shift;
     foreach my $object_type (keys(%{ $self->{'objects'} })){
-        print "-=[$object_type]=-\n";
+        $self->reduce($object_type);
     }
 }
 
