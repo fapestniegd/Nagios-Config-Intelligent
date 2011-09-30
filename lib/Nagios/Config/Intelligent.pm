@@ -513,6 +513,7 @@ sub reduce {
         $self->add_template($type,$tpl);
     }
     # now we want to reduce the actual object by the largest template of it's type that will fit it.
+    my $object_entry;
     for(my $i=0; $i<=$#{ $self->{'objects'}->{$type} };$i++){
         my $biggest_count = 0;
         my $biggest_name = undef;
@@ -526,7 +527,7 @@ sub reduce {
            # get an element count
            my $t_elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
-           my $object_entry = $self->detemplate( $self->{'objects'}->{$type}->[$i] );
+           $object_entry = $self->detemplate( $self->{'objects'}->{$type}->[$i] );
            my $intersect = $self->intersection([ $tmpl, $object_entry ]);
            my $i_elements = keys(%{ $intersect });
            #print Data::Dumper->Dump([ { 
