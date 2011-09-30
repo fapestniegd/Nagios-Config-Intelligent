@@ -487,6 +487,7 @@ sub add_template{
 sub reduce {
     my $self = shift;
     my $type = shift;
+    print STDERR "-=[$type]=-\n";
     return undef unless $type;
     my $sets = $self->{'objects'}->{ $type };
     my $template_candidates;
