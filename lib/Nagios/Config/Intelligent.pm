@@ -526,7 +526,7 @@ sub reduce {
            my $i_elements = keys(%{ $intersect });
 print Data::Dumper->Dump([ { 
                              'tmpl' => $tmpl,  
-                             'elements' => $elements
+                             'elements' => $elements,
                              'object' => $self->{'objects'}->{$type}->[$i] , 
                              'intersect' => $intersect, 
                              'i_elements' => $i_elements, 
