@@ -520,7 +520,11 @@ sub reduce {
            delete $tmpl->{'name'} if($tmpl->{'name'});
            delete $tmpl->{'register'} if($tmpl->{'register'});
            # get an element count
-           my $t_elements = keys(%{  $self->{'templates'}->{$type}->{$tpl_name} });
+           my $t_elements = 0;
+           foreach my $k (keys(%{  $self->{'templates'}->{$type}->{$tpl_name} })){
+               print "$k\n";
+               $t_elements++;
+           }
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
            my $intersect = $self->intersection([ $tmpl, $self->{'objects'}->{$type}->[$i] ]);
            my $i_elements = keys(%{ $intersect });
