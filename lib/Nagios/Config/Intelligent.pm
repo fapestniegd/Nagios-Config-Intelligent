@@ -521,7 +521,7 @@ sub reduce {
            delete $tmpl->{'register'} if($tmpl->{'register'});
            # get an element count
            my $t_elements = 0;
-           foreach my $k (keys(%{  $tmpl } })){
+           foreach my $k (keys(%{ $tmpl })){
                print ":: $k\n";
                $t_elements++;
            }
