@@ -26,4 +26,4 @@ my $n = Nagios::Config::Intelligent->new({'cfg' => $main_config });
 
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
 $n->reduce('contact',$n->{'objects'}->{'contact'});
-#print $n->dump();
+print $n->dump();

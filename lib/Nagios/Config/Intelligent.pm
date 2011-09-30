@@ -534,20 +534,19 @@ sub reduce {
            #                         } ]);
            if ($i_elements == $t_elements){ # all of these match, and it's the biggest, save the name
                if($biggest_count < $i_elements){
-                   print "$self->{'objects'}->{$type}->[$i]->{ $type .'_name' } matches all $i_elements of $tpl_name \n";
                    $biggest_count=$i_elements;
                    $biggest_name=$tpl_name;
                }
            }
         }
-#        # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
-#        if(defined($biggest_name)){
-#            print STDERR Data::Dumper->Dump(['reduction', $self->{'templates'}->{$type}->{$biggest_name},  $sets->[$i] ]);
-#            foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
-#                delete $sets->[$i]->{$tplkey} if(defined($sets->[$i]->{$tplkey}));
-#            }
-#            $sets->[$i]->{'use'} = $biggest_name;
-#        }
+        # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
+        if(defined($biggest_name)){
+            print STDERR Data::Dumper->Dump(['reduction', $self->{'templates'}->{$type}->{$biggest_name},  $sets->[$i] ]);
+            foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
+                delete $sets->[$i]->{$tplkey} if(defined($sets->[$i]->{$tplkey}));
+            }
+            $sets->[$i]->{'use'} = $biggest_name;
+        }
     }
 }
 
