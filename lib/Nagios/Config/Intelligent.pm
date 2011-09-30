@@ -403,7 +403,8 @@ sub service_status{
 sub intersection {
     my $self=shift;
     my ($sets) = shift;
-    my $intersection = shift(@{ $sets });; # the first one intersects fully with itself;
+    my $i = shift(@{ $sets });; # the first one intersects fully with itself;
+    my $intersection = $self->clone($i); # make a copy
     while(my $next = shift(@{ $sets })){
         foreach my $key (keys(%{ $intersection })){ # remove things in intersection that are not in next
             if( (!defined($next->{$key})) || ($intersection->{$key} ne $next->{$key}) ){
