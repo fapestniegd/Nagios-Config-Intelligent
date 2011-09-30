@@ -464,7 +464,7 @@ sub add_template{
 }
 
 ################################################################################
-# create a matrix of commonalities between all (de-templated FIXME) entries
+# create a matrix of commonalities between all (de-templated) entries
 # so if we have 5 sets [a, b, c, d, e] and they each have say, 9 elements, 
 # we'll get a matrix that looks like:
 # _ a b c d e
@@ -526,7 +526,8 @@ sub reduce {
            # get an element count
            my $t_elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
-           my $intersect = $self->intersection([ $tmpl, $self->{'objects'}->{$type}->[$i] ]);
+           my $object_entry = $self->detemplate( $self->{'objects'}->{$type}->[$i] );
+           my $intersect = $self->intersection([ $tmpl, $object_entry ]);
            my $i_elements = keys(%{ $intersect });
            #print Data::Dumper->Dump([ { 
            #                             'tmpl' => $tmpl,  
@@ -545,9 +546,10 @@ sub reduce {
         # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
         if(defined($biggest_name)){
             foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
-                delete $sets->[$i]->{$tplkey} if(defined($sets->[$i]->{$tplkey}));
+                delete $object_entry->{$tplkey} if(defined($object_entry->{$tplkey}));
             }
-            $sets->[$i]->{'use'} = $biggest_name;
+            $object_entry->{'use'} = $biggest_name;
+            $sets->[$i] = $self->clone($object_entry);
         }
     }
 }
