@@ -86,6 +86,7 @@ sub write_object_cfgs{
                        $max_key_length=length($key) if(length($key) > $max_key_length);
                     }
                 }
+                print $fh "################################################################################\n";
                 foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
@@ -96,6 +97,7 @@ sub write_object_cfgs{
                     print $fh "}\n\n";
 
                 }
+                print $fh "################################################################################\n";
                 foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ ${object} })){
