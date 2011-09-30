@@ -87,6 +87,7 @@ sub write_object_cfgs{
                     }
                 }
                 print $fh "################################################################################\n";
+                print $fh "# Templates                                                                    #\n";
                 foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
@@ -97,7 +98,10 @@ sub write_object_cfgs{
                     print $fh "}\n\n";
 
                 }
+                print $fh "#                                                                              #\n";
+                print $fh "################################################################################\n\n";
                 print $fh "################################################################################\n";
+                print $fh "# Objects                                                                      #\n";
                 foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ ${object} })){
@@ -107,6 +111,8 @@ sub write_object_cfgs{
                     }
                     print $fh "}\n\n";
                 }
+                print $fh "#                                                                              #\n";
+                print $fh "################################################################################\n";
             }
             $fh->close;
         }
@@ -559,7 +565,7 @@ sub reduce {
         #print "\n";
     }
     foreach my $tpl (@{ $template_candidates }){
-        $self->add_template($type,$tpl) if(keys(%{ $tpl }) >= 4); # if you don't remove 4 lines, you're adding lines.
+        $self->add_template($type,$intersection) if(keys(%{ $tpl }) >= 4); # if you don't remove 4 lines, you're adding lines.
     }
     # now we want to reduce the actual object by the largest template of it's type that will fit it.
     my $object_entry;
