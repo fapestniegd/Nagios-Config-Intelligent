@@ -521,8 +521,8 @@ sub reduce {
            delete $tmpl->{'register'} if($tmpl->{'register'});
            # get an element count
            my $t_elements = 0;
-           foreach my $k (keys(%{  $self->{'templates'}->{$type}->{$tpl_name} })){
-               print "$k\n";
+           foreach my $k (keys(%{  $tmpl } })){
+               print ":: $k\n";
                $t_elements++;
            }
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
