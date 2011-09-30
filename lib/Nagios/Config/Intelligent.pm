@@ -486,7 +486,9 @@ sub add_template{
 
 sub reduce {
     my $self = shift;
-    my ($type,$sets) = @_;
+    my $type = shift;
+    return undef unless $type;
+    my $sets = $self->clone($self->{'objects'}->{$type});
     my $template_candidates;
     for(my $i=0; $i<=$#{$sets};$i++){
         for(my $j=0; $j<=$i;$j++){
