@@ -557,7 +557,7 @@ sub reduce {
         #print "\n";
     }
     foreach my $tpl (@{ $template_candidates }){
-        $self->add_template($type,$tpl);
+        $self->add_template($type,$tpl) if(keys(%{ $tpl }) >= 4); # if you don't remove 4 lines, you're adding lines.
     }
     # now we want to reduce the actual object by the largest template of it's type that will fit it.
     my $object_entry;
