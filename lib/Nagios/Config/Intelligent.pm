@@ -87,7 +87,7 @@ sub write_object_cfgs{
                     }
                 }
                 print $fh "################################################################################\n";
-                print $fh "# Templates                                                                    #\n";
+                print $fh "# Templates                                                                    #\n\n";
                 foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
@@ -101,7 +101,7 @@ sub write_object_cfgs{
                 print $fh "#                                                                              #\n";
                 print $fh "################################################################################\n\n";
                 print $fh "################################################################################\n";
-                print $fh "# Objects                                                                      #\n";
+                print $fh "# Objects                                                                      #\n\n";
                 foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ ${object} })){
@@ -549,6 +549,7 @@ sub reduce {
     for(my $i=0; $i<=$#{$sets};$i++){
         for(my $j=0; $j<=$i;$j++){
             my $intersection = $self->clone($sets->[$i]);
+            delete $intersection->{'host_name'} if($type eq 'service');
             my $s_count = keys(%{ $intersection });
             foreach my $key (keys(%{ $intersection })){
                 if( (!defined($sets->[$j]->{$key})) || ($intersection->{$key} ne $sets->[$j]->{$key}) ){
