@@ -526,9 +526,9 @@ sub reduce {
            my $i_elements = keys(%{ $intersect });
 print Data::Dumper->Dump([ { 
                              'tmpl' => $tmpl,  
-                             'object' => $self->{'objects'}->{$type}->[$i] , 
-                             'intersect' => $intersect, 
-                             'i_elements' => $i_elements, 
+                             #'object' => $self->{'objects'}->{$type}->[$i] , 
+                             #'intersect' => $intersect, 
+                             #'i_elements' => $i_elements, 
                              'elements' => $elements
                          } ]);
            if ($i_elements == $elements){ # all of these match, and it's the biggest, save the name
