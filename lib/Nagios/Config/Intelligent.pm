@@ -76,10 +76,20 @@ sub write_object_cfgs{
             my $fh = FileHandle->new("> $cnstr->{'dir'}/$object_type.cfg");
             if (defined $fh) {
                 foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
-                    print $fh YAML::Dump( $self->{'templates'}->{ $object_type }->{ $template_name } );
+
+                    print $fh "define $object_type {\n";
+                    foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
+                        print "    $key      $self->{'templates'}->{ $object_type }->{ $template_name }->{$key}\n";
+                    }
+                    print $fh "}\n\n";
+
                 }
                 foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
-                    print $fh YAML::Dump( $object );
+                    print $fh "define $object_type {\n";
+                    foreach my $key (keys(%{ ${object} })){
+                        print "    $key      $object->{$key}\n";
+                    }
+                    print $fh "}\n\n";
                 }
             }
             $fh->close;
