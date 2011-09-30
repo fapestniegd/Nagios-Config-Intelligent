@@ -64,6 +64,29 @@ sub get_cfgs {
         @files;
 }
 
+sub write_object_cfgs{
+    my $self = shift; 
+    my $cnstr = shift;
+      
+    if(defined($cnstr->{'dir'})){
+        if(! -d "$cnstr->{'dir'}"){ mkdir("$cnstr->{'dir'}"); }
+        if(! -d "$cnstr->{'dir'}"){ return undef; }
+        if(! -w "$cnstr->{'dir'}"){ return undef; }
+        foreach my $object_type (keys(%{ $self->{'objects'} })){
+            my $fh = FileHandle->new("> $cnstr->{'dir'}/$object_type.cfg");
+            if (defined $fh) {
+                foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
+                    print $fh YAML::Dump( $self->{'templates'}->{ $object_type }->{ $template_name } );
+                }
+                foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
+                    print $fh YAML::Dump( $object );
+                }
+            }
+            $fh->close;
+        }
+    }
+}
+
 # return a list of nagios config files per the nagios.cfg cfg_file & cfg_dir directives
 sub object_files {
     my $self = shift;
@@ -527,7 +550,7 @@ sub reduce {
            # get an element count
            my $t_elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
-           $object_entry = $self->detemplate( $self->{'objects'}->{$type}->[$i] );
+           $object_entry = $self->detemplate( $self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
            my $intersect = $self->intersection([ $tmpl, $object_entry ]);
            my $i_elements = keys(%{ $intersect });
            #print Data::Dumper->Dump([ { 
