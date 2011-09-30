@@ -75,11 +75,23 @@ sub write_object_cfgs{
         foreach my $object_type (keys(%{ $self->{'objects'} })){
             my $fh = FileHandle->new("> $cnstr->{'dir'}/$object_type.cfg");
             if (defined $fh) {
+                my $max_key_length=0;
                 foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
-
+                    foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
+                       $max_key_length=length($key) if(length($key) > $max_key_length);
+                    }
+                }
+                foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
+                    foreach my $key (keys(%{ ${object} })){
+                       $max_key_length=length($key) if(length($key) > $max_key_length);
+                    }
+                }
+                foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
-                        print $fh "    $key      $self->{'templates'}->{ $object_type }->{ $template_name }->{$key}\n";
+                        print $fh "    $key";
+                        for(my $i=0; $i<=$max_key_length-length($key); $i++){ print $fh " "; }
+                        print $fh "$self->{'templates'}->{ $object_type }->{ $template_name }->{$key}\n";
                     }
                     print $fh "}\n\n";
 
@@ -87,7 +99,9 @@ sub write_object_cfgs{
                 foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
                     print $fh "define $object_type {\n";
                     foreach my $key (keys(%{ ${object} })){
-                        print $fh "    $key      $object->{$key}\n";
+                        print $fh "    $key";
+                        for(my $i=0; $i<=$max_key_length-length($key); $i++){ print $fh " "; }
+                        print $fh "$object->{$key}\n";
                     }
                     print $fh "}\n\n";
                 }
