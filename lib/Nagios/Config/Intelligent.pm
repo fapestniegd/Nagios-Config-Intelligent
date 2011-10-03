@@ -327,7 +327,7 @@ sub detemplate{
     my $self = shift; 
     my $type = shift;
     my $entry = shift;
-    print Data:Dumper->Dump([ {
+    print Data::Dumper->Dump([ {
                               'detemplating' => $entry,
                               'type'         => $type,
                            }])
