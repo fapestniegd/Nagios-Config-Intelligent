@@ -359,7 +359,9 @@ sub find_objects{
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $records = undef;      # the list we'll be returning
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
-        $entry = $self->detemplate($type,$entry);
+        if(defined($entry->{'use'})){
+            $entry = $self->detemplate($type,$entry);
+        }
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
@@ -399,7 +401,9 @@ sub find_object_regex{
     my $attrs = shift if @_;  # a hash of the attributes that *all* must match to return the entry/entries
     my $records = undef;      # the list we'll be returning
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
-        $entry = $self->detemplate($type, $entry);
+        if(defined($entry->{'use'})){
+            $entry = $self->detemplate($type, $entry);
+        }
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
             if(defined($entry->{$needle})){
