@@ -586,6 +586,7 @@ sub reduce {
            my $t_elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
            $object_entry = $self->detemplate( $self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
+print Data::Dumper->Dump(['comparing', $tmpl, $object_entry ]);
            my $intersect = $self->intersection([ $tmpl, $object_entry ]);
            my $i_elements = keys(%{ $intersect });
            if ($i_elements == $t_elements){ # all of these match, and it's the biggest, save the name
@@ -596,7 +597,7 @@ sub reduce {
            }
         }
         # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
-print STDERR Data::Dumper->Dump([{ 'biggest_name' => $biggest_name }]);
+#print STDERR Data::Dumper->Dump([{ 'biggest_name' => $biggest_name }]);
         if(defined($biggest_name)){
             foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
                 delete $object_entry->{$tplkey} if(defined($object_entry->{$tplkey}));
