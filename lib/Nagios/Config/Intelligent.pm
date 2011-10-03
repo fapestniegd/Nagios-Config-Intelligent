@@ -595,7 +595,7 @@ sub reduce {
            }
         }
         # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
-print STDERR Data::Dumper->Dump({ 'biggest_name' => $biggest_name });
+print STDERR Data::Dumper->Dump([{ 'biggest_name' => $biggest_name }]);
         if(defined($biggest_name)){
             foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
                 delete $object_entry->{$tplkey} if(defined($object_entry->{$tplkey}));
