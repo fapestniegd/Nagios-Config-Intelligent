@@ -585,11 +585,11 @@ sub reduce {
            # get an element count
            my $t_elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
-           $object_entry = $self->detemplate( $self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
-print Data::Dumper->Dump([{
-                           'comparing' => [  $tmpl, $self->{'objects'}->{$type}->[$i] ],
-                           'actually'  => [ $tmpl, $object_entry  ],
-                        }]);
+           $object_entry = $self->detemplate( $type, $self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
+#print Data::Dumper->Dump([{
+#                           'comparing' => [  $tmpl, $self->{'objects'}->{$type}->[$i] ],
+#                           'actually'  => [ $tmpl, $object_entry  ],
+#                        }]);
            my $intersect = $self->intersection([ $tmpl, $object_entry ]);
            my $i_elements = keys(%{ $intersect });
            if ($i_elements == $t_elements){ # all of these match, and it's the biggest, save the name
