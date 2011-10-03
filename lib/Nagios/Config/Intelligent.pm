@@ -330,7 +330,7 @@ sub detemplate{
     print Data::Dumper->Dump([ {
                               'detemplating' => $entry,
                               'type'         => $type,
-                           }])
+                           }]);
     return $entry unless(defined($entry->{'use'}));
     my $template; 
 
