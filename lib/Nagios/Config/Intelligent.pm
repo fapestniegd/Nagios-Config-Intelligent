@@ -327,11 +327,11 @@ sub detemplate{
     my $self = shift; 
     my $type = shift;
     my $entry = shift;
+    return $entry unless(defined($entry->{'use'}));
     print Data::Dumper->Dump([ {
                               'detemplating' => $entry,
                               'type'         => $type,
                            }]);
-    return $entry unless(defined($entry->{'use'}));
     my $template; 
 
     if(defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
