@@ -589,7 +589,11 @@ sub reduce {
            # get an element count
            my $t_elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
-           $object_entry = $self->detemplate( $type, $self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
+           if($defined($self->{'objects'}->{$type}->[$i]->{'use'}){
+               $object_entry = $self->detemplate( $type, $self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
+           }else{
+               $object_entry = $self->clone($self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
+           }
 #print Data::Dumper->Dump([{
 #                           'comparing' => [  $tmpl, $self->{'objects'}->{$type}->[$i] ],
 #                           'actually'  => [ $tmpl, $object_entry  ],
