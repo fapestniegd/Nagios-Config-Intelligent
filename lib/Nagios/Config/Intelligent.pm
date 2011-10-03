@@ -328,11 +328,8 @@ sub detemplate{
     my $type = shift;
     my $entry = shift;
     return $entry unless(defined($entry->{'use'}));
-    print Data::Dumper->Dump([ {
-                              'detemplating' => $entry,
-                              'type'         => $type,
-                           }]);
     my $template; 
+
 
     if(defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
         $template = $self->clone($self->detemplate($type,$self->{'templates'}->{$type}->{$entry->{'use'}}));
@@ -341,7 +338,6 @@ sub detemplate{
         warn "no such $type template: $entry->{'use'}\n";
         return $entry;
     }
-
     my $new_entry = $self->clone($template);     # start the new entry with the fetched template
     foreach my $key (keys(%{ $entry })){ # override the template with entries from the entry being templated
         $new_entry->{$key} = $entry->{$key};
@@ -598,10 +594,10 @@ sub reduce {
            }else{
                $object_entry = $self->clone($self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
            }
-#print Data::Dumper->Dump([{
-#                           'comparing' => [  $tmpl, $self->{'objects'}->{$type}->[$i] ],
-#                           'actually'  => [ $tmpl, $object_entry  ],
-#                        }]);
+print Data::Dumper->Dump([{
+                           'comparing' => [  $tmpl, $self->{'objects'}->{$type}->[$i] ],
+                           'actually'  => [ $tmpl, $object_entry  ],
+                        }]);
            my $intersect = $self->intersection([ $tmpl, $object_entry ]);
            my $i_elements = keys(%{ $intersect });
            if ($i_elements == $t_elements){ # all of these match, and it's the biggest, save the name
