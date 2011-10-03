@@ -594,11 +594,12 @@ sub reduce {
            }else{
                $object_entry = $self->clone($self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
            }
-print Data::Dumper->Dump([{
-                           'comparing' => [  $tmpl, $self->{'objects'}->{$type}->[$i] ],
-                           'actually'  => [ $tmpl, $object_entry  ],
-                        }]);
            my $intersect = $self->intersection([ $tmpl, $object_entry ]);
+           # print Data::Dumper->Dump([{
+           #                 'comparing' => [  $tmpl, $self->{'objects'}->{$type}->[$i] ],
+           #                 'actually'  => [ $tmpl, $object_entry  ],
+           #                 'result'    => [ $intersect  ],
+           #              }]);
            my $i_elements = keys(%{ $intersect });
            if ($i_elements == $t_elements){ # all of these match, and it's the biggest, save the name
                if($biggest_count < $i_elements){
