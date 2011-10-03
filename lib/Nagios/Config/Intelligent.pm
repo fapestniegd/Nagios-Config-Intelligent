@@ -565,7 +565,6 @@ sub reduce {
         }
         #print "\n";
     }
-    print Data::Dumper->Dump([ $template_candidates]);
     foreach my $tpl (@{ $template_candidates }){
         delete $tpl->{$type.'_name'} if(defined($tpl->{$type.'_name'}));
         $self->add_template($type,$tpl) if(keys(%{ $tpl }) >= 4); # if you don't remove 4 lines, you're adding lines.
@@ -588,13 +587,6 @@ sub reduce {
            $object_entry = $self->detemplate( $self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
            my $intersect = $self->intersection([ $tmpl, $object_entry ]);
            my $i_elements = keys(%{ $intersect });
-           #print Data::Dumper->Dump([ { 
-           #                             'tmpl' => $tmpl,  
-           #                             't_elements' => $t_elements,
-           #                             'object' => $self->{'objects'}->{$type}->[$i], 
-           #                             'intersect' => $intersect, 
-           #                             'i_elements' => $i_elements, 
-           #                         } ]);
            if ($i_elements == $t_elements){ # all of these match, and it's the biggest, save the name
                if($biggest_count < $i_elements){
                    $biggest_count=$i_elements;
@@ -603,6 +595,7 @@ sub reduce {
            }
         }
         # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
+print STDERR Data::Dumper->Dump({ 'biggest_name' => $biggest_name });
         if(defined($biggest_name)){
             foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
                 delete $object_entry->{$tplkey} if(defined($object_entry->{$tplkey}));
