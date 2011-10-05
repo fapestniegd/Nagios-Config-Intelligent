@@ -10,18 +10,25 @@ BEGIN {
         chdir( $oldpwd ); 
       };
 
-use Nagios::Config::Intelligent;
 use Getopt::Long;
-use FileHandle;
-use YAML;
-use Data::Dumper;
 $Getopt::Long::ignorecase = 0;
+use Nagios::Config::Intelligent;
+use Graph::Network;
+use Data::Dumper;
+
 my $result = GetOptions(
   'help'              => \$opt->{'help'},
   'config=s'          => \$opt->{'config'},
+  'topology=s'        => \$opt->{'topology'},
 );
-my $main_config=$opt->{'config'}||"/etc/nagios/nagios.cfg";
-my $n = Nagios::Config::Intelligent->new({'cfg' => $main_config });
+
+my $main_config = $opt->{'config'}  ||"/etc/nagios/nagios.cfg";
+my $topology    = $opt->{'topology'}||"/root/ncfg/etc/toplogy";
+my $n = Nagios::Config::Intelligent->new({
+                                           'cfg'      => $main_config 
+                                           'topology' => $main_config 
+                                        });
+
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
