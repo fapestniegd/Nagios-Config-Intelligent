@@ -1,4 +1,4 @@
-Package Graph::Network;
+package Graph::Network;
 use strict;
 use YAML;
 use Graph::Directed;
