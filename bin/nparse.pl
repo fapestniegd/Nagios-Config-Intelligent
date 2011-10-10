@@ -36,4 +36,3 @@ $n->reduce_objects; # this is computationally expensive
 #$n->reduce('contact');
 print $n->dump();
 print $n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
-
