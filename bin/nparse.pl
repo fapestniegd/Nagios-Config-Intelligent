@@ -25,8 +25,8 @@ my $result = GetOptions(
 my $main_config = $opt->{'config'}  ||"/etc/nagios/nagios.cfg";
 my $topology    = $opt->{'topology'}||"/root/ncfg/etc/toplogy";
 my $n = Nagios::Config::Intelligent->new({
-                                           'cfg'      => $main_config 
-                                           'topology' => $main_config 
+                                           'cfg'      => $main_config,
+                                           'topology' => $topology,
                                         });
 
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
