@@ -32,6 +32,12 @@ sub new{
     return $self;
 }
 
+sub debug{
+    my $self = shift;
+    my $message = shift;
+    print STDERR "$message\n" if $self->{'debug'};
+}
+
 ################################################################################
 # create a graph of the network using the interfaces on therouters provided
 # [hostA]<--->[hostA:eth0]<-->[hostB:eth0]<-->[hostB]<-->[hostB:eth1]<-->( etc. )
