@@ -88,7 +88,7 @@ sub add_router{
 #
 sub add_host{
     my $self = shift;
-    my $hostdata = shift; if @_;
+    my $hostdata = shift;
     return undef unless $hostdata->{'name'}; 
     $hostdata->{'address'} = $hostdata->{'name'} unless(defined($hostdata->{'address'}));
     # add the vertex for our host
