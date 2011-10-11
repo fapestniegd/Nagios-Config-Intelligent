@@ -13,7 +13,7 @@ sub new{
     my $cnstr=shift if @_;
     bless $self, $class;
 
-    $self->{'g'} = Graph::Directed->new('rankdir=LR'); # A directed graph.
+    $self->{'g'} = Graph::Directed->new('rankdir' => 'LR'); # A directed graph.
     $self->{'res'} = Net::DNS::Resolver->new;
     $self->{'debug'} = $cnstr->{'debug'}||0;
     
