@@ -31,7 +31,6 @@ my $n = Nagios::Config::Intelligent->new({
 
 my $g = Graph::Network->new({ 'routers' => $routers });
 $g->draw("routers.png");
-print Data::Dumper->Dump([$n]);
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
 
