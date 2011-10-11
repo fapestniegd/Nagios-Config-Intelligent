@@ -23,7 +23,8 @@ sub new{
         } 
     }
     if(defined($self->{'routers'})){
-        foreach my $router(@{ $self->{'routers'}}){
+        foreach my $router (@{ $self->{'routers'}}){
+            print Data::Dumper->Dump([$router]);
             $self->add_router($router);
         }
     }
