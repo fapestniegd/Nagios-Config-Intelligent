@@ -40,7 +40,7 @@ sub new{
         $self->nagioscfg($cnstr->{'cfg'});
     }
     if(defined($cnstr->{'routers'})){
-        $self->{'g'} = Graph::Network->new({ 'routers' => $routers }); 
+        $self->{'g'} = Graph::Network->new({ 'routers' => $cnstr->{'routers'} }); 
         #$self->{'g'}->draw("routers.png");
     }
     if($self->nagioscfg){ 
