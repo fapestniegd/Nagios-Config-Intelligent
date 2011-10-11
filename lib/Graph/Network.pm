@@ -135,8 +135,14 @@ sub ipaddress{
     my $hostname = shift;
     my $res = Net::DNS::Resolver->new; 
     my $query = $res->search($hostname);
-    
-    return "127.0.0.1";
+    if ($query) {
+        foreach my $rr ($query->answer) {
+            next unless $rr->type eq "A";
+            return $rr->address;
+        }
+    }else{
+        warn "query failed: ", $res->errorstring, "\n";
+    }
 }
 
 sub draw{
