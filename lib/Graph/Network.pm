@@ -93,13 +93,13 @@ sub add_host{
     $hostdata->{'address'} = $hostdata->{'name'} unless(defined($hostdata->{'address'}));
     # add the vertex for our host
     $self->{'g'}->add_vertex($hostdata->{'name'}) unless $self->{'g'}->has_vertex($hostdata->{'name'});
-    print "Added $hostdata->{'name'}" if  $self->{'g'}->has_vertex($hostdata->{'name'});
+    print "Added $hostdata->{'name'}\n" if  $self->{'g'}->has_vertex($hostdata->{'name'});
     
     # look up the ip if the address is a hostname
     unless($hostdata->{'address'}=~m/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/){
         $hostdata->{'address'} = $self->ipaddress($hostdata->{'address'});
         $self->{'g'}->add_vertex("$hostdata->{'name'}:$hostdata->{'address'}") unless $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
-        print "Added $hostdata->{'name'}:$hostdata->{'address'}" if  $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
+        print "Added $hostdata->{'name'}:$hostdata->{'address'}\n" if  $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
     }
     # add the vertex for the host:ip (we won't know from the nagios configs what the name of the interface is)
     # add the edges between the host <==> host:ip
