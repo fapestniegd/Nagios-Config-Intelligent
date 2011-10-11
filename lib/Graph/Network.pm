@@ -113,7 +113,7 @@ sub add_host{
         }
     }
     foreach my $cidr (@{ $self->{'networks'} }){
-        if(Net::CIDR::cidrlookup($hostdata->{'address'}, $cidr){
+        if( Net::CIDR::cidrlookup($hostdata->{'address'}, $cidr) ){
              $self->{'g'}->add_vertex($cidr) unless $self->{'g'}->has_vertex($cidr);
              $self->{'g'}->add_edge($cidr,"$hostdata->{'name'}:$hostdata->{'address'}");
              $self->{'g'}->add_edge("$hostdata->{'name'}:$hostdata->{'address'}",$cidr);
