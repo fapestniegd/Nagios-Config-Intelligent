@@ -76,4 +76,16 @@ sub add_router{
     return $self;
 }
 
+sub draw{
+   my $self = shift;
+   my $file = shift if @_;
+   return undef unless $file;
+   $writer = Graph::Writer::Dot->new();
+   $writer->write_graph($self->{'g'}, $file.".dot");
+   system("/usr/bin/dot -Tpng ".$file.".dot -o $file");
+   system("/bin/rm $file.dot");
+   return $self;
+}
+
+
 1;
