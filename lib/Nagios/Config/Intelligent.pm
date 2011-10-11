@@ -53,6 +53,12 @@ sub new{
                                      'address' => $host->{'address'}     # should be an IP or resolve via DNS, full nsswitch unimplemented
                                   });  
         }
+        #foreach my $host (@{ $self->{'objects'}->{'service'} }){
+        #    $self->{'g'}->add_service({ 
+        #                                'name'    => $host->{'host_name'}, 
+        #                                'address' => $host->{'address'}     # should be an IP or resolve via DNS, full nsswitch unimplemented
+        #                             });  
+        #}
     }
     return $self;
 }
