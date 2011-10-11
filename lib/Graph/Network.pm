@@ -17,10 +17,10 @@ sub new{
     $self->{'res'} = Net::DNS::Resolver->new;
     $self->{'debug'} = $cnstr->{'debug'}||0;
     
-    print Data::Dumper->Dump([$cnstr]);
     if(defined($cnstr->{'routers'})){
         if( -f "$cnstr->{'routers'}"){
             $self->{'routers'} = YAML::LoadFile("$cnstr->{'routers'}");
+            print Data::Dumper->Dump([$self->{'routers'}]);
         } 
     }
     if(defined($self->{'routers'})){

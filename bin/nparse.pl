@@ -23,7 +23,7 @@ my $result = GetOptions(
 );
 
 my $main_config = $opt->{'config'}  ||"/etc/nagios/nagios.cfg";
-my $routers    = $opt->{'routers'}||"/root/ncfg/etc/routers.cfg";
+my $routers    = $opt->{'routers'}||"/etc/routers.cfg";
 my $n = Nagios::Config::Intelligent->new({
                                            'cfg'      => $main_config,
                                            'routers' => $routers,
