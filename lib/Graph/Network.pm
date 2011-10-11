@@ -13,7 +13,7 @@ sub new{
     my $cnstr=shift if @_;
     bless $self, $class;
 
-    $self->{'g'} = Graph::Directed->new; # A directed graph.
+    $self->{'g'} = Graph::Directed->new('rankdir=LR'); # A directed graph.
     $self->{'res'} = Net::DNS::Resolver->new;
     $self->{'debug'} = $cnstr->{'debug'}||0;
     
@@ -162,6 +162,7 @@ sub draw{
    my $file = shift if @_;
    return undef unless $file;
    my $writer = Graph::Writer::Dot->new();
+   # add rankdir=LR to digraph g {
    $writer->write_graph($self->{'g'}, $file.".dot");
    system("/usr/bin/dot -Tpng ".$file.".dot -o $file");
    #system("/bin/rm $file.dot");
