@@ -69,6 +69,7 @@ sub add_router{
             # get the IP and netmask for CIDR calculations
             my ($interface_ip,$netbits) = split(/\//,$router_if->{'ip'});
             my ($network, $broadcast)=split(/-/,join('',Net::CIDR::cidr2range($router_if->{'ip'})));
+            push(@{ $self->{'networks'} }, $network."/".$netbits);
             ####################################################################
             # complete the graph segment by attaching the interface to the network it's on:
             # [192.168.21.0/24] <-> [basalt:lan] <-> [basalt] <-> [basalt:wan] <-> [198.51.100.32/29]
@@ -95,12 +96,10 @@ sub add_host{
     # look up the ip if the address is a hostname
     if($hostdata->{'address'}=~m/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/){
         $self->{'g'}->add_vertex($hostdata->{'name'}) unless $self->{'g'}->has_vertex($hostdata->{'name'});
-        #print "Added $hostdata->{'name'}\n" if  $self->{'g'}->has_vertex($hostdata->{'name'});
         $self->{'g'}->add_vertex("$hostdata->{'name'}:$hostdata->{'address'}") 
           unless $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
         $self->{'g'}->add_edge($hostdata->{'name'},"$hostdata->{'name'}:$hostdata->{'address'}");
         $self->{'g'}->add_edge("$hostdata->{'name'}:$hostdata->{'address'}",$hostdata->{'name'});
-        #print "Added $hostdata->{'name'}:$hostdata->{'address'}\n" if  $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
     }else{
         $hostdata->{'address'} = $self->ipaddress($hostdata->{'address'});
         if($hostdata->{'address'}=~m/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/){
@@ -111,6 +110,13 @@ sub add_host{
             $self->{'g'}->add_edge("$hostdata->{'name'}:$hostdata->{'address'}",$hostdata->{'name'});
         }else{
             print STDERR "Unable to determine numeric IP for address [$hostdata->{'address'}]. It will be omitted from the graph.\n"; 
+        }
+    }
+    foreach my $cidr (@{ $self->{'networks'} }){
+        if(Net::CIDR::cidrlookup($hostdata->{'address'}, $cidr){
+             $self->{'g'}->add_vertex($cidr) unless $self->{'g'}->has_vertex($cidr);
+             $self->{'g'}->add_edge($cidr,"$hostdata->{'name'}:$hostdata->{'address'}");
+             $self->{'g'}->add_edge("$hostdata->{'name'}:$hostdata->{'address'}",$cidr);
         }
     }
     # add the vertex for the host:ip (we won't know from the nagios configs what the name of the interface is)
