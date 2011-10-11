@@ -83,6 +83,42 @@ sub add_router{
     return $self;
 }
 
+################################################################################
+# add a host to our existing graph of routers
+#
+sub add_host{
+    my $self = shift;
+    my $hostdata = shift; if @_;
+    return undef unless $hostdata->{'name'}; 
+    $hostdata->{'address'} = $hostdata->{'name'} unless(defined($hostdata->{'address'}));
+    # add the vertex for our host
+    $self->{'g'}->add_vertex($hostdata->{'name'}) unless $self->{'g'}->has_vertex($hostdata->{'name'});
+    # look up the ip if the address is a hostname
+    unless($hostdata->{'address'}=~m/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/){
+        $hostdata->{'address'} = $self->ipaddr($hostdata->{'address'});
+    }
+    # add the vertex for the host:ip (we won't know from the nagios configs what the name of the interface is)
+    # add the edges between the host <==> host:ip
+    # add the edges between the host:ip <==> cidr
+}
+
+sub add_service{
+    my $self = shift;
+    my $hostdata = shift; if @_;
+    return undef unless $hostdata->{'name'}; 
+    return undef unless $hostdata->{'address'};
+    # add the vertex & edges for our host if not exist
+    # add the edge for host_name <==> host_name:service_description
+}
+
+
+sub ipaddress{
+    use Net::DNS;
+    my $self = shift;
+    my $hostname = shift;
+    return "127.0.0.1";
+}
+
 sub draw{
    my $self = shift;
    my $file = shift if @_;
@@ -93,6 +129,5 @@ sub draw{
    system("/bin/rm $file.dot");
    return $self;
 }
-
 
 1;

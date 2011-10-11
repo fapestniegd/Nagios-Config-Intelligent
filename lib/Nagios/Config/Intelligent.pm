@@ -39,8 +39,20 @@ sub new{
     if(defined($cnstr->{'cfg'})){
         $self->nagioscfg($cnstr->{'cfg'});
     }
+    if(defined($cnstr->{'routers'})){
+        $self->{'g'} = Graph::Network->new({ 'routers' => $routers }); 
+        #$self->{'g'}->draw("routers.png");
+    }
     if($self->nagioscfg){ 
         foreach ($self->object_files()){ $self->load_object_file($_); } 
+    }
+    if(defined($self->{'g'})){
+        foreach my $host (@{ $self->{'objects'}->{'host'} }){
+            $self->{'g'}->add_host({ 
+                                     'name'    => $host->{'host_name'}, 
+                                     'address' => $host->{'address'}     # should be an IP or resolve via DNS, full nsswitch unimplemented
+                                  });  
+        }
     }
     return $self;
 }
