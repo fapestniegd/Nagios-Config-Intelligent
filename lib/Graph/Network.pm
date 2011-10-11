@@ -127,11 +127,17 @@ sub add_host{
 
 sub add_service{
     my $self = shift;
-    my $hostdata = shift if @_;
-    return undef unless $hostdata->{'name'}; 
-    return undef unless $hostdata->{'address'};
-    # add the vertex & edges for our host if not exist
+    my $servicedata = shift if @_;
+    return undef unless $servicedata->{'host_name'}; 
+    return undef unless $servicedata->{'service_description'};
+     $self->{'g'}->add_vertex($servicedata->{'host_name'}) 
+       unless $self->{'g'}->has_vertex($servicedata->{'host_name'});
+     $self->{'g'}->add_vertex("$servicedata->{'host_name'}:$servicedata->{'service_description'}") 
+       unless $self->{'g'}->has_vertex("$servicedata->{'host_name'}:$servicedata->{'service_description'}");
     # add the edge for host_name <==> host_name:service_description
+    $self->{'g'}->add_edge($servicedata->{'host_name'},"$servicedata->{'host_name'}:$servicedata->{'service_description'}");
+    $self->{'g'}->add_edge("$servicedata->{'host_name'}:$servicedata->{'service_description'}",$servicedata->{'host_name'});
+    return $self;
 }
 
 
