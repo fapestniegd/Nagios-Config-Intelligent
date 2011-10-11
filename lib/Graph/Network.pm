@@ -133,10 +133,10 @@ sub add_service{
      $self->{'g'}->add_vertex($servicedata->{'host_name'}) 
        unless $self->{'g'}->has_vertex($servicedata->{'host_name'});
      $self->{'g'}->add_vertex("$servicedata->{'host_name'}\n$servicedata->{'service_description'}") 
-       unless $self->{'g'}->has_vertex("$servicedata->{'host_name'}\n$servicedata->{'service_description'}");
+       unless $self->{'g'}->has_vertex($servicedata->{'host_name'}.'\n'.$servicedata->{'service_description'});
     # add the edge for host_name <==> host_name:service_description
-    $self->{'g'}->add_edge($servicedata->{'host_name'},"$servicedata->{'host_name'}\n$servicedata->{'service_description'}");
-    $self->{'g'}->add_edge("$servicedata->{'host_name'}\n$servicedata->{'service_description'}",$servicedata->{'host_name'});
+    $self->{'g'}->add_edge($servicedata->{'host_name'},$servicedata->{'host_name'}.'\n'.$servicedata->{'service_description'});
+    $self->{'g'}->add_edge($servicedata->{'host_name'}.'\n'.$servicedata->{'service_description'},$servicedata->{'host_name'});
     return $self;
 }
 
