@@ -62,9 +62,9 @@ sub add_router{
               unless $self->{'g'}->has_vertex($router->{'name'}.':'.$router_if->{'name'});
             # add the edge between host and host:interface
             $self->debug("adding edge between $router->{'name'} and $router->{'name'}:$router_if->{'name'}");
-            $self->{'g'}->add_edge($router->{'name'},$router->{'name'}.':'.$router_if->{'name'});
+            $self->{'g'}->add_weighted_edge($router->{'name'},$router->{'name'}.':'.$router_if->{'name'},10);
             # (both directions)
-            $self->{'g'}->add_edge($router->{'name'}.':'.$router_if->{'name'},$router->{'name'});
+            $self->{'g'}->add_weighted_edge($router->{'name'}.':'.$router_if->{'name'},$router->{'name'},10);
             ####################################################################
             # get the IP and netmask for CIDR calculations
             my ($interface_ip,$netbits) = split(/\//,$router_if->{'ip'});
@@ -77,8 +77,8 @@ sub add_router{
             $self->{'g'}->add_vertex($network."/".$netbits) unless $self->{'g'}->has_vertex($network."/".$netbits);
             # add edges to/from the hostname:interface to the network
             $self->debug("adding edge between $router->{'name'}:$router_if->{'name'} and  $network/$netbits");
-            $self->{'g'}->add_edge($network."/".$netbits, $router->{'name'}.':'.$router_if->{'name'});
-            $self->{'g'}->add_edge($router->{'name'}.':'.$router_if->{'name'}, $network."/".$netbits);
+            $self->{'g'}->add_weighted_edge($network."/".$netbits, $router->{'name'}.':'.$router_if->{'name'},10);
+            $self->{'g'}->add_weighted_edge($router->{'name'}.':'.$router_if->{'name'}, $network."/".$netbits,10);
         }
     }
     return $self;
