@@ -90,7 +90,7 @@ sub draw{
    my $writer = Graph::Writer::Dot->new();
    $writer->write_graph($self->{'g'}, $file.".dot");
    system("/usr/bin/dot -Tpng ".$file.".dot -o $file");
-   #system("/bin/rm $file.dot");
+   system("/bin/rm $file.dot");
    return $self;
 }
 

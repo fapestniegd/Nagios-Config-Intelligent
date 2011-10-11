@@ -25,10 +25,13 @@ my $result = GetOptions(
 my $main_config = $opt->{'config'}  ||"/etc/nagios/nagios.cfg";
 my $routers    = $opt->{'routers'}||"/etc/routers.cfg";
 my $n = Nagios::Config::Intelligent->new({
-                                           'cfg'      => $main_config,
+                                           'cfg'     => $main_config,
                                            'routers' => $routers,
                                         });
 
+my $g = Graph::Network->new({ 'routers' => $routers });
+$g->draw("routers.png");
+print Data::Dumper->Dump([$n]);
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
 
@@ -40,5 +43,3 @@ my $n = Nagios::Config::Intelligent->new({
 # print $n->dump();
 
 # $n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
-my $g = Graph::Network->new({ 'routers' => $routers });
-$g->draw("routers.png");
