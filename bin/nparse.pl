@@ -41,4 +41,5 @@ my $n = Nagios::Config::Intelligent->new({
 
 # $n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
 my $g = Graph::Network->new({ 'routers' => $routers });
+print Data::Dumper->Dump([$g->{'g']);
 $g->draw("routers.png");
