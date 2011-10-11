@@ -171,7 +171,7 @@ sub draw{
    my $count=0;
    foreach my $line (@lines){
        print "$count: $line\n";
-       #print rankdir=LR\n" if($count==1);
+       print "rankdir=LR\n" if($count==1);
        $count++;
    }
    #close($fh);
