@@ -98,6 +98,8 @@ sub add_host{
         #print "Added $hostdata->{'name'}\n" if  $self->{'g'}->has_vertex($hostdata->{'name'});
         $self->{'g'}->add_vertex("$hostdata->{'name'}:$hostdata->{'address'}") 
           unless $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
+        $self->{'g'}->add_edge($hostdata->{'name'},"$hostdata->{'name'}:$hostdata->{'address'}");
+        $self->{'g'}->add_edge("$hostdata->{'name'}:$hostdata->{'address'}",$hostdata->{'name'});
         #print "Added $hostdata->{'name'}:$hostdata->{'address'}\n" if  $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
     }else{
         $hostdata->{'address'} = $self->ipaddress($hostdata->{'address'});
@@ -105,6 +107,8 @@ sub add_host{
             $self->{'g'}->add_vertex($hostdata->{'name'}) unless $self->{'g'}->has_vertex($hostdata->{'name'});
             $self->{'g'}->add_vertex("$hostdata->{'name'}:$hostdata->{'address'}") 
               unless $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
+            $self->{'g'}->add_edge($hostdata->{'name'},"$hostdata->{'name'}:$hostdata->{'address'}");
+            $self->{'g'}->add_edge("$hostdata->{'name'}:$hostdata->{'address'}",$hostdata->{'name'});
         }else{
             print STDERR "Unable to determine numeric IP for address [$hostdata->{'address'}]. It will be omitted from the graph.\n"; 
         }
