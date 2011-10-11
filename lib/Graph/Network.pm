@@ -1,3 +1,4 @@
+# yum install -y graphviz graphviz-gd graphviz-perl
 package Graph::Network;
 use strict;
 use YAML;
