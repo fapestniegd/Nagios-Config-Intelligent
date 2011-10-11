@@ -167,14 +167,14 @@ sub draw{
    open(my $fh, $file.".dot");
    my @lines=<$fh>;
    close($fh);
-   #open(my $fh, ">$file.dot");
+   open(my $fh, ">$file.dot");
    my $count=0;
    foreach my $line (@lines){
-       print "$count: $line\n";
-       print "rankdir=LR\n" if($count==1);
+       print $fh "$line\n";
+       print $fh "     rankdir=LR\n" if($count==1);
        $count++;
    }
-   #close($fh);
+   close($fh);
     
    system("/usr/bin/dot -Tpng ".$file.".dot -o $file");
    #system("/bin/rm $file.dot");
