@@ -95,12 +95,19 @@ sub add_host{
     # look up the ip if the address is a hostname
     if($hostdata->{'address'}=~m/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/){
         $self->{'g'}->add_vertex($hostdata->{'name'}) unless $self->{'g'}->has_vertex($hostdata->{'name'});
-        print "Added $hostdata->{'name'}\n" if  $self->{'g'}->has_vertex($hostdata->{'name'});
+        #print "Added $hostdata->{'name'}\n" if  $self->{'g'}->has_vertex($hostdata->{'name'});
         $self->{'g'}->add_vertex("$hostdata->{'name'}:$hostdata->{'address'}") 
           unless $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
-        print "Added $hostdata->{'name'}:$hostdata->{'address'}\n" if  $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
+        #print "Added $hostdata->{'name'}:$hostdata->{'address'}\n" if  $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
     }else{
         $hostdata->{'address'} = $self->ipaddress($hostdata->{'address'});
+        if($hostdata->{'address'}=~m/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/){
+            $self->{'g'}->add_vertex($hostdata->{'name'}) unless $self->{'g'}->has_vertex($hostdata->{'name'});
+            $self->{'g'}->add_vertex("$hostdata->{'name'}:$hostdata->{'address'}") 
+              unless $self->{'g'}->has_vertex("$hostdata->{'name'}:$hostdata->{'address'}");
+        }else{
+            print STDERR "Unable to determine numeric IP for address [$hostdata->{'address'}]. It will be omitted from the graph.\n"; 
+        }
     }
     # add the vertex for the host:ip (we won't know from the nagios configs what the name of the interface is)
     # add the edges between the host <==> host:ip
