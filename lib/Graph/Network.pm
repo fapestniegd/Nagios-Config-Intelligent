@@ -112,6 +112,7 @@ sub add_host{
     # add the vertex for the host:ip (we won't know from the nagios configs what the name of the interface is)
     # add the edges between the host <==> host:ip
     # add the edges between the host:ip <==> cidr
+    return $self;
 }
 
 sub add_service{
@@ -128,6 +129,9 @@ sub ipaddress{
     use Net::DNS;
     my $self = shift;
     my $hostname = shift;
+    my $res = Net::DNS::Resolver->new; 
+    my $query = $res->search($hostname);
+    
     return "127.0.0.1";
 }
 
