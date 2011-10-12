@@ -19,6 +19,7 @@ sub new{
     
     if(defined($cnstr->{'routers'})){
         if( -f "$cnstr->{'routers'}"){
+            print STDERR "Loading $cnstr->{'routers'}\n";
             $self->{'routers'} = YAML::LoadFile("$cnstr->{'routers'}");
         } 
     }
