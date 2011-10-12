@@ -116,8 +116,9 @@ sub add_host{
     # If the device is a soekris or a printer, we need to add it's /30 to networks
     #
     if($hostdata->{'name'} =~m /^(skrs|prnt)[0-9]{4}.cao/){
-        $self->{'g'}->add_vertex("$hostdata->{'address'}/30") unless $self->{'g'}->has_vertex("$hostdata->{'address'}/30");
-        push(@{ $self->{'networks'} },"$hostdata->{'address'}/30") unless grep( /^$hostdata->{'address'}\/30$/, @{ $self->{'networks'} });
+          my ($interface_ip,$netbits) = split(/\//,"$hostdata->{'address'}/30");
+          my ($network, $broadcast)=split(/-/,join('',Net::CIDR::cidr2range("$hostdata->{'address'}/30")));
+          push(@{ $self->{'networks'} }, $network."/".$netbits);
     }
     #
     ############################################################################
