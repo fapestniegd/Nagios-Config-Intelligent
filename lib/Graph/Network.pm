@@ -19,11 +19,9 @@ sub new{
     
     if(defined($cnstr->{'routers'})){
         if( -f "$cnstr->{'routers'}"){
-            print STDERR "Loading $cnstr->{'routers'}\n";
             $self->{'routers'} = YAML::LoadFile("$cnstr->{'routers'}");
         } 
     }
-print Data::Dumper->Dump([$self->{'routers'}]);
     if(defined($self->{'routers'})){
         foreach my $router (@{ $self->{'routers'}}){
             print STDERR "$router->{'name'}\n";
