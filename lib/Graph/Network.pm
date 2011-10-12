@@ -122,6 +122,9 @@ sub add_host{
     }
     #
     ############################################################################
+    ############################################################################
+    # If the device is a soekris, we need to "vpn" it into 
+    #
     foreach my $cidr (@{ $self->{'networks'} }){
         if( Net::CIDR::cidrlookup($hostdata->{'address'}, $cidr) ){
              $self->{'g'}->add_vertex($cidr) unless $self->{'g'}->has_vertex($cidr);
@@ -188,6 +191,16 @@ sub draw{
    system("/usr/bin/dot -Tpng ".$file.".dot -o $file");
    #system("/bin/rm $file.dot");
    return $self;
+}
+
+sub trace{
+   my $self = shift;
+   my $source = shift if @_;
+   return undef unless $source;
+   my $target = shift if @_;
+   return undef unless $target;
+   $self->debug("trace $source -> $target");
+   print Data::Dumper->Dump([ $self->{'g'}->SP_Dijkstra( $source, $target ) ]);
 }
 
 1;
