@@ -23,8 +23,10 @@ sub new{
             $self->{'routers'} = YAML::LoadFile("$cnstr->{'routers'}");
         } 
     }
+print Data::Dumper->Dump([$self->{'routers'}]);
     if(defined($self->{'routers'})){
         foreach my $router (@{ $self->{'routers'}}){
+            print STDERR "$router->{'name'}\n";
             $self->add_router($router);
         }
     }
