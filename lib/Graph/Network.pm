@@ -112,16 +112,6 @@ sub add_host{
             print STDERR "Unable to determine numeric IP for address [$hostdata->{'address'}]. It will be omitted from the graph.\n"; 
         }
     }
-#    ############################################################################
-#    # If the device is a soekris or a printer, we need to add it's /30 to networks
-#    #
-#    if($hostdata->{'name'} =~m /^(skrs|prnt)[0-9]{4}.cao/){
-#          my ($interface_ip,$netbits) = split(/\//,"$hostdata->{'address'}/30");
-#          my ($network, $broadcast)=split(/-/,join('',Net::CIDR::cidr2range("$hostdata->{'address'}/30")));
-#          push(@{ $self->{'networks'} }, $network."/".$netbits);
-#    }
-#    #
-#    ############################################################################
     foreach my $cidr (@{ $self->{'networks'} }){
         if( Net::CIDR::cidrlookup($hostdata->{'address'}, $cidr) ){
              $self->{'g'}->add_vertex($cidr) unless $self->{'g'}->has_vertex($cidr);
@@ -199,7 +189,7 @@ sub trace{
    my @path = $self->{'g'}->SP_Dijkstra( $source, $target );
    my @systems = ();
    foreach my $vertex (@path){
-       unless ($vertex=~m/[:\/]/){ push(@systems,$vertex); }  # we don't care about iterfaces nor networks here.
+       unless ($vertex=~m/[:\/\n]/){ push(@systems,$vertex); }  # we don't care about iterfaces nor networks here.
    }
    return @systems;
 }
