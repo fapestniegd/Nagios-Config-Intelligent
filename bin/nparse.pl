@@ -30,7 +30,7 @@ my $n = Nagios::Config::Intelligent->new({
                                         });
 
 # take a peek at the network
-#$n->{'g'}->draw("routers.png");
+$n->{'g'}->draw("routers.png");
 
 print Data::Dumper->Dump([$n->{'g'}->trace('hubble.eftdomain.net','prnt0063.cao.eftdomain.net')]);
 print "\n";
