@@ -32,7 +32,7 @@ my $n = Nagios::Config::Intelligent->new({
 # take a peek at the network
 #$n->{'g'}->draw("routers.png");
 
-$n->{'g'}->trace('hubble.eftdomain.net','prnt0063.cao.eftdomain.net')
+$n->{'g'}->trace('hubble.eftdomain.net','prnt0063.cao.eftdomain.net');
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
 
