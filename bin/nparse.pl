@@ -29,7 +29,8 @@ my $n = Nagios::Config::Intelligent->new({
                                            'routers' => $routers,
                                         });
 
-$n->{'g'}->draw("routers.png");
+# take a peek at the network
+#$n->{'g'}->draw("routers.png");
 
 $n->{'g'}->trace('hubble.eftdomain.net','prnt0063.cao.eftdomain.net')
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
