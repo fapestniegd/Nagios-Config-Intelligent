@@ -199,8 +199,12 @@ sub trace{
    return undef unless $source;
    my $target = shift if @_;
    return undef unless $target;
-   $self->debug("trace $source -> $target");
-   print Data::Dumper->Dump([ $self->{'g'}->SP_Dijkstra( $source, $target ) ]);
+   my @path = $self->{'g'}->SP_Dijkstra( $source, $target );
+   my @systems = ();
+   foreach my $vertex (@path){
+       unless ($vertex=~m/[:\/]/){ push(@systems,$vertex); }  # we don't care about iterfaces nor networks here.
+   }
+   return @systems;
 }
 
 1;
