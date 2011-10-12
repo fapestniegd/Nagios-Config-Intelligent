@@ -112,6 +112,15 @@ sub add_host{
             print STDERR "Unable to determine numeric IP for address [$hostdata->{'address'}]. It will be omitted from the graph.\n"; 
         }
     }
+    ############################################################################
+    # If the device is a soekris or a printer, we need to add it's /30 to networks
+    #
+    if($hostdata->{'name'} =~m /^(skrs|prnt)[0-9]{4}.cao/){
+        $self->{'g'}->add_vertex("$hostdata->{'address'}/30") unless $self->{'g'}->has_vertex("$hostdata->{'address'}/30");
+        push(@{ $self->{'networks'} },"$hostdata->{'address'}/30") unless grep( /^$hostdata->{'address'}\/30$/, @{ $self->{'networks'} });
+    }
+    #
+    ############################################################################
     foreach my $cidr (@{ $self->{'networks'} }){
         if( Net::CIDR::cidrlookup($hostdata->{'address'}, $cidr) ){
              $self->{'g'}->add_vertex($cidr) unless $self->{'g'}->has_vertex($cidr);
