@@ -164,9 +164,8 @@ sub draw{
    my $writer = Graph::Writer::Dot->new();
    # add rankdir=LR to digraph g {
    $writer->write_graph($self->{'g'}, $file.".dot");
-   open(my $rfh, $file.".dot");
-   my @lines=<$rfh>;
-   close($rfh);
+   # re-write the dot file with rankdir=LR
+   open(my $rfh, $file.".dot"); my @lines=<$rfh>; close($rfh);
    open(my $wfh, ">$file.dot");
    my $count=0;
    foreach my $line (@lines){
