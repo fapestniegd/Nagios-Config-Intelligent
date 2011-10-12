@@ -24,7 +24,6 @@ sub new{
     }
     if(defined($self->{'routers'})){
         foreach my $router (@{ $self->{'routers'}}){
-            print STDERR "$router->{'name'}\n";
             $self->add_router($router);
         }
     }
