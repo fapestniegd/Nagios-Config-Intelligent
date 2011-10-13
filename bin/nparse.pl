@@ -47,4 +47,4 @@ print Data::Dumper->Dump([
 
 #print $n->dump();
 
-# $n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
+$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
