@@ -32,15 +32,19 @@ my $n = Nagios::Config::Intelligent->new({
                                            'topology'=> $nagios_servers,
                                         });
 
+################################################################################
 # take a peek at the network
 $n->{'g'}->draw("routers.png");
 
-my $poll;
-foreach my $host (@{ $n->{'objects'}->{'host'} }){
-    my $closest = $n->poll_server($host->{'address'});
-    push(@{ $poll->{$closest} },$host->{'host_name'});
-}
-print Data::Dumper->Dump([ $poll ]);
+################################################################################
+# my $poll;
+# foreach my $host (@{ $n->{'objects'}->{'host'} }){
+#     my $closest = $n->poll_server($host->{'address'});
+#     push(@{ $poll->{$closest} },$host->{'host_name'});
+# }
+# print Data::Dumper->Dump([ $poll ]);
+
+################################################################################
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
 
