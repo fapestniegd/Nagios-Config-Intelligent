@@ -102,7 +102,7 @@ print Data::Dumper->Dump([{
             $max_hops = $hops; 
             $closest_poller = $self->{'nagios'}->{'poll'};
         }
-        return $closest_poller if(defined($closest_poller)):
+        return $closest_poller if(defined($closest_poller));
     }
     return "indeterminite";
 }
