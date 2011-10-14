@@ -22,24 +22,20 @@ my $result = GetOptions(
   'routers=s'        => \$opt->{'routers'},
 );
 
-my $main_config = $opt->{'config'}  ||"/etc/nagios/nagios.cfg";
-my $routers    = $opt->{'routers'}||"/etc/routers.cfg";
+my $nagios_cfg     = $opt->{'config'}  ||"/etc/nagios/nagios.cfg";
+my $routers        = $opt->{'routers'} ||"/etc/routers.cfg";
+my $nagios_servers = $opt->{'nagioses'}||"/etc/topology.cfg";
+
 my $n = Nagios::Config::Intelligent->new({
-                                           'cfg'     => $main_config,
+                                           'cfg'     => $nagios_cfg,
                                            'routers' => $routers,
+                                           'topology'=> $nagios_servers,
                                         });
 
 # take a peek at the network
 $n->{'g'}->draw("routers.png");
 
-print Data::Dumper->Dump([
-  [ 
-    $n->{'g'}->network_trace(
-                               'prnt0063.cao.eftdomain.net',
-                               'hubble.eftdomain.net',
-                              ) 
-  ],
-]);
+print Data::Dumper->Dump([ $n->{'objects'}->{'host'}  ]);
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
 

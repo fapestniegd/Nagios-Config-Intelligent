@@ -210,5 +210,3 @@ sub network_trace{
 }
 
 1;
-
-1;
