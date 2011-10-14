@@ -48,7 +48,7 @@ sub new{
     # how our nagios servrers are layed out { 'report' => $report, 'poll' => [ $poll[1] .. $poll[n] ] }
     if(defined($cnstr->{'topology'})){
         $self->{'nagios'} = YAML::LoadFile($cnstr->{'toplogy'});
-print Data::Dumper->Dump([ $self->{'nagios'} ]);
+print Data::Dumper->Dump([ $cnstr ]);
         foreach my $host (@{ $self->{'nagios'}->{'poll'} }){
             $self->{'g'}->add_host({ 'name'    => $host, 'address' => $host }); # get the poll servers on the graph
         }
