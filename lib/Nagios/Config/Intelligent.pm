@@ -93,6 +93,7 @@ sub poll_server{
     my $closest_poller = undef;;
     foreach my $pollhost (@{ $self->{'nagios'}->{'poll'} }){
         my $hops = $self->{'g'}->network_trace( $pollhost, $target );
+        $self->{'distance'}->{$target}->{$pollhost} =  $hops;
         if ($hops < $max_hops){ 
             $max_hops = $hops; 
             $closest_poller = $pollhost;
