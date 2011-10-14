@@ -39,14 +39,21 @@ sub new{
     if(defined($cnstr->{'cfg'})){
         $self->nagioscfg($cnstr->{'cfg'});
     }
-    # how our nagios servrers are layed out { 'report' => $report, 'poll' => [ $poll[1] .. $poll[n] ] }
-    if(defined($cnstr->{'toplogy'})){
-        $self->{'nagios'} = YAML::LoadFile($cnstr->{'toplogy'});
-
     # how our network is layed out  
     if(defined($cnstr->{'routers'})){
         $self->{'g'} = Graph::Network->new({ 'routers' => $cnstr->{'routers'} }); 
         #$self->{'g'}->draw("routers.png");
+    }
+
+    # how our nagios servrers are layed out { 'report' => $report, 'poll' => [ $poll[1] .. $poll[n] ] }
+    if(defined($cnstr->{'toplogy'})){
+        $self->{'nagios'} = YAML::LoadFile($cnstr->{'toplogy'});
+        foreach my $host (@{ $self->{'nagios'}->{'poll'} }){
+            $self->{'g'}->add_host({ 'name'    => $host, 'address' => $host }); # get the poll servers on the graph
+        }
+        foreach my $host (@{ $self->{'nagios'}->{'report'} }){
+            $self->{'g'}->add_host({ 'name'    => $host, 'address' => $host }); # get the report servers on the graph
+        }
     }
 
     # our nagios config files 
@@ -68,6 +75,18 @@ sub new{
         }
     }
     return $self;
+}
+
+################################################################################
+# if a 'poll' server is in the same network, use it.
+# if not, count the networks from the each poll server to the monitored object
+#   use the poll server with the least hops to the device, on a tie, use the 
+#   one closet to the polling server
+# a poll server may not monitor its own host status (except the report server)
+#
+sub poll_server{
+    my $self=shift;
+    return "hubble.eftdomin.net";
 }
 
 sub nagioscfg{

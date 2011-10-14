@@ -35,10 +35,11 @@ my $n = Nagios::Config::Intelligent->new({
 # take a peek at the network
 $n->{'g'}->draw("routers.png");
 
+my $poll;
 foreach my $host (@{ $n->{'objects'}->{'host'} }){
-    print $host->{'host_name'}."\n";
+    push(@{$poll->{$n->poll_server($host->{'address'})}},$host->{'host_name'});
 }
-#print Data::Dumper->Dump([ $n->{'objects'}->{'host'}  ]);
+print Data::Dumper->Dump([ $poll ]);
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
 
