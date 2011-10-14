@@ -98,9 +98,9 @@ print Data::Dumper->Dump([{
                             'target'    => $target,
                             'hops'      => $hops,
                         }]);
-        if ($#{ $hops } < $max_hops){ 
-            $max_hops = $#{ $hops }; 
-            $closest_poller = $self->{'nagios'}->{'poll'};
+        if ($hops < $max_hops){ 
+            $max_hops = $hops; 
+            $closest_poller = $pollhost;
         }
         return $closest_poller if(defined($closest_poller));
     }
