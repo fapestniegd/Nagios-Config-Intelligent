@@ -153,7 +153,7 @@ sub hostname{
             return $rr->ptrdname;
         }
     }else{
-        warn "query failed: ", $res->errorstring, "\n";
+        warn "PTR query for $ip failed: ", $res->errorstring, "\n";
     }
 }
 
@@ -169,7 +169,7 @@ sub ipaddress{
             return $rr->address;
         }
     }else{
-        warn "query failed: ", $res->errorstring, "\n";
+        warn "A query for $hostname failed: ", $res->errorstring, "\n";
     }
 }
 
