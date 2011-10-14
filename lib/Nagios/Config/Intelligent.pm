@@ -46,7 +46,7 @@ sub new{
     }
 
     # how our nagios servrers are layed out { 'report' => $report, 'poll' => [ $poll[1] .. $poll[n] ] }
-    if(defined($cnstr->{'toplogy'})){
+    if(defined($cnstr->{'topology'})){
         $self->{'nagios'} = YAML::LoadFile($cnstr->{'toplogy'});
 print Data::Dumper->Dump([ $self->{'nagios'} ]);
         foreach my $host (@{ $self->{'nagios'}->{'poll'} }){
