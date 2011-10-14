@@ -78,6 +78,8 @@ sub new{
 }
 
 ################################################################################
+# Find the "appropriate" poll server for this host
+# 
 # if a 'poll' server is in the same network, use it.
 # if not, count the networks from the each poll server to the monitored object
 #   use the poll server with the least hops to the device, on a tie, use the 
@@ -85,8 +87,23 @@ sub new{
 # a poll server may not monitor its own host status (except the report server)
 #
 sub poll_server{
-    my $self=shift;
-    return "hubble.eftdomin.net";
+    my $self = shift;
+    my $target = shift;
+    my $max_hops = 100000;
+    my $closest_poller;
+    foreach my $pollhost (@{ $self->{'nagios'}->{'poll'} }){
+        my $hops = $self->{'g'}->network_trace( $pollhost, $target );
+print Data::Dumper->Dump([{ 
+                            'poll_host' => $pollhost,
+                            'target'    => $target,
+                            'hops'      => $hops,
+                        }]);
+        if ($hops < $max_hops){ 
+            $max_hops = $hops; 
+            $closest_poller = $self->{'nagios'}->{'poll'};
+        }
+    }
+    return "indeterminite";
 }
 
 sub nagioscfg{
