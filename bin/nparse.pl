@@ -35,8 +35,8 @@ $n->{'g'}->draw("routers.png");
 print Data::Dumper->Dump([
   [ 
     $n->{'g'}->network_trace(
-                               'hubble.eftdomain.net',
                                'prnt0063.cao.eftdomain.net'
+                               'hubble.eftdomain.net',
                               ) 
   ],
 ]);
