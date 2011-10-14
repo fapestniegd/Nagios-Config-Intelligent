@@ -96,7 +96,7 @@ sub poll_server{
 print Data::Dumper->Dump([{ 
                             'poll_host' => $pollhost,
                             'target'    => $target,
-                            'hops'      => $#{ $hops },
+                            'hops'      => $hops,
                         }]);
         if ($#{ $hops } < $max_hops){ 
             $max_hops = $#{ $hops }; 
