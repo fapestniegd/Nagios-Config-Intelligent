@@ -189,7 +189,8 @@ sub trace{
    my @path = $self->{'g'}->SP_Dijkstra( $source, $target );
    my @systems = ();
    foreach my $vertex (@path){
-       unless ($vertex=~m/[:\/\n]/){ push(@systems,$vertex); }  # we don't care about iterfaces nor networks here.
+       # unless ($vertex=~m/[:\/\n]/){ push(@systems,$vertex); }  # we don't care about iterfaces nor networks here.
+       push(@systems,$vertex);
    }
    return @systems;
 }
