@@ -48,6 +48,7 @@ sub new{
     # how our nagios servrers are layed out { 'report' => $report, 'poll' => [ $poll[1] .. $poll[n] ] }
     if(defined($cnstr->{'toplogy'})){
         $self->{'nagios'} = YAML::LoadFile($cnstr->{'toplogy'});
+print Data::Dumper->Dump([ $self->{'nagios'} ]);
         foreach my $host (@{ $self->{'nagios'}->{'poll'} }){
             $self->{'g'}->add_host({ 'name'    => $host, 'address' => $host }); # get the poll servers on the graph
         }
@@ -90,7 +91,6 @@ sub poll_server{
     my $self = shift;
     my $target = shift;
     my $max_hops = 100000;
-print Data::Dumper->Dump([ $self->{'nagios'}->{'poll'} ]);
     foreach my $pollhost (@{ $self->{'nagios'}->{'poll'} }){
         my $closest_poller = undef;
         my $hops = $self->{'g'}->network_trace( $pollhost, $target );
