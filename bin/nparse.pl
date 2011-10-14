@@ -37,7 +37,8 @@ $n->{'g'}->draw("routers.png");
 
 my $poll;
 foreach my $host (@{ $n->{'objects'}->{'host'} }){
-    push(@{$poll->{$n->poll_server($host->{'address'})}},$host->{'host_name'});
+    my $closest = $n->poll_server($host->{'address'});
+    push(@{ $poll->{$closest} },$host->{'host_name'});
 }
 print Data::Dumper->Dump([ $poll ]);
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
