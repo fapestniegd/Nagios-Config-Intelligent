@@ -39,10 +39,17 @@ sub new{
     if(defined($cnstr->{'cfg'})){
         $self->nagioscfg($cnstr->{'cfg'});
     }
+    # how our nagios servrers are layed out { 'report' => $report, 'poll' => [ $poll[1] .. $poll[n] ] }
+    if(defined($cnstr->{'toplogy'})){
+        $self->{'nagios'} = YAML::LoadFile($cnstr->{'toplogy'});
+
+    # how our network is layed out  
     if(defined($cnstr->{'routers'})){
         $self->{'g'} = Graph::Network->new({ 'routers' => $cnstr->{'routers'} }); 
         #$self->{'g'}->draw("routers.png");
     }
+
+    # our nagios config files 
     if($self->nagioscfg){ 
         foreach ($self->object_files()){ $self->load_object_file($_); } 
     }
