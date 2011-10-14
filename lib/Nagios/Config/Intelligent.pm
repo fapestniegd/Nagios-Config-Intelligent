@@ -90,6 +90,7 @@ sub poll_server{
     my $self = shift;
     my $target = shift;
     my $max_hops = 100000;
+print "################################################################################\n";
     foreach my $pollhost (@{ $self->{'nagios'}->{'poll'} }){
         my $closest_poller = undef;
         my $hops = $self->{'g'}->network_trace( $pollhost, $target );
@@ -97,6 +98,7 @@ print Data::Dumper->Dump([{
                             'poll_host' => $pollhost,
                             'target'    => $target,
                             'hops'      => $hops,
+                            'max_hops'  => $max_hops,
                         }]);
         if ($hops < $max_hops){ 
             $max_hops = $hops; 
