@@ -130,7 +130,10 @@ sub write_object_cfgs{
         if(! -d "$cnstr->{'dir'}"){ mkdir("$cnstr->{'dir'}"); }
         if(! -d "$cnstr->{'dir'}"){ return undef; }
         if(! -w "$cnstr->{'dir'}"){ return undef; }
+ 
         foreach my $object_type (keys(%{ $self->{'objects'} })){
+            next if($object_type eq "host");
+            next if($object_type eq "service");
             my $fh = FileHandle->new("> $cnstr->{'dir'}/$object_type.cfg");
             if (defined $fh) {
                 my $max_key_length=0;
