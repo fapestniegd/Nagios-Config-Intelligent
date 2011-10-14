@@ -42,6 +42,7 @@ foreach my $host (@{ $n->{'objects'}->{'host'} }){
 }
 print Data::Dumper->Dump([ $poll ]);
 print Data::Dumper->Dump([ $n->{'distance'} ]);
+print Data::Dumper->Dump([ $n->{'objects'} ]);
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
 

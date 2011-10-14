@@ -222,7 +222,7 @@ sub network_trace{
    my @path = $self->{'g'}->SP_Dijkstra( $source, $target );
    my @networks = ();
    foreach my $vertex (@path){
-       if($vertex=~m/\//){ push(@networks,$vertex); }  # just list the networks
+       if($vertex=~m/\//){ push(@networks, $vertex); }  # just list the networks
    }
    return @networks;
 }
