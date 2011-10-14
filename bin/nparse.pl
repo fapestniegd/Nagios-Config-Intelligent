@@ -35,8 +35,8 @@ my $n = Nagios::Config::Intelligent->new({
 # take a peek at the network
 $n->{'g'}->draw("routers.png");
 
-for each my $host (@{ $n->{'objects'}->{'host'} }){
-    print $host->{'host_name'};
+foreach my $host (@{ $n->{'objects'}->{'host'} }){
+    print $host->{'address'};
 }
 #print Data::Dumper->Dump([ $n->{'objects'}->{'host'}  ]);
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
