@@ -141,6 +141,22 @@ sub add_service{
 }
 
 
+sub hostname{
+    use Net::DNS;
+    my $self = shift;
+    my $ip = shift;
+    my $res = Net::DNS::Resolver->new; 
+    my $query = $res->search($ip);
+    if ($query) {
+        foreach my $rr ($query->answer) {
+            next unless $rr->type eq "PTR";
+            return $rr->ptrdname;
+        }
+    }else{
+        warn "query failed: ", $res->errorstring, "\n";
+    }
+}
+
 sub ipaddress{
     use Net::DNS;
     my $self = shift;
@@ -198,8 +214,10 @@ sub trace{
 sub network_trace{
    my $self = shift;
    my $source = shift if @_;
+   $source = $self->hostname($source) if($source=~m/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/);
    return undef unless $source;
    my $target = shift if @_;
+   $target = $self->hostname($target) if($target=~m/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/);
    return undef unless $target;
    my @path = $self->{'g'}->SP_Dijkstra( $source, $target );
    my @networks = ();
