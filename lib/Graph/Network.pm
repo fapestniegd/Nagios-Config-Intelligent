@@ -195,4 +195,20 @@ sub trace{
    return @systems;
 }
 
+sub network_trace{
+   my $self = shift;
+   my $source = shift if @_;
+   return undef unless $source;
+   my $target = shift if @_;
+   return undef unless $target;
+   my @path = $self->{'g'}->SP_Dijkstra( $source, $target );
+   my @networks = ();
+   foreach my $vertex (@path){
+       if($vertex=~m/\/]/){ push(@networks,$vertex); }  # just list the networks
+   }
+   return @networks;
+}
+
+1;
+
 1;
