@@ -85,7 +85,7 @@ sub delegate {
         # actify the host check
         $active_check->{'active_checks_enabled'} = 1;
         $active_check->{'passive_checks_enabled'} = 0;
-        if($poll_srv ne $report_srv)
+        if($poll_srv ne $report_srv){
             $active_check->{'notifications_enabled'} = 0;
         }
 
