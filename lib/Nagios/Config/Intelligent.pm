@@ -78,9 +78,27 @@ sub delegate {
     foreach my $host (@{ $self->{'objects'}->{'host'} }){
         my $poll_srv = $self->poll_server($host->{'address'});
         my $report_srv = $self->report_server($host->{'address'});
-        push( @{ $self->{'work'}->{$poll_srv}->{'host'}->{'active'} },$self->clone($self->detemplate('host',$host)) );
+
+        # make a copy of the active check
+        my $active_check = $self->clone($self->detemplate('host',$host));
+
+        # actify the host check
+        $active_check->{'active_checks_enabled'} = 1;
+        $active_check->{'passive_checks_enabled'} = 0;
+
+        # add it to the poll server's active work list
+        push( @{ $self->{'work'}->{$poll_srv}->{'host'}->{'active'} },$active_check );
+
         if($poll_srv ne $report_srv){
-            push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $self->clone($self->detemplate('host',$host)) );
+            # copy the check for passive acceptance into the report host
+            my $passive_check = $self->clone($self->detemplate('host',$host));
+
+            # passify the host check
+            $passive_check->{'active_checks_enabled'} = 1;
+            $passive_check->{'passive_checks_enabled'} = 0;
+
+            # add the passive check to the report servers work list
+            push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $passive_check );
         }
     } 
 }
