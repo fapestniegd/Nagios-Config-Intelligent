@@ -540,7 +540,7 @@ sub find_objects{
                 $allmatch=0; # if we're missing a key in the attrs, then all don't match
             }
         }
-        if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attr
+        if($allmatch == 1){  # all keys were present, and matched the values for the same key in $attrs
             push(@{ $records },$entry);
         }
     }
