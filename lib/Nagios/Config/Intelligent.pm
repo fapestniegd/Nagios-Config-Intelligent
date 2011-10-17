@@ -75,6 +75,7 @@ sub new{
 # 
 sub delegate {
     my $self = shift;
+    # handle the host entry for the active server
     foreach my $host (@{ $self->{'objects'}->{'host'} }){
         my $poll_srv = $self->poll_server($host->{'address'});
         my $report_srv = $self->report_server($host->{'address'});
@@ -84,14 +85,13 @@ sub delegate {
 
         # actify the host check
         $active_check->{'active_checks_enabled'} = 1;
-        $active_check->{'passive_checks_enabled'} = 0;
+        delete($active_check->{'passive_checks_enabled'});
         if($poll_srv ne $report_srv){
             $active_check->{'notifications_enabled'} = 0;
             delete($active_check->{'notification_interval'});
             delete($active_check->{'notification_options'});
             delete($active_check->{'notification_period'});
             delete($active_check->{'notifications_enabled'});
-
         }
 
         # add it to the poll server's active work list
@@ -103,13 +103,16 @@ sub delegate {
 
             # passify the host check
             $passive_check->{'active_checks_enabled'} = 1;
-            $passive_check->{'passive_checks_enabled'} = 0;
             $passive_check->{'notifications_enabled'} = 1;
+            delete($passive_check->{'passive_checks_enabled'});
 
             # add the passive check to the report servers work list
             push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $passive_check );
         }
     } 
+    foreach my $host (@{ $self->{'objects'}->{'host'} }){
+        
+    }
 }
 
 sub report_server{
