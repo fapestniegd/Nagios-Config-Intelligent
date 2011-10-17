@@ -108,7 +108,7 @@ sub delegate {
             delete($passive_check->{'passive_checks_enabled'});
 
             # add the passive check to the report servers work list
-            push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $passive_check );
+            push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $self->clone($passive_check) );
         }
     } 
     ############################################################################
@@ -123,9 +123,13 @@ sub delegate {
 
         # make a copy of the service check, de-template it
         my $service_check = $self->clone($self->detemplate('service',$service));
+
+        # add the active check
         push( @{ $self->{'work'}->{$poll_srv}->{'service'}->{'active'} },$service_check );
+       
+        # and the passive check if the report server is not the poll server
         if($poll_srv ne $report_srv){
-            push( @{ $self->{'work'}->{$poll_srv}->{'service'}->{'pasive'} },$service_check );
+            push( @{ $self->{'work'}->{$poll_srv}->{'service'}->{'pasive'} },$self->clone($service_check) );
         }
     }    
 }
