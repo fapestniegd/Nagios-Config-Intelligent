@@ -129,7 +129,7 @@ sub delegate {
        
         # and the passive check if the report server is not the poll server
         if($poll_srv ne $report_srv){
-            push( @{ $self->{'work'}->{$poll_srv}->{'service'}->{'pasive'} },$self->clone($service_check) );
+            push( @{ $self->{'work'}->{$report_srv}->{'service'}->{'pasive'} },$self->clone($service_check) );
         }
     }    
 }
