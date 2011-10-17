@@ -85,6 +85,9 @@ sub delegate {
         # actify the host check
         $active_check->{'active_checks_enabled'} = 1;
         $active_check->{'passive_checks_enabled'} = 0;
+        if($poll_srv ne $report_srv)
+            $active_check->{'notifications_enabled'} = 0;
+        }
 
         # add it to the poll server's active work list
         push( @{ $self->{'work'}->{$poll_srv}->{'host'}->{'active'} },$active_check );
@@ -96,6 +99,7 @@ sub delegate {
             # passify the host check
             $passive_check->{'active_checks_enabled'} = 1;
             $passive_check->{'passive_checks_enabled'} = 0;
+            $passive_check->{'notifications_enabled'} = 1;
 
             # add the passive check to the report servers work list
             push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $passive_check );
