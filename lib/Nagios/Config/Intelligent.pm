@@ -78,9 +78,9 @@ sub delegate {
     foreach my $host (@{ $self->{'objects'}->{'host'} }){
         my $poll_srv = $self->poll_server($host->{'address'});
         my $report_srv = $self->report_server($host->{'address'});
-        push( @{ $self->{'work'}->{$poll_srv}->{'host'}->{'active'} }, YAML::Load(YAML::Dump($host)) );
+        push( @{ $self->{'work'}->{$poll_srv}->{'host'}->{'active'} },$self->clone($self->detemplate($host)) );
         if($poll_srv ne $report_srv){
-            push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, YAML::Load(YAML::Dump($host)) );
+            push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $self->clone($self->detemplate($host)) );
         }
     } 
 }
