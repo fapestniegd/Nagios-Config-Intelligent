@@ -147,6 +147,7 @@ sub report_server{
 sub poll_server{
     my $self = shift;
     my $target = shift;
+    return undef unless $target;
     return $self->{'poll_server'}->{$target} if(defined($self->{'poll_server'}->{$target}));
     my $max_hops = 100000;
     my $closest_poller = undef;;
