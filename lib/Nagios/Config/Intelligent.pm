@@ -145,15 +145,15 @@ sub write_object_cfgs{
         if(! -d "$cnstr->{'dir'}"){ return undef; }
         if(! -w "$cnstr->{'dir'}"){ return undef; }
         # for each nagios poll server
-        #     write out non-host configs (commands, contact, contactgroup)
         #         for each host create <host>.cfg in objects dir with  write out host check
         #             for each service for that host, append active service checks
         #
         foreach my $pollsrv (@{ $self->list_poll_only_servers }){
             if(! -d "$cnstr->{'dir'}/$pollsrv"){ mkdir("$cnstr->{'dir'}/$pollsrv"); }
             ################################################################################
+            #     write out non-host configs (commands, contact, contactgroup)
             foreach my $object_type (keys(%{ $self->{'objects'} })){
-                next if(grep(/$object_type/, ('host', 'service')));
+                next if(grep(/$object_type/, ('host', 'service','hostdependency','servicedependency')));
                 my $fh = FileHandle->new("> $cnstr->{'dir'}/$pollsrv/$object_type.cfg");
                 if (defined $fh) {
                     my $max_key_length=0;
