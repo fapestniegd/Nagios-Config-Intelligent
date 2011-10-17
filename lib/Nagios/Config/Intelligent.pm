@@ -536,6 +536,7 @@ sub find_objects{
                     }
                 }else{
                     $allmatch=0; # if we're missing a key in the attrs, then all don't match
+               }
             }else{
                 $allmatch=0; # if we're missing a key in the attrs, then all don't match
             }
