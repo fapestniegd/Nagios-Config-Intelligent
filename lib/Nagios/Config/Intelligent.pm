@@ -528,11 +528,14 @@ sub find_objects{
         }
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
-            if(defined($entry->{$needle})){
-                print STDERR "$needle: [ $entry->{$needle} ] eq [ $attrs->{$needle} ]\n";
-                unless($entry->{$needle} eq $attrs->{$needle}){
-                    $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
-                }
+            if(defined($attr->{$needle})){
+                if(defined($entry->{$needle})){
+                    print STDERR "$needle: [ $entry->{$needle} ] eq [ $attrs->{$needle} ]\n";
+                    unless($entry->{$needle} eq $attrs->{$needle}){
+                        $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
+                    }
+                }else{
+                    $allmatch=0; # if we're missing a key in the attrs, then all don't match
             }else{
                 $allmatch=0; # if we're missing a key in the attrs, then all don't match
             }
