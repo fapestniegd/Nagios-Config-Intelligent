@@ -530,7 +530,6 @@ sub find_objects{
         foreach my $needle (keys(%{ $attrs })){
             if(defined($attrs->{$needle})){ # how is this ever not the case? And yet, errors.
                 if(defined($entry->{$needle})){
-                    print STDERR "$needle: [ $entry->{$needle} ] eq [ $attrs->{$needle} ]\n";
                     unless($entry->{$needle} eq $attrs->{$needle}){
                         $allmatch=0; # if the key's value we're looking for isn't the value in the entry, then all don't match
                     }
