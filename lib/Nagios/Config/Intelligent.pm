@@ -124,12 +124,23 @@ sub delegate {
         # make a copy of the service check, de-template it
         my $service_check = $self->clone($self->detemplate('service',$service));
 
+        # actify the service check (strip out anything that makes it passive, add active traits)
+        $service_check->{'active_checks_enabled'} = 1;
+        delete($service_check->{'passive_checks_enabled'});
+        if($poll_srv ne $report_srv){
+            $service_check->{'notifications_enabled'} = 0;
+            delete($service_check->{'notification_interval'});
+            delete($service_check->{'notification_options'});
+            delete($service_check->{'notification_period'});
+            delete($service_check->{'notifications_enabled'});
+        }
+
         # add the active check
         push( @{ $self->{'work'}->{$poll_srv}->{'service'}->{'active'} },$service_check );
        
         # and the passive check if the report server is not the poll server
         if($poll_srv ne $report_srv){
-            push( @{ $self->{'work'}->{$report_srv}->{'service'}->{'pasive'} },$self->clone($service_check) );
+            push( @{ $self->{'work'}->{$report_srv}->{'service'}->{'passive'} },$self->clone($service_check) );
         }
     }    
 }
