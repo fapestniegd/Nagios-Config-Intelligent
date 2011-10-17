@@ -561,6 +561,10 @@ sub find_object{
         return shift(@{$objects});
     }else{
         print STDERR "no objects found matching search\n";
+        print STDERR Data::Dumper->Dump([{
+                                           'type' => $type,
+                                           'attrs' => $attrs,
+                                       }]);
         return undef;
     }
 }
