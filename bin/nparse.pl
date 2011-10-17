@@ -34,7 +34,7 @@ my $n = Nagios::Config::Intelligent->new({
 
 ################################################################################
 # take a peek at the network
-$n->{'g'}->draw("routers.png");
+#$n->{'g'}->draw("routers.png");
 
 # calculate poll server for target
 # trace hostdependencies from poll server to target, add if not present

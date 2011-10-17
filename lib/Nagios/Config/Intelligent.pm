@@ -139,7 +139,7 @@ sub write_object_cfgs{
         if(! -d "$cnstr->{'dir'}"){ mkdir("$cnstr->{'dir'}"); }
         if(! -d "$cnstr->{'dir'}"){ return undef; }
         if(! -w "$cnstr->{'dir'}"){ return undef; }
-        foreach my $pollsrv ( $self->list_poll_servers ){
+        foreach my $pollsrv (@{ $self->list_poll_servers }){
             print STDERR "poll only: $pollsrv\n";
         }
 # for each nagios poll server
