@@ -63,6 +63,6 @@ my $n = Nagios::Config::Intelligent->new({
 #print $n->dump();
 
 $n->delegate();
-print Data::Dumper->Dump([$n]);
+print Data::Dumper->Dump([$n->{'work'}]);
 
 #$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
