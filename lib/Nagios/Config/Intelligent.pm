@@ -528,7 +528,7 @@ sub find_objects{
         }
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
-            if(defined($attr->{$needle})){
+            if(defined($attrs->{$needle})){ # how is this ever not the case? And yet, errors.
                 if(defined($entry->{$needle})){
                     print STDERR "$needle: [ $entry->{$needle} ] eq [ $attrs->{$needle} ]\n";
                     unless($entry->{$needle} eq $attrs->{$needle}){
