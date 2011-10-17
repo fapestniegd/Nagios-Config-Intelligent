@@ -217,6 +217,7 @@ sub write_object_cfgs{
             ################################################################################
             #     write out non-host configs (commands, contact, contactgroup)
             foreach my $object_type (keys(%{ $self->{'objects'} })){
+                next unless $object_type;
                 next if(grep(
                               /$object_type/, 
                               (
