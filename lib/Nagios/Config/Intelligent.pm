@@ -78,9 +78,9 @@ sub delegate {
     foreach my $host (@{ $self->{'objects'}->{'host'} }){
         my $poll_srv = $self->poll_server($host->{'address'});
         my $report_srv = $self->report_server($host->{'address'});
-        push( @{ $self->{'work'}->{'active'}->{$poll_srv}->{'host'} }, $host);
+        push( @{ $self->{'work'}->{$poll_srv}->{'host'}->{'active'} }, $host);
         if($poll_srv ne $report_srv){
-            push( @{ $self->{'work'}->{'passive'}->{$report_srv}->{'host'} }, $host);
+            push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $host);
         }
     } 
 }
