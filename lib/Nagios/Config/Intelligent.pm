@@ -77,6 +77,7 @@ sub delegate {
     my $self = shift;
     ############################################################################
     # handle the host entry foreach my $host (@{ $self->{'objects'}->{'host'} }){
+    foreach my $host (@{ $self->{'objects'}->{'host'} }){
         my $poll_srv = $self->poll_server($host->{'address'});
         my $report_srv = $self->report_server($host->{'address'});
 
