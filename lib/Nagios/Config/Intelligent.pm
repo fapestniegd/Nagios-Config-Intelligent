@@ -122,6 +122,15 @@ sub get_cfgs {
         @files;
 }
 
+sub list_poll_servers{
+    my $self = shift;
+    my $pollers = [];
+    foreach my $poll_server (@{ $self->{'nagios'}->{'poll'} }){
+        push(@{ $pollers }, $poll_server) unless grep(/^$poll_server$/, @{ $self->{'nagios'}->{'report'});
+    }
+    return $pollers;
+}
+
 sub write_object_cfgs{
     my $self = shift; 
     my $cnstr = shift;
@@ -130,9 +139,22 @@ sub write_object_cfgs{
         if(! -d "$cnstr->{'dir'}"){ mkdir("$cnstr->{'dir'}"); }
         if(! -d "$cnstr->{'dir'}"){ return undef; }
         if(! -w "$cnstr->{'dir'}"){ return undef; }
- 
+
+    foreach my $pollsrv ($self->list_poll_servers){
+        print STDERR "poll only: $pollsrv\n";
+    }
+# for each nagios poll server
+#     write out non-host configs (commands, contact, contactgroup)
+#         for each host create <host>.cfg in objects dir with  write out host check
+#             for each service for that host, append active service checks
+#
+# for each nagios report server,
+#     write out non-host configs (commands, contact, contactgroup)
+#         for each host create <host>.cfg in objects dir with  write out host check, hostextinfo, hostdependencies
+#             for each service for that host, append (active and passive) service checks, serviceextinfo, servicedependencies
+
         foreach my $object_type (keys(%{ $self->{'objects'} })){
-            next if(grep(/$object_type/, ('host', 'hostdependency', 'service','servicedependency')));
+            next if(grep(/$object_type/, ('host', 'service')));
             my $fh = FileHandle->new("> $cnstr->{'dir'}/$object_type.cfg");
             if (defined $fh) {
                 my $max_key_length=0;

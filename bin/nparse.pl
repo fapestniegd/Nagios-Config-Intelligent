@@ -36,6 +36,12 @@ my $n = Nagios::Config::Intelligent->new({
 # take a peek at the network
 $n->{'g'}->draw("routers.png");
 
+# calculate poll server for target
+# trace hostdependencies from poll server to target, add if not present
+# trace servicedependencies from poll server to target, add if not present
+# for each poll host, write out active checks into cfg_root/hostname/obj.cfg
+# for the report host, write out passive checks into cfg_root/hostname/obj.cfg
+
 ################################################################################
 # my $poll;
 # foreach my $host (@{ $n->{'objects'}->{'host'} }){
