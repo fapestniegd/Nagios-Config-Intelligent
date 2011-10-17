@@ -122,13 +122,18 @@ sub get_cfgs {
         @files;
 }
 
-sub list_poll_servers{
+sub list_poll_only_servers{
     my $self = shift;
     my $pollers = [];
     foreach my $poll_server (@{ $self->{'nagios'}->{'poll'} }){
         push(@{ $pollers }, $poll_server) unless grep(/^$poll_server$/, @{ $self->{'nagios'}->{'report'} });
     }
     return $pollers;
+}
+
+sub list_report_servers{
+    my $self = shift;
+    return $self->{'nagios'}->{'report'};
 }
 
 sub write_object_cfgs{
@@ -139,8 +144,11 @@ sub write_object_cfgs{
         if(! -d "$cnstr->{'dir'}"){ mkdir("$cnstr->{'dir'}"); }
         if(! -d "$cnstr->{'dir'}"){ return undef; }
         if(! -w "$cnstr->{'dir'}"){ return undef; }
-        foreach my $pollsrv (@{ $self->list_poll_servers }){
+        foreach my $pollsrv (@{ $self->list_poll_only_servers }){
             print STDERR "poll only: $pollsrv\n";
+        }
+        foreach my $reportsrv (@{ $self->list_report_servers }){
+            print STDERR "report : $reportsrv\n";
         }
 # for each nagios poll server
 #     write out non-host configs (commands, contact, contactgroup)
