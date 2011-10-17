@@ -75,15 +75,15 @@ sub new{
 # 
 sub delegate {
     my $self = shift;
-    # handle the host entry for the active server
-    foreach my $host (@{ $self->{'objects'}->{'host'} }){
+    ############################################################################
+    # handle the host entry foreach my $host (@{ $self->{'objects'}->{'host'} }){
         my $poll_srv = $self->poll_server($host->{'address'});
         my $report_srv = $self->report_server($host->{'address'});
 
-        # make a copy of the active check
+        # make a copy of the host check, de-template it
         my $active_check = $self->clone($self->detemplate('host',$host));
 
-        # actify the host check
+        # actify the host check (strip out anything that makes it passive, add active traits)
         $active_check->{'active_checks_enabled'} = 1;
         delete($active_check->{'passive_checks_enabled'});
         if($poll_srv ne $report_srv){
@@ -98,10 +98,10 @@ sub delegate {
         push( @{ $self->{'work'}->{$poll_srv}->{'host'}->{'active'} },$active_check );
 
         if($poll_srv ne $report_srv){
-            # copy the check for passive acceptance into the report host
+            # copy the check for passive acceptance into the report host, de-template it
             my $passive_check = $self->clone($self->detemplate('host',$host));
 
-            # passify the host check
+            # passify the host check (strip out anything that makes it active, add passive traits)
             $passive_check->{'active_checks_enabled'} = 1;
             $passive_check->{'notifications_enabled'} = 1;
             delete($passive_check->{'passive_checks_enabled'});
@@ -110,9 +110,22 @@ sub delegate {
             push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $passive_check );
         }
     } 
-    foreach my $host (@{ $self->{'objects'}->{'host'} }){
-        
-    }
+    ############################################################################
+    # now we do all service checks
+    foreach my $service (@{ $self->{'objects'}->{'service'} }){
+
+        # get the host and poll host for this service
+        my $host = $self->find_host({ 'host_name' => $host->{'host_name'} });
+        my $poll_srv = $self->poll_server($host->{'address'}); 
+        my $report_srv = $self->report_server($host->{'address'}); 
+
+        # make a copy of the service check, de-template it
+        my $service_check = $self->clone($self->detemplate('service',$service));
+        push( @{ $self->{'work'}->{$poll_srv}->{'service'}->{'active'} },$service_check );
+        if($poll_srv ne $report_srv){
+            push( @{ $self->{'work'}->{$poll_srv}->{'service'}->{'pasive'} },$service_check );
+        }
+    }    
 }
 
 sub report_server{
