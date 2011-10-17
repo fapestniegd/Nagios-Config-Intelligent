@@ -9,7 +9,6 @@ require Exporter;
 # use AutoLoader qw(AUTOLOAD);
 
 our @ISA = qw(Exporter);
-
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
@@ -17,16 +16,9 @@ our @ISA = qw(Exporter);
 # This allows declaration	use Nagios::Config::Intelligent ':all';
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	
-) ] );
-
+our %EXPORT_TAGS = ( 'all' => [ qw( ) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw(
-	
-);
-
+our @EXPORT = qw( );
 our $VERSION = '0.01';
 
 
@@ -78,6 +70,29 @@ sub new{
 }
 
 ################################################################################
+# Assign active checks to the closest poll server and passive checks to the
+# reporting server (if different from the poll server)
+# 
+sub delegate {
+    my $self = shift;
+    foreach my $host (@{ $n->{'objects'}->{'host'} }){
+        my $poll_srv = $n->poll_server($host->{'address'});
+        my $report_srv = $n->report_server($host->{'address'});
+        push( @{ $self->{'work'}->{'active'}->{$poll_srv}->{'host'} }, $host);
+        if($poll_srv ne $report_srv){
+            push( @{ $self->{'work'}->{'passive'}->{$report_srv}->{'host'} }, $host);
+        }
+    } 
+}
+
+sub report_server{
+    # just in case we want to select a different report server for some cases later
+    my $self = shift;
+    my $target = shift;
+    return $self->{'nagios'}->{'report'}->[0];
+}
+
+################################################################################
 # Find the "appropriate" poll server for this host
 # 
 # if a 'poll' server is in the same network, use it.
@@ -89,6 +104,7 @@ sub new{
 sub poll_server{
     my $self = shift;
     my $target = shift;
+    return $self->{'poll_server'}->{$target} if(defined($self->{'poll_server'}->{$target}));
     my $max_hops = 100000;
     my $closest_poller = undef;;
     foreach my $pollhost (@{ $self->{'nagios'}->{'poll'} }){
@@ -99,7 +115,12 @@ sub poll_server{
             $closest_poller = $pollhost;
         }
     }
-    return $closest_poller if(defined($closest_poller));
+    if(defined($closest_poller)){
+        # cache it for subsequent runs
+        $self->{'poll_server'}->{$target} = $closest_poller;
+        return $closest_poller;
+    }
+    $self->{'poll_server'}->{$target} = undef;
     return "indeterminite";
 }
 

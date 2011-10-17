@@ -54,6 +54,7 @@ my $n = Nagios::Config::Intelligent->new({
 #print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
 #print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
 
+
 ################################################################################
 # template reduction routines
 # $n->reduce_objects; # this is computationally expensive
@@ -61,4 +62,7 @@ my $n = Nagios::Config::Intelligent->new({
 
 #print $n->dump();
 
-$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
+$n->delegate();
+print Data::Dumper->Dump([$n]);
+
+#$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
