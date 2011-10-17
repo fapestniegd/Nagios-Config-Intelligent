@@ -151,6 +151,53 @@ sub write_object_cfgs{
         #
         foreach my $pollsrv (@{ $self->list_poll_only_servers }){
             if(! -d "$cnstr->{'dir'}/$pollsrv"){ mkdir("$cnstr->{'dir'}/ $pollsrv"); }
+            ################################################################################
+            foreach my $object_type (keys(%{ $self->{'objects'} })){
+                next if(grep(/$object_type/, ('host', 'service')));
+                my $fh = FileHandle->new("> $cnstr->{'dir'}/$pollsrv/$object_type.cfg");
+                if (defined $fh) {
+                    my $max_key_length=0;
+                    foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
+                        foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
+                           $max_key_length=length($key) if(length($key) > $max_key_length);
+                        }
+                    }
+                    foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
+                        foreach my $key (keys(%{ ${object} })){
+                           $max_key_length=length($key) if(length($key) > $max_key_length);
+                        }
+                    }
+                    print $fh "################################################################################\n";
+                    print $fh "# Templates                                                                    #\n\n";
+                    foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
+                        print $fh "define $object_type {\n";
+                        foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
+                            print $fh "    $key";
+                            for(my $i=0; $i<=$max_key_length-length($key); $i++){ print $fh " "; }
+                            print $fh "$self->{'templates'}->{ $object_type }->{ $template_name }->{$key}\n";
+                        }
+                        print $fh "}\n\n";
+    
+                    }
+                    print $fh "#                                                                              #\n";
+                    print $fh "################################################################################\n\n";
+                    print $fh "################################################################################\n";
+                    print $fh "# Objects                                                                      #\n\n";
+                    foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
+                        print $fh "define $object_type {\n";
+                        foreach my $key (keys(%{ ${object} })){
+                            print $fh "    $key";
+                            for(my $i=0; $i<=$max_key_length-length($key); $i++){ print $fh " "; }
+                            print $fh "$object->{$key}\n";
+                        }
+                        print $fh "}\n\n";
+                    }
+                    print $fh "#                                                                              #\n";
+                    print $fh "################################################################################\n";
+                }
+                $fh->close;
+            }
+            ################################################################################
         }
         # for each nagios report server,
         #     write out non-host configs (commands, contact, contactgroup)
@@ -161,52 +208,7 @@ sub write_object_cfgs{
         }
 
 
-################################################################################
-        foreach my $object_type (keys(%{ $self->{'objects'} })){
-            next if(grep(/$object_type/, ('host', 'service')));
-            my $fh = FileHandle->new("> $cnstr->{'dir'}/$object_type.cfg");
-            if (defined $fh) {
-                my $max_key_length=0;
-                foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
-                    foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
-                       $max_key_length=length($key) if(length($key) > $max_key_length);
-                    }
-                }
-                foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
-                    foreach my $key (keys(%{ ${object} })){
-                       $max_key_length=length($key) if(length($key) > $max_key_length);
-                    }
-                }
-                print $fh "################################################################################\n";
-                print $fh "# Templates                                                                    #\n\n";
-                foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
-                    print $fh "define $object_type {\n";
-                    foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
-                        print $fh "    $key";
-                        for(my $i=0; $i<=$max_key_length-length($key); $i++){ print $fh " "; }
-                        print $fh "$self->{'templates'}->{ $object_type }->{ $template_name }->{$key}\n";
-                    }
-                    print $fh "}\n\n";
 
-                }
-                print $fh "#                                                                              #\n";
-                print $fh "################################################################################\n\n";
-                print $fh "################################################################################\n";
-                print $fh "# Objects                                                                      #\n\n";
-                foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
-                    print $fh "define $object_type {\n";
-                    foreach my $key (keys(%{ ${object} })){
-                        print $fh "    $key";
-                        for(my $i=0; $i<=$max_key_length-length($key); $i++){ print $fh " "; }
-                        print $fh "$object->{$key}\n";
-                    }
-                    print $fh "}\n\n";
-                }
-                print $fh "#                                                                              #\n";
-                print $fh "################################################################################\n";
-            }
-            $fh->close;
-        }
     }
 }
 
