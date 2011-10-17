@@ -150,7 +150,7 @@ sub write_object_cfgs{
         #             for each service for that host, append active service checks
         #
         foreach my $pollsrv (@{ $self->list_poll_only_servers }){
-            if(! -d "$cnstr->{'dir'}/$pollsrv"){ mkdir("$cnstr->{'dir'}/ $pollsrv"); }
+            if(! -d "$cnstr->{'dir'}/$pollsrv"){ mkdir("$cnstr->{'dir'}/$pollsrv"); }
             ################################################################################
             foreach my $object_type (keys(%{ $self->{'objects'} })){
                 next if(grep(/$object_type/, ('host', 'service')));
