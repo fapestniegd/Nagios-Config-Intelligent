@@ -115,6 +115,8 @@ sub delegate {
     # now we do all service checks
     foreach my $service (@{ $self->{'objects'}->{'service'} }){
         # get the host and poll host for this service
+        print STDERR Data::Dumper->Dump([$service])  unless(defined( $service->{'host_name'} ));
+        next unless(defined( $service->{'host_name'} ));
         my $host = $self->find_host({ 'host_name' => $service->{'host_name'} });
         my $poll_srv = $self->poll_server($host->{'address'}); 
         my $report_srv = $self->report_server($host->{'address'}); 
