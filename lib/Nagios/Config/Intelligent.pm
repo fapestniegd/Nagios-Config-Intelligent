@@ -144,22 +144,24 @@ sub write_object_cfgs{
         if(! -d "$cnstr->{'dir'}"){ mkdir("$cnstr->{'dir'}"); }
         if(! -d "$cnstr->{'dir'}"){ return undef; }
         if(! -w "$cnstr->{'dir'}"){ return undef; }
+        # for each nagios poll server
+        #     write out non-host configs (commands, contact, contactgroup)
+        #         for each host create <host>.cfg in objects dir with  write out host check
+        #             for each service for that host, append active service checks
+        #
         foreach my $pollsrv (@{ $self->list_poll_only_servers }){
-            print STDERR "poll only: $pollsrv\n";
+            if(! -d "$cnstr->{'dir'}/$pollsrv"){ mkdir("$cnstr->{'dir'}/ $pollsrv"); }
         }
+        # for each nagios report server,
+        #     write out non-host configs (commands, contact, contactgroup)
+        #         for each host create <host>.cfg in objects dir with  write out host check, hostextinfo, hostdependencies
+        #             for each service for that host, append (active and passive) service checks, serviceextinfo, servicedependencies
         foreach my $reportsrv (@{ $self->list_report_servers }){
-            print STDERR "report : $reportsrv\n";
+            if(! -d "$cnstr->{'dir'}/$reportsrv"){ mkdir("$cnstr->{'dir'}/$reportsrv"); }
         }
-# for each nagios poll server
-#     write out non-host configs (commands, contact, contactgroup)
-#         for each host create <host>.cfg in objects dir with  write out host check
-#             for each service for that host, append active service checks
-#
-# for each nagios report server,
-#     write out non-host configs (commands, contact, contactgroup)
-#         for each host create <host>.cfg in objects dir with  write out host check, hostextinfo, hostdependencies
-#             for each service for that host, append (active and passive) service checks, serviceextinfo, servicedependencies
 
+
+################################################################################
         foreach my $object_type (keys(%{ $self->{'objects'} })){
             next if(grep(/$object_type/, ('host', 'service')));
             my $fh = FileHandle->new("> $cnstr->{'dir'}/$object_type.cfg");
