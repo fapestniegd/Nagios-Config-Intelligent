@@ -153,7 +153,18 @@ sub write_object_cfgs{
             ################################################################################
             #     write out non-host configs (commands, contact, contactgroup)
             foreach my $object_type (keys(%{ $self->{'objects'} })){
-                next if(grep(/$object_type/, ('host', 'service','hostdependency','servicedependency','hostextinfo', 'serviceextinfo')));
+                next if(grep(
+                              /$object_type/, 
+                              (
+                                'host',
+                                'hostextinfo',
+                                'hostgroup',
+                                'hostdependency',
+                                'service',
+                                'serviceextinfo',
+                                'servicegroup',
+                                'servicedependency'
+                             )));
                 my $fh = FileHandle->new("> $cnstr->{'dir'}/$pollsrv/$object_type.cfg");
                 if (defined $fh) {
                     my $max_key_length=0;
