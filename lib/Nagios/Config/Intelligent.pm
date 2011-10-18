@@ -258,10 +258,10 @@ sub list_report_servers{
 
 # $self->write_object_cfg('host', $obj_list_ref, $filename);
 sub write_object_cfg{
-    my $self     = shift;
-    my $type     = shift;
-    my $objects  = shift;
-    my $filename = shift;
+    my $self        = shift;
+    my $object_type = shift;
+    my $objects     = shift;
+    my $filename    = shift;
 
     # determine the longest key for readability of the configs
     my $max_key_length = undef;
@@ -279,7 +279,7 @@ sub write_object_cfg{
     my $fh = FileHandle->new("> $filename");
     if (defined $fh) {
         print $fh "################################################################################\n";
-        print $fh "# $type                                                                        #\n\n";
+        print $fh "# $object_ type                                                                #\n\n";
         foreach my $object (@{ $objects }){
             print $fh "define $object_type {\n";
             foreach my $key (keys(%{ ${object} })){
