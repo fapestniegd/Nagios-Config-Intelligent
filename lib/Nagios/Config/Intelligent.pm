@@ -126,7 +126,11 @@ sub delegate {
         if(defined($service->{'host_name'})){
             push(@{ $new_services }, $service); 
         }elsif(defined($service->{'hostgroup_name'})){
-            print STDERR Data::Dumper->Dump([ $service->{'hostgroup_name'}, $self->hostgroup_members($service->{'hostgroup_name'}) ]);
+            print STDERR Data::Dumper->Dump([{
+                                               'hostgroup_name' => $service->{'hostgroup_name'}
+                                               'hostgroup'      => $self->find_objects('hostgroup',{ 'hostgroup_name' => $service->{'hostgroup_name'} }),
+                                               'members' => $self->hostgroup_members($service->{'hostgroup_name'}),
+                                            }]);
             #foreach my $host (@{ $self->hostgroup_members($service->{'hostgroup_name'}) }){
             #    my $new_service = $self->clone($service); 
             #    delete $new_service->{'hostgroup_name'};
