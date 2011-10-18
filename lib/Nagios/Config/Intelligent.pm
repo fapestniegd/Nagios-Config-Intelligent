@@ -346,12 +346,12 @@ sub write_object_cfgs{
                               (
                                 'host',
                                 #'hostextinfo',
-                                'hostgroup',
-                                'hostdependency',
+                                #'hostgroup',
+                                #'hostdependency',
                                 'service',
                                 #'serviceextinfo',
-                                'servicegroup',
-                                'servicedependency'
+                                #'servicegroup',
+                                #'servicedependency'
                              )));
                 $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type},         "$cnstr->{'dir'}/$reportsrv/$object_type.cfg");
                 $self->write_object_cfg( 'host',       $self->{'work'}->{$reportsrv}->{'host'},    "$cnstr->{'dir'}/$reportsrv/host.cfg");
