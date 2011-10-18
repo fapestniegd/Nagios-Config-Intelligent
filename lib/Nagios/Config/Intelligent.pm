@@ -256,6 +256,40 @@ sub list_report_servers{
     return $self->{'nagios'}->{'report'};
 }
 
+# $self->write_object_cfg('host', $obj_list_ref, $filename);
+sub write_object_cfg{
+    my $self     = shift;
+    my $type     = shift;
+    my $objects  = shift;
+    my $filename = shift;
+
+    # determine the longest key for readability of the configs
+    foreach my $object (@{ $objects }){
+        foreach my $key (keys(%{ ${object} })){
+            $max_key_length=length($key) if(length($key) > $max_key_length);
+        }
+    }
+
+    # write out the objects into the file
+    my $fh = FileHandle->new("> $filename");
+    if (defined $fh) {
+        print $fh "################################################################################\n";
+        print $fh "# $type                                                                        #\n\n";
+        foreach my $object (@{ $objects }){
+            print $fh "define $object_type {\n";
+            foreach my $key (keys(%{ ${object} })){
+                print $fh "    $key";
+                for(my $i=0; $i<=$max_key_length-length($key); $i++){ print $fh " "; }
+                print $fh "$object->{$key}\n";
+            }
+            print $fh "}\n\n";
+        }
+        print $fh "#                                                                              #\n";
+        print $fh "################################################################################\n";
+        $fh->close;
+    } 
+}
+
 sub write_object_cfgs{
     my $self = shift; 
     my $cnstr = shift;
@@ -271,7 +305,6 @@ sub write_object_cfgs{
             if(! -d "$cnstr->{'dir'}/$pollsrv"){ mkdir("$cnstr->{'dir'}/$pollsrv"); }
             ################################################################################
             #     write out non-host configs (commands, contact, contactgroup)
-# $self->{'work'}->{$poll_srv}->{'host'}->{'active'}
             foreach my $object_type (keys(%{ $self->{'objects'} })){
                 next unless $object_type;
                 next if(grep(
@@ -286,50 +319,10 @@ sub write_object_cfgs{
                                 'servicegroup',
                                 'servicedependency'
                              )));
-                my $fh = FileHandle->new("> $cnstr->{'dir'}/$pollsrv/$object_type.cfg");
-                if (defined $fh) {
-                    my $max_key_length=0;
-                    foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
-                        foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
-                           $max_key_length=length($key) if(length($key) > $max_key_length);
-                        }
-                    }
-                    foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
-                        foreach my $key (keys(%{ ${object} })){
-                           $max_key_length=length($key) if(length($key) > $max_key_length);
-                        }
-                    }
-                    if(defined(keys(%{ $self->{'templates'}->{ $object_type } }))){
-print STDERR Data::Dumper->Dump([keys(%{ $self->{'templates'}->{ $object_type } })]);
-                        print $fh "################################################################################\n";
-                        print $fh "# Templates                                                                    #\n\n";
-                        foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
-                            print $fh "define $object_type {\n";
-                            foreach my $key (keys(%{ $self->{'templates'}->{ $object_type }->{ $template_name } })){
-                                print $fh "    $key";
-                                for(my $i=0; $i<=$max_key_length-length($key); $i++){ print $fh " "; }
-                                print $fh "$self->{'templates'}->{ $object_type }->{ $template_name }->{$key}\n";
-                            }
-                            print $fh "}\n\n";
-                        }
-                        print $fh "#                                                                              #\n";
-                        print $fh "################################################################################\n\n";
-                    }
-                    print $fh "################################################################################\n";
-                    print $fh "# Objects                                                                      #\n\n";
-                    foreach my $object (@{ $self->{'objects'}->{ $object_type } }){
-                        print $fh "define $object_type {\n";
-                        foreach my $key (keys(%{ ${object} })){
-                            print $fh "    $key";
-                            for(my $i=0; $i<=$max_key_length-length($key); $i++){ print $fh " "; }
-                            print $fh "$object->{$key}\n";
-                        }
-                        print $fh "}\n\n";
-                    }
-                    print $fh "#                                                                              #\n";
-                    print $fh "################################################################################\n";
-                    $fh->close;
-                }
+
+
+                
+                $self->write_cfg( $object_type, $self->{'objects'}->{$object_type}, "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
             }
             ################################################################################
         }
@@ -340,9 +333,6 @@ print STDERR Data::Dumper->Dump([keys(%{ $self->{'templates'}->{ $object_type } 
         foreach my $reportsrv (@{ $self->list_report_servers }){
             if(! -d "$cnstr->{'dir'}/$reportsrv"){ mkdir("$cnstr->{'dir'}/$reportsrv"); }
         }
-
-
-
     }
 }
 
