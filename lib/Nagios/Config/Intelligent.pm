@@ -105,7 +105,7 @@ sub delegate {
         }
 
         # add it to the poll server's active work list
-        push( @{ $self->{'work'}->{$poll_srv}->{'host'}->{'active'} },$active_check );
+        push( @{ $self->{'work'}->{$poll_srv}->{'host'} },$active_check );
 
         if($poll_srv ne $report_srv){
             # copy the check for passive acceptance into the report host, de-template it
@@ -117,7 +117,7 @@ sub delegate {
             delete($passive_check->{'passive_checks_enabled'});
 
             # add the passive check to the report servers work list
-            push( @{ $self->{'work'}->{$report_srv}->{'host'}->{'passive'} }, $self->clone($passive_check) );
+            push( @{ $self->{'work'}->{$report_srv}->{'host'} }, $self->clone($passive_check) );
         }
     } 
     ############################################################################
@@ -174,11 +174,11 @@ sub delegate {
         }
 
         # add the active check
-        push( @{ $self->{'work'}->{$poll_srv}->{'service'}->{'active'} },$service_check );
+        push( @{ $self->{'work'}->{$poll_srv}->{'service'} },$service_check );
        
         # and the passive check if the report server is not the poll server
         if($poll_srv ne $report_srv){
-            push( @{ $self->{'work'}->{$report_srv}->{'service'}->{'passive'} },$self->clone($service_check) );
+            push( @{ $self->{'work'}->{$report_srv}->{'service'} },$self->clone($service_check) );
         }
     }    
 }
@@ -324,7 +324,9 @@ sub write_object_cfgs{
                                 'servicegroup',
                                 'servicedependency'
                              )));
-                $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type}, "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
+                $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type},       "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
+                $self->write_object_cfg( 'host',       $self->{'work'}->{$pollsrv}->{'host'},    "$cnstr->{'dir'}/$pollsrv/host.cfg");
+                $self->write_object_cfg( 'service',    $self->{'work'}->{$pollsrv}->{'service'}, "$cnstr->{'dir'}/$pollsrv/service.cfg");
             }
             ################################################################################
         }
@@ -350,7 +352,10 @@ sub write_object_cfgs{
                                 'servicegroup',
                                 'servicedependency'
                              )));
-                $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type}, "$cnstr->{'dir'}/$reportsrv/$object_type.cfg");
+                $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type},         "$cnstr->{'dir'}/$reportsrv/$object_type.cfg");
+                $self->write_object_cfg( 'host',       $self->{'work'}->{$reportsrv}->{'host'},    "$cnstr->{'dir'}/$reportsrv/host.cfg");
+                $self->write_object_cfg( 'service',    $self->{'work'}->{$reportsrv}->{'service'}, "$cnstr->{'dir'}/$reportsrv/service.cfg");
+            }
             }
         }
     }
