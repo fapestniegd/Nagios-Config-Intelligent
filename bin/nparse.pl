@@ -67,4 +67,4 @@ my $n = Nagios::Config::Intelligent->new({
 #$n->delegate();
 #print YAML::Dump($n->{'work'});
 
-print Data::Dumper->Dump([$n->hostgroup_members("bna_e_drives");
+print Data::Dumper->Dump([$n->hostgroup_members("bna_e_drives")]);
