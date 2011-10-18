@@ -131,7 +131,7 @@ sub delegate {
                                                'hostgroup'      => $self->find_objects('hostgroup',{ 'hostgroup_name' => $service->{'hostgroup_name'} }),
                                                'members'        => [ $self->hostgroup_members($service->{'hostgroup_name'}) ],
                                             }]);
-            my $members = $self->hostgroup_members($service->{'hostgroup_name'});
+            my @{ $members } = @{ $self->hostgroup_members($service->{'hostgroup_name'}) };
             next unless $members;
             foreach my $host (@{ $members }){
                 my $new_service = $self->clone($service); 
