@@ -112,9 +112,9 @@ sub delegate {
             my $passive_check = $self->clone($self->detemplate('host',$host));
 
             # passify the host check (strip out anything that makes it active, add passive traits)
-            $passive_check->{'active_checks_enabled'} = 1;
+            delete($passive_check->{'active_checks_enabled'});
+            $passive_check->{'passive_checks_enabled'} = 1;
             $passive_check->{'notifications_enabled'} = 1;
-            delete($passive_check->{'passive_checks_enabled'});
 
             # add the passive check to the report servers work list
             push( @{ $self->{'work'}->{$report_srv}->{'host'} }, $self->clone($passive_check) );
