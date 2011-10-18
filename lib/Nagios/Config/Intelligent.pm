@@ -300,7 +300,7 @@ sub write_object_cfgs{
                         }
                     }
                     if(defined(keys(%{ $self->{'templates'}->{ $object_type } }))){
-print Data::Dumper->Dump([keys(%{ $self->{'templates'}->{ $object_type } })]);
+print STDERR Data::Dumper->Dump([keys(%{ $self->{'templates'}->{ $object_type } })]);
                     #    print $fh "################################################################################\n";
                     #    print $fh "# Templates                                                                    #\n\n";
                     #    foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
