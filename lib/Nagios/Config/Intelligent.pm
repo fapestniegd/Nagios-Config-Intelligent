@@ -356,7 +356,6 @@ sub write_object_cfgs{
                 $self->write_object_cfg( 'host',       $self->{'work'}->{$reportsrv}->{'host'},    "$cnstr->{'dir'}/$reportsrv/host.cfg");
                 $self->write_object_cfg( 'service',    $self->{'work'}->{$reportsrv}->{'service'}, "$cnstr->{'dir'}/$reportsrv/service.cfg");
             }
-            }
         }
     }
 }
