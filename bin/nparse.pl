@@ -68,6 +68,5 @@ my $n = Nagios::Config::Intelligent->new({
 
 $n->delegate();
 $n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
-print Data::Dumper->Dump([ $n->{'objects'}->{'hostgroup'} ]);
 
 
