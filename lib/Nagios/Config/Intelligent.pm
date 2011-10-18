@@ -126,13 +126,13 @@ sub delegate {
         if(defined($service->{'host_name'})){
             push(@{ $new_services }, $service); 
         }elsif(defined($service->{'hostgroup_name'})){
-            print Data::Dumper->Dump([ $self->hostgroup_members($service->{'hostgroup_name'}) ]);
-            foreach my $host (@{ $self->hostgroup_members($service->{'hostgroup_name'}) }){
-                my $new_service = $self->clone($service); 
-                delete $new_service->{'hostgroup_name'};
-                $new_service->{'host_name'} = $host;
-                push(@{ $new_services }, $new_service); 
-            }
+            print STDERR Data::Dumper->Dump([ $self->hostgroup_members($service->{'hostgroup_name'}) ]);
+            #foreach my $host (@{ $self->hostgroup_members($service->{'hostgroup_name'}) }){
+            #    my $new_service = $self->clone($service); 
+            #    delete $new_service->{'hostgroup_name'};
+            #    $new_service->{'host_name'} = $host;
+            #    push(@{ $new_services }, $new_service); 
+            #}
         }
     }
     # replace the global services list with our de-refereced one (yes, we've lost some information here, like the hostgroup alias)
