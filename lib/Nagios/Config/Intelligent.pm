@@ -324,7 +324,7 @@ sub write_object_cfgs{
                                 'servicegroup',
                                 'servicedependency'
                              )));
-                $self->write_cfg( $object_type, $self->{'objects'}->{$object_type}, "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
+                $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type}, "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
             }
             ################################################################################
         }
