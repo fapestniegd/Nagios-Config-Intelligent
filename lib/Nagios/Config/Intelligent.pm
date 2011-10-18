@@ -127,7 +127,7 @@ sub delegate {
             push(@{ $new_services }, $service); 
         }elsif(defined($service->{'hostgroup_name'})){
             foreach my $host (@{ $self->hostgroup_members($service->{'hostgroup_name'}) }){
-                my $new_svc = $self->clone($service); 
+                my $new_service = $self->clone($service); 
                 delete $new_svc->{'hostgroup_name'};
                 $new_svc->{'host_name'} = $host;
                 push(@{ $new_services }, $new_service); 
