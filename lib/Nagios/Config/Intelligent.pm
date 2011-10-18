@@ -148,7 +148,6 @@ sub delegate {
     # 
     ############################################################################
     
-
     ############################################################################
     # now we do all service checks
     foreach my $service (@{ $self->{'objects'}->{'service'} }){
@@ -316,13 +315,13 @@ sub write_object_cfgs{
                               /$object_type/, 
                               (
                                 'host',
-                                'hostextinfo',
-                                'hostgroup',
-                                'hostdependency',
+                                #'hostextinfo',
+                                #'hostgroup',
+                                #'hostdependency',
                                 'service',
-                                'serviceextinfo',
-                                'servicegroup',
-                                'servicedependency'
+                                #'serviceextinfo',
+                                #'servicegroup',
+                                #'servicedependency'
                              )));
                 $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type},       "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
                 $self->write_object_cfg( 'host',       $self->{'work'}->{$pollsrv}->{'host'},    "$cnstr->{'dir'}/$pollsrv/host.cfg");
