@@ -264,9 +264,14 @@ sub write_object_cfg{
     my $filename = shift;
 
     # determine the longest key for readability of the configs
+    my $max_key_length = undef;
     foreach my $object (@{ $objects }){
         foreach my $key (keys(%{ ${object} })){
-            $max_key_length=length($key) if(length($key) > $max_key_length);
+            if(! defined($max_key_length)){
+                $max_key_length=length($key);
+            }elsif(length($key) > $max_key_length){
+                $max_key_length=length($key) 
+           }
         }
     }
 
