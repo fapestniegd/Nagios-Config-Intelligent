@@ -73,6 +73,8 @@ sub hostgroup_members{
     my $self = shift;
     my $hostgroup_name = shift;
     my $hostgroup = $self->find_objects('hostgroup', { 'hostgroup_name' => $hostgroup_name });
+    return undef unless defined($hostgroup->[0]);
+    return undef unless defined($hostgroup->[0]->{'members'});
     return split(/,\s+/, $hostgroup->[0]->{'members'}); # you can't have a duplicate name, so this will be [0] or undef
 }
 
