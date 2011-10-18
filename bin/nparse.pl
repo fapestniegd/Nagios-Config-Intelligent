@@ -62,10 +62,9 @@ my $n = Nagios::Config::Intelligent->new({
 
 #print $n->dump();
 
-#$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
 
 
 #print Data::Dumper->Dump([$n->hostgroup_members("bna_e_drives")]);
 
 $n->delegate();
-print YAML::Dump($n->{'work'});
+$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
