@@ -69,6 +69,13 @@ sub new{
     return $self;
 }
 
+sub hostgroup_members{
+    my $self = shift;
+    my $hostgroup_name = shift;
+    my $hostgroup = $self->find_objects('hostgroup', { 'hostgroup_name' => $hostgroup_name });
+    return $hostgroup;
+}
+
 ################################################################################
 # Assign active checks to the closest poll server and passive checks to the
 # reporting server (if different from the poll server)
