@@ -73,7 +73,7 @@ sub hostgroup_members{
     my $self = shift;
     my $hostgroup_name = shift;
     my $hostgroup = $self->find_objects('hostgroup', { 'hostgroup_name' => $hostgroup_name });
-    return split(/,\s+/,$hostgroup->members);
+    return split(/,\s+/,$hostgroup->{'members'});
 }
 
 ################################################################################
