@@ -119,12 +119,23 @@ sub delegate {
         }
     } 
     ############################################################################
+    # service checks can be assigned to a host group, so we dereference those 
+    # into atomic service checks here, replacing the entire service array.
+    my $new_services = [] ;
+    foreach my $service (@{ $self->{'objects'}->{'service'} }){
+        if(defined($service->{'host_name'})){
+            push(@{ $new_services }, $service); 
+        }elsif(defined($service->{'hostgroup_name'})){
+            print STDERR Data::Dumper->Dump([$service])  unless(defined( $service->{'host_name'} ));
+        }
+    }
+    $self->{'objects'}->{'service'} = $self->clone($new_services);
+
+    ############################################################################
     # now we do all service checks
     foreach my $service (@{ $self->{'objects'}->{'service'} }){
 
-        print STDERR Data::Dumper->Dump([$service])  unless(defined( $service->{'host_name'} ));
         next unless(defined( $service->{'host_name'} ));
-
         # get the host and poll host for this service
         my $host = $self->find_host({ 'host_name' => $service->{'host_name'} });
         my $poll_srv = $self->poll_server($host->{'address'}); 
