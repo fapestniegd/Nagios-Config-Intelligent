@@ -299,7 +299,7 @@ sub write_object_cfgs{
                            $max_key_length=length($key) if(length($key) > $max_key_length);
                         }
                     }
-                    if(defined($self->{'templates'}->{ $object_type })){
+                    if(defined(keys(%{ $self->{'templates'}->{ $object_type } }))){
                         print $fh "################################################################################\n";
                         print $fh "# Templates                                                                    #\n\n";
                         foreach my $template_name (keys(%{ $self->{'templates'}->{ $object_type } })){
