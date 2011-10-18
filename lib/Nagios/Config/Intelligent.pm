@@ -279,7 +279,7 @@ sub write_object_cfg{
     my $fh = FileHandle->new("> $filename");
     if (defined $fh) {
         print $fh "################################################################################\n";
-        print $fh "# $object_ type                                                                #\n\n";
+        print $fh "# $object_type                                                                 #\n\n";
         foreach my $object (@{ $objects }){
             print $fh "define $object_type {\n";
             foreach my $key (keys(%{ ${object} })){
