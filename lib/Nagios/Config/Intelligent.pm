@@ -132,7 +132,7 @@ sub delegate {
             print STDERR Data::Dumper->Dump([{
                                                'hostgroup_name' => $service->{'hostgroup_name'},
                                                'hostgroup'      => $self->find_objects('hostgroup',{ 'hostgroup_name' => $service->{'hostgroup_name'} }),
-                                               'members'        => @members,
+                                               'members'        => \@members,
                                             }]);
             next unless @members;
             foreach my $host (@members){
