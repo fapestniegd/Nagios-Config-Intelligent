@@ -334,6 +334,24 @@ sub write_object_cfgs{
         #             for each service for that host, append (active and passive) service checks, serviceextinfo, servicedependencies
         foreach my $reportsrv (@{ $self->list_report_servers }){
             if(! -d "$cnstr->{'dir'}/$reportsrv"){ mkdir("$cnstr->{'dir'}/$reportsrv"); }
+            ################################################################################
+            #     write out non-host configs (commands, contact, contactgroup)
+            foreach my $object_type (keys(%{ $self->{'objects'} })){
+                next unless $object_type;
+                next if(grep( 
+                              /$object_type/,
+                              (
+                                'host',
+                                'hostextinfo',
+                                'hostgroup',
+                                'hostdependency',
+                                'service',
+                                'serviceextinfo',
+                                'servicegroup',
+                                'servicedependency'
+                             )));
+                $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type}, "$cnstr->{'dir'}/$reportsrv/$object_type.cfg");
+            }
         }
     }
 }
