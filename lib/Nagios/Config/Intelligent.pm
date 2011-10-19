@@ -307,7 +307,7 @@ sub nobject_isa{
                                'hostgroup'         => [ 
                                                         'hostgroup_name',
                                                         'alias',
-                                                        'members',
+                                                        # 'members', # it will accept it without this even though the docs say it's "required"
                                                       ],
                                'service'           => [
                                                         'host_name',
