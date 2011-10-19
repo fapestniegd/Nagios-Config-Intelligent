@@ -454,11 +454,11 @@ sub write_object_cfgs{
                 # we write these out to objects.d/<fqdn>.cfg host checks then service checks
                 # then hostextinfo, serviceextinfo, hostdependencies, servicedependencies,
                 foreach my $host_nobject (@{ $self->{'work'}->{$pollsrv}->{'host'} }){
-                    $self->write_object_cfg($host_nobject,"$cnstr->{'dir'}/$pollsrv/nobjects.d".$host_nobject->{'host_name'}.".cfg");
+                    $self->write_object_cfg($host_nobject,"$cnstr->{'dir'}/$pollsrv/nobjects.d/".$host_nobject->{'host_name'}.".cfg");
 
                     foreach my $service_nobject (@{ $self->{'work'}->{$pollsrv}->{'service'} }){
                         next if ($service_nobject->{'host_name'} ne $host_nobject->{'host_name'});
-                        $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$pollsrv/nobjects.d".$host_nobject->{'host_name'}.".cfg",1);
+                        $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$pollsrv/nobjects.d/".$host_nobject->{'host_name'}.".cfg",1);
                     }
                 }
             }
@@ -470,6 +470,7 @@ sub write_object_cfgs{
         #             for each service for that host, append (active and passive) service checks, serviceextinfo, servicedependencies
         foreach my $reportsrv (@{ $self->list_report_servers }){
             if(! -d "$cnstr->{'dir'}/$reportsrv"){ mkdir("$cnstr->{'dir'}/$reportsrv"); }
+            if(! -d "$cnstr->{'dir'}/$reportsrv/nobjects.d"){ mkdir("$cnstr->{'dir'}/$reportsrv/nobjects.d"); }
             ################################################################################
             #     write out non-host configs (commands, contact, contactgroup)
             foreach my $object_type (keys(%{ $self->{'objects'} })){
@@ -492,11 +493,11 @@ sub write_object_cfgs{
                 # we write these out to objects.d/<fqdn>.cfg host checks then service checks
                 # then hostextinfo, serviceextinfo, hostdependencies, servicedependencies,
                 foreach my $host_nobject (@{ $self->{'work'}->{$reportsrv}->{'host'} }){
-                    $self->write_object_cfg($host_nobject,"$cnstr->{'dir'}/$reportsrv/nobjects.d".$host_nobject->{'host_name'}.".cfg");
+                    $self->write_object_cfg($host_nobject,"$cnstr->{'dir'}/$reportsrv/nobjects.d/".$host_nobject->{'host_name'}.".cfg");
 
                     foreach my $service_nobject (@{ $self->{'work'}->{$reportsrv}->{'service'} }){
                         next if ($service_nobject->{'host_name'} ne $host_nobject->{'host_name'});
-                        $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$reportsrv/nobjects.d".$host_nobject->{'host_name'}.".cfg",1);
+                        $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$reportsrv/nobjects.d/".$host_nobject->{'host_name'}.".cfg",1);
                     }
                 }
             }
