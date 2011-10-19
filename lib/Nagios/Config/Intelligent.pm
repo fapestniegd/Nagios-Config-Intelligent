@@ -255,16 +255,136 @@ sub list_report_servers{
     return $self->{'nagios'}->{'report'};
 }
 
-# $self->write_object_cfg('host', $obj_list_ref, $filename);
+sub nobject_isa{
+   my $self = shift;
+   my $nobject = shift;
+   # nagios 2.x required attributes
+   my $required_attributes = {
+                               'command'           => [ 
+                                                       'command_name', 
+                                                       'command_line', 
+                                                      ],
+                               'contact'           => [ 
+                                                       'contact_name', 
+                                                       'alias', 
+                                                       'host_notification_period', 
+                                                       'service_notification_period', 
+                                                       'host_notification_options', 
+                                                       'service_notification_options', 
+                                                       'host_notification_commands', 
+                                                       'service_notification_commands', 
+                                                      ],
+                               'contactgroup'      => [ 
+                                                       'contactgroup_name', 
+                                                       'alias', 
+                                                       'members', 
+                                                      ],
+                               'host'              => [ 
+                                                        'host_name', 
+                                                        'alias', 
+                                                        'address', 
+                                                        'max_check_attempts', 
+                                                        'check_period', 
+                                                        'contact_groups', 
+                                                        'notification_interval',
+                                                        'notification_period', 
+                                                        'notification_options',
+                                                      ],
+                               'hostdependency'    => [ 
+                                                       'dependent_host_name',
+                                                       'host_name',
+                                                      ],
+                               'hostescalation'    => [ 
+                                                        'host_name',
+                                                        'contact_groups',
+                                                        'first_notification',
+                                                        'last_notification',
+                                                        'notification_interval',
+                                                      ],
+                               'hostextinfo'       => [ 
+                                                        'host_name',
+                                                      ],
+                               'hostgroup'         => [ 
+                                                        'hostgroup_name',
+                                                        'alias',
+                                                        'members',
+                                                      ],
+                               'service'           => [
+                                                        'host_name',
+                                                        'service_description',
+                                                        'check_command',
+                                                        'max_check_attempts',
+                                                        'normal_check_interval', 
+                                                        'retry_check_interval', 
+                                                        'check_period', 
+                                                        'contact_groups', 
+                                                        'notification_interval',
+                                                        'notification_period', 
+                                                        'notification_options',
+                                                      ]
+                               'servicedependency' => [ 
+                                                        'dependent_host_name',
+                                                        'dependent_service_description',
+                                                        'host_name',
+                                                        'service_description',
+                                                      ],
+                               'serviceescalation' => [ 
+                                                        'host_name',
+                                                        'service_description',
+                                                        'contact_groups',
+                                                        'first_notification',
+                                                        'last_notification',
+                                                        'notification_interval',
+                                                      ],
+                               'serviceextinfo'    => [ 
+                                                        'host_name',
+                                                        'service_description',
+                                                      ]
+                               'servicegroup'      => [ 
+                                                        'servicegroup_name',
+                                                        'alias',
+                                                        'members',
+                                                      ],
+                               'timeperiod'        => [ 
+                                                        'timeperiod_name', 
+                                                        'alias', 
+                                                      ],
+                             };
+   # find the nagios object types for which all required attributes are present, 
+   # if more than one match, (serviceextinfo's reqs are a sub-set of service) 
+   # favor the one with the most matches.
+   my $max_matched=0;
+   my $type = undef;
+   foreach my $obj_type in (keys(%{ $required_attributes })){
+       $all_match=1;
+       my $matched=0;
+       foreach my $req in (keys(%{ $required_attributes->{$obj_type}  })){
+           if(defined($nobject->{$req})){
+               $matched++;
+           }else{
+               $all_match = 0;
+           }
+           if($all_matcho){
+               if($matched > $max){ 
+                   $type = $obj_type;
+               }
+           }
+           $max_matched=0;
+       }
+   }
+   return $type;
+}
+
+# $self->write_object_cfg($obj_list_ref, $filename);
 sub write_object_cfg{
     my $self        = shift;
-    my $object_type = shift;
     my $objects     = shift;
     my $filename    = shift;
 
     # determine the longest key for readability of the configs
     my $max_key_length = undef;
     foreach my $object (@{ $objects }){
+        my $object_type = $self->nobject_isa(
         foreach my $key (keys(%{ ${object} })){
             if(! defined($max_key_length)){
                 $max_key_length=length($key);
@@ -326,6 +446,17 @@ sub write_object_cfgs{
                                 'servicedependency'
                              )));
                 $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type},       "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
+                ############################################################################
+                # service and host objects are treated differently, 
+                # we write these out to objects.d/<fqdn>.cfg host checks then service checks
+                # then hostextinfo, serviceextinfo, hostdependencies, servicedependencies,
+                my $object_config = [];
+                foreach(my $monitored_host (@{ $self->{'work'}->{$pollsrv}->{'host'} }){
+                    foreach(my $monitored_service (@{ $self->{'work'}->{$pollsrv}->{'service'} }){
+                        next if ($monitored_service->{'host_name'} ne $host);
+                    }
+                }
+
                 $self->write_object_cfg( 'host',       $self->{'work'}->{$pollsrv}->{'host'},    "$cnstr->{'dir'}/$pollsrv/host.cfg");
                 $self->write_object_cfg( 'service',    $self->{'work'}->{$pollsrv}->{'service'}, "$cnstr->{'dir'}/$pollsrv/service.cfg");
             }
