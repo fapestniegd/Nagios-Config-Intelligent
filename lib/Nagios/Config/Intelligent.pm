@@ -358,7 +358,7 @@ sub nobject_isa{
    foreach my $obj_type (keys(%{ $required_attributes })){
        $all_match=1;
        my $matched=0;
-       foreach my $req in (keys(%{ $required_attributes->{$obj_type}  })){
+       foreach my $req (keys(%{ $required_attributes->{$obj_type}  })){
            if(defined($nobject->{$req})){
                $matched++;
            }else{
