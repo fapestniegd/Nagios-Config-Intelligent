@@ -450,10 +450,10 @@ sub write_object_cfgs{
                 # service and host objects are treated differently, 
                 # we write these out to objects.d/<fqdn>.cfg host checks then service checks
                 # then hostextinfo, serviceextinfo, hostdependencies, servicedependencies,
-                foreach(my $host_nobject (@{ $self->{'work'}->{$pollsrv}->{'host'} })){
+                foreach my $host_nobject (@{ $self->{'work'}->{$pollsrv}->{'host'} }){
                     $self->write_object_cfg($host_nobject,"$cnstr->{'dir'}/$reportsrv/".$host_nobject->{'host_name'}.".cfg");
 
-                    foreach(my $service_nobject (@{ $self->{'work'}->{$pollsrv}->{'service'} })){
+                    foreach my $service_nobject (@{ $self->{'work'}->{$pollsrv}->{'service'} }){
                         next if ($service_nobject->{'host_name'} ne $host_nobject->{'host_name'});
                         $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$reportsrv/".$monitored_host->{'host_name'}.".cfg",1);
                     }
