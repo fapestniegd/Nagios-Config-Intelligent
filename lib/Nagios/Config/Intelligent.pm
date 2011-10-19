@@ -384,7 +384,7 @@ sub write_object_cfg{
     # determine the longest key for readability of the configs
     my $max_key_length = undef;
     foreach my $object (@{ $objects }){
-    my $object_type = $self->nobject_isa($object);
+        my $object_type = $self->nobject_isa($object);
         my $object_type = $self->nobject_isa($object);
         foreach my $key (keys(%{ ${object} })){
             if(! defined($max_key_length)){
@@ -401,6 +401,7 @@ sub write_object_cfg{
         print $fh "################################################################################\n";
         print $fh "# $object_type                                                                 #\n\n";
         foreach my $object (@{ $objects }){
+            my $object_type = $self->nobject_isa($object);
             print $fh "define $object_type {\n";
             foreach my $key (keys(%{ ${object} })){
                 print $fh "    $key";
