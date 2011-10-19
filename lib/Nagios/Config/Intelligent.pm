@@ -369,25 +369,6 @@ sub nobject_isa{
        }
    }
    return $type if(defined($type));
-   #############################################################################
-   $max_matched=-1;
-   $type = undef;
-   foreach my $obj_type (keys(%{ $required_attributes })){
-       my $matched=-1;
-       foreach my $req (@{ $required_attributes->{$obj_type}  }){
-           if(defined($nobject->{$req})){ $matched++; }
-       }
-       # Determine if the required objects were all matched
-       if($matched == $#{ $required_attributes->{$obj_type}  }){ 
-           print STDERR Data::Dumper->Dump([sort($nobject)]);
-           print STDERR "$obj_type matched $matched of $#{ $required_attributes->{$obj_type} }.\n";
-           if($matched > $max_matched){ 
-               $type = $obj_type;
-               $max_matched = $matched;
-           }
-       }
-   }
-   #############################################################################
    return 'unknown';
 }
 
