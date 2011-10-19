@@ -377,6 +377,7 @@ sub write_object_cfg{
     my $self        = shift;
     my $objects     = shift;
     my $filename    = shift;
+    my $append      = shift if @_;
 
     # determine the longest key for readability of the configs
     my $max_key_length = undef;
@@ -392,7 +393,12 @@ sub write_object_cfg{
     }
 
     # write out the objects into the file
-    my $fh = FileHandle->new("> $filename");
+    my $fh = undef;
+    if($append){
+        $fh = FileHandle->new(">> $filename");
+    }else{
+        $fh = FileHandle->new("> $filename");
+    }
     if (defined $fh) {
         foreach my $object (@{ $objects }){
             my $object_type = $self->nobject_isa($object);
@@ -445,11 +451,13 @@ sub write_object_cfgs{
                 # we write these out to objects.d/<fqdn>.cfg host checks then service checks
                 # then hostextinfo, serviceextinfo, hostdependencies, servicedependencies,
                 my $object_config = [];
-                #foreach(my $monitored_host (@{ $self->{'work'}->{$pollsrv}->{'host'} })){
-                #    foreach(my $monitored_service (@{ $self->{'work'}->{$pollsrv}->{'service'} })){
-                #        next if ($monitored_service->{'host_name'} ne $host);
-                #    }
-                #}
+                foreach(my $monitored_host (@{ $self->{'work'}->{$pollsrv}->{'host'} })){
+                    $self->write_object_cfg($monitored_host,"$cnstr->{'dir'}/$reportsrv/".$monitored_host->{'host_name'}.".cfg");
+                    foreach(my $monitored_service (@{ $self->{'work'}->{$pollsrv}->{'service'} })){
+                        next if ($monitored_service->{'host_name'} ne $host);
+                        $self->write_object_cfg($monitored_host,"$cnstr->{'dir'}/$reportsrv/".$monitored_host->{'host_name'}.".cfg",1);
+                    }
+                }
 
                 $self->write_object_cfg($self->{'work'}->{$pollsrv}->{'host'},    "$cnstr->{'dir'}/$pollsrv/host.cfg");
                 $self->write_object_cfg($self->{'work'}->{$pollsrv}->{'service'}, "$cnstr->{'dir'}/$pollsrv/service.cfg");
