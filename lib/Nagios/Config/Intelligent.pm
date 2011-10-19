@@ -386,7 +386,6 @@ sub write_object_cfg{
     my $max_key_length = undef;
     foreach my $object (@{ $objects }){
         my $object_type = $self->nobject_isa($object);
-        my $object_type = $self->nobject_isa($object);
         foreach my $key (keys(%{ ${object} })){
             if(! defined($max_key_length)){
                 $max_key_length=length($key);
