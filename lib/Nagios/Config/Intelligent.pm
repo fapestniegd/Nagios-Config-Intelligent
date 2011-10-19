@@ -321,7 +321,7 @@ sub nobject_isa{
                                                         'notification_interval',
                                                         'notification_period', 
                                                         'notification_options',
-                                                      ]
+                                                      ],
                                'servicedependency' => [ 
                                                         'dependent_host_name',
                                                         'dependent_service_description',
@@ -339,7 +339,7 @@ sub nobject_isa{
                                'serviceextinfo'    => [ 
                                                         'host_name',
                                                         'service_description',
-                                                      ]
+                                                      ],
                                'servicegroup'      => [ 
                                                         'servicegroup_name',
                                                         'alias',
