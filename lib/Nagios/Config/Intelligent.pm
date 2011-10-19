@@ -364,7 +364,7 @@ sub nobject_isa{
            }else{
                $all_match = 0;
            }
-           if($all_matcho){
+           if($all_match){
                if($matched > $max){ 
                    $type = $obj_type;
                }
