@@ -360,7 +360,7 @@ sub nobject_isa{
        foreach my $req (@{ $required_attributes->{$obj_type}  }){
            if(defined($nobject->{$req})){ $matched++; }
        }
-       # the required objects were all matched.
+       # Determine if the required objects were all matched
        if($matched == $#{ $required_attributes->{$obj_type}  }){ 
            if($matched > $max_matched){ 
                $type = $obj_type;
@@ -368,7 +368,9 @@ sub nobject_isa{
            }
        }
    }
-   return $type;
+   return $type if(defined($type));
+   print STDERR Data::Dumper->Dump([$object]);
+   return 'unknown';
 }
 
 # $self->write_object_cfg($obj_list_ref, $filename);
