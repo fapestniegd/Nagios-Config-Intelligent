@@ -379,7 +379,7 @@ sub nobject_isa{
            if(defined($nobject->{$req})){ $matched++; }
        }
        # Determine if the required objects were all matched
-       print STDERR "$object_type matched $matched.\n";
+       print STDERR "$obj_type matched $matched.\n";
        if($matched == $#{ $required_attributes->{$obj_type}  }){ 
            if($matched > $max_matched){ 
                $type = $obj_type;
