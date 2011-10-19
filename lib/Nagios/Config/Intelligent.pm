@@ -280,12 +280,12 @@ sub nobject_isa{
                                                        'members', 
                                                       ],
                                'host'              => [ 
-                                                        'host_name', 
                                                         'alias', 
                                                         'address', 
-                                                        'max_check_attempts', 
+                                                        'host_name', 
                                                         'check_period', 
                                                         'contact_groups', 
+                                                        'max_check_attempts', 
                                                         'notification_interval',
                                                         'notification_period', 
                                                         'notification_options',
@@ -369,7 +369,7 @@ sub nobject_isa{
        }
    }
    return $type if(defined($type));
-   print STDERR Data::Dumper->Dump([$nobject]);
+   print STDERR Data::Dumper->Dump([sort($nobject)]);
    return 'unknown';
 }
 
