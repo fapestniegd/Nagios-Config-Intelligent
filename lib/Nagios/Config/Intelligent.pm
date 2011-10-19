@@ -378,6 +378,7 @@ sub write_object_cfg{
     my $objects     = shift;
     my $filename    = shift;
     my $append      = shift if @_;
+    $objects = [ $objects ] unless(ref($objects) eq 'ARRAY');
 
     # determine the longest key for readability of the configs
     my $max_key_length = undef;
