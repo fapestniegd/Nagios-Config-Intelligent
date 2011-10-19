@@ -370,7 +370,7 @@ sub nobject_isa{
                    $max_matched = $matched;
                }
            }
-           $max_matched=0;
+           $matched=0;
        }
    }
    return $type;
