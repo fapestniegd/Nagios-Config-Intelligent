@@ -358,7 +358,7 @@ sub nobject_isa{
    foreach my $obj_type (keys(%{ $required_attributes })){
        my $all_match=1;
        my $matched=0;
-       foreach my $req (keys(%{ $required_attributes->{$obj_type}  })){
+       foreach my $req (@{ $required_attributes->{$obj_type}  }){
            if(defined($nobject->{$req})){
                $matched++;
            }else{
@@ -384,7 +384,6 @@ sub write_object_cfg{
 
     # determine the longest key for readability of the configs
     my $max_key_length = undef;
-print STDERR Data::Dumper->Dump([$objects]);
     foreach my $object (@{ $objects }){
         my $object_type = $self->nobject_isa($object);
         foreach my $key (keys(%{ ${object} })){
