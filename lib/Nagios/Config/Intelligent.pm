@@ -356,7 +356,7 @@ sub nobject_isa{
    my $max_matched=0;
    my $type = undef;
    foreach my $obj_type (keys(%{ $required_attributes })){
-       my $matched=0;
+       my $matched=-1;
        foreach my $req (@{ $required_attributes->{$obj_type}  }){
            if(defined($nobject->{$req})){ $matched++; }
        }
@@ -374,7 +374,7 @@ sub nobject_isa{
    $max_matched=0;
    $type = undef;
    foreach my $obj_type (keys(%{ $required_attributes })){
-       my $matched=0;
+       my $matched=-1;
        foreach my $req (@{ $required_attributes->{$obj_type}  }){
            if(defined($nobject->{$req})){ $matched++; }
        }
