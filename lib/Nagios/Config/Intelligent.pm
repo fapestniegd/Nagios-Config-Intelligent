@@ -365,8 +365,9 @@ sub nobject_isa{
                $all_match = 0;
            }
            if($all_match){
-               if($matched > $max){ 
+               if($matched > $max_matched){ 
                    $type = $obj_type;
+                   $max_matched = $matched;
                }
            }
            $max_matched=0;
@@ -398,8 +399,6 @@ sub write_object_cfg{
     # write out the objects into the file
     my $fh = FileHandle->new("> $filename");
     if (defined $fh) {
-        print $fh "################################################################################\n";
-        print $fh "# $object_type                                                                 #\n\n";
         foreach my $object (@{ $objects }){
             my $object_type = $self->nobject_isa($object);
             print $fh "define $object_type {\n";
@@ -410,8 +409,6 @@ sub write_object_cfg{
             }
             print $fh "}\n\n";
         }
-        print $fh "#                                                                              #\n";
-        print $fh "################################################################################\n";
         $fh->close;
     } 
 }
