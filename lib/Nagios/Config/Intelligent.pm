@@ -461,8 +461,6 @@ sub write_object_cfgs{
                         $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$pollsrv/nobjects.d".$host_nobject->{'host_name'}.".cfg",1);
                     }
                 }
-                #$self->write_object_cfg($self->{'work'}->{$pollsrv}->{'host'},    "$cnstr->{'dir'}/$pollsrv/host.cfg");
-                #$self->write_object_cfg($self->{'work'}->{$pollsrv}->{'service'}, "$cnstr->{'dir'}/$pollsrv/service.cfg");
             }
             ################################################################################
         }
@@ -489,8 +487,18 @@ sub write_object_cfgs{
                                 #'servicedependency'
                              )));
                 $self->write_object_cfg($self->{'objects'}->{$object_type},         "$cnstr->{'dir'}/$reportsrv/$object_type.cfg");
-                #$self->write_object_cfg($self->{'work'}->{$reportsrv}->{'host'},    "$cnstr->{'dir'}/$reportsrv/host.cfg");
-                #$self->write_object_cfg($self->{'work'}->{$reportsrv}->{'service'}, "$cnstr->{'dir'}/$reportsrv/service.cfg");
+                ############################################################################
+                # service and host objects are treated differently, 
+                # we write these out to objects.d/<fqdn>.cfg host checks then service checks
+                # then hostextinfo, serviceextinfo, hostdependencies, servicedependencies,
+                foreach my $host_nobject (@{ $self->{'work'}->{$reportsrv}->{'host'} }){
+                    $self->write_object_cfg($host_nobject,"$cnstr->{'dir'}/$reportsrv/nobjects.d".$host_nobject->{'host_name'}.".cfg");
+
+                    foreach my $service_nobject (@{ $self->{'work'}->{$reportsrv}->{'service'} }){
+                        next if ($service_nobject->{'host_name'} ne $host_nobject->{'host_name'});
+                        $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$reportsrv/nobjects.d".$host_nobject->{'host_name'}.".cfg",1);
+                    }
+                }
             }
         }
     }
