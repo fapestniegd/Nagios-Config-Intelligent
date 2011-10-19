@@ -121,19 +121,15 @@ sub delegate {
         }
     } 
     ############################################################################
-    # service checks can be assigned to a host group, so we dereference those 
-    # into atomic service checks here, replacing the entire service array.
+    # service checks can be assigned to a hostgroup, so we need todereference 
+    # those into atomic service checks here, replacing the entire service array.
+    #
     my $new_services = [] ;
     foreach my $service (@{ $self->{'objects'}->{'service'} }){
         if(defined($service->{'host_name'})){
             push(@{ $new_services }, $service); 
         }elsif(defined($service->{'hostgroup_name'})){
             my @members = $self->hostgroup_members($service->{'hostgroup_name'});
-            #print STDERR Data::Dumper->Dump([{
-            #                                   'hostgroup_name' => $service->{'hostgroup_name'},
-            #                                   'hostgroup'      => $self->find_objects('hostgroup',{ 'hostgroup_name' => $service->{'hostgroup_name'} }),
-            #                                   'members'        => \@members,
-            #                                }]);
             next unless @members;
             foreach my $host (@members){
                 my $new_service = $self->clone($service); 
@@ -149,9 +145,8 @@ sub delegate {
     ############################################################################
     
     ############################################################################
-    # now we do all service checks
+    # now we process all service checks
     foreach my $service (@{ $self->{'objects'}->{'service'} }){
-
         next unless(defined( $service->{'host_name'} ));
         # get the host and poll host for this service
         my $host = $self->find_host({ 'host_name' => $service->{'host_name'} });
@@ -177,7 +172,14 @@ sub delegate {
        
         # and the passive check if the report server is not the poll server
         if($poll_srv ne $report_srv){
-            push( @{ $self->{'work'}->{$report_srv}->{'service'} },$self->clone($service_check) );
+            # passify the service check (strip out anything that makes it active, add passive traits)
+            my $passive_service_check = $self->clone($self->detemplate('service',$service));
+
+            delete($passive_service_check->{'active_checks_enabled'});
+            $passive_service_check->{'passive_checks_enabled'} = 1;
+            $passive_service_check->{'notifications_enabled'} = 1;
+
+            push( @{ $self->{'work'}->{$report_srv}->{'service'} },$self->clone($passive_service_check) );
         }
     }    
 }
