@@ -283,7 +283,7 @@ sub nobject_isa{
                                                         'alias', 
                                                         'address', 
                                                         'host_name', 
-                                                        'check_period', 
+                                                        #'check_period',  # it will accept it without this even though the docs say it's "required"
                                                         'contact_groups', 
                                                         'max_check_attempts', 
                                                         'notification_interval',
