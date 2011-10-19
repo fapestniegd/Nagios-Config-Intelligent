@@ -356,21 +356,16 @@ sub nobject_isa{
    my $max_matched=0;
    my $type = undef;
    foreach my $obj_type (keys(%{ $required_attributes })){
-       my $all_match=1;
-       my $matched=0;
+       my $matched=-1;
        foreach my $req (@{ $required_attributes->{$obj_type}  }){
-           if(defined($nobject->{$req})){
-               $matched++;
-           }else{
-               $all_match = 0;
+           if(defined($nobject->{$req})){ $matched++; }
+       }
+       # the required objects were all matched.
+       if($matched == $#{ $required_attributes->{$obj_type}  }){ 
+           if($matched > $max_matched){ 
+               $type = $obj_type;
+               $max_matched = $matched;
            }
-           if($all_match){
-               if($matched > $max_matched){ 
-                   $type = $obj_type;
-                   $max_matched = $matched;
-               }
-           }
-           $matched=0;
        }
    }
    return $type;
