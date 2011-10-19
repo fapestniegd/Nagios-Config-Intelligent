@@ -455,7 +455,7 @@ sub write_object_cfgs{
 
                     foreach my $service_nobject (@{ $self->{'work'}->{$pollsrv}->{'service'} }){
                         next if ($service_nobject->{'host_name'} ne $host_nobject->{'host_name'});
-                        $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$pollsrv/".$monitored_host->{'host_name'}.".cfg",1);
+                        $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$pollsrv/".$host_nobject->{'host_name'}.".cfg",1);
                     }
                 }
                 #$self->write_object_cfg($self->{'work'}->{$pollsrv}->{'host'},    "$cnstr->{'dir'}/$pollsrv/host.cfg");
