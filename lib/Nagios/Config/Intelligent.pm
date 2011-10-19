@@ -444,7 +444,7 @@ sub write_object_cfgs{
                                 'servicegroup',
                                 'servicedependency'
                              )));
-                $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type},       "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
+                $self->write_object_cfg($self->{'objects'}->{$object_type},       "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
                 ############################################################################
                 # service and host objects are treated differently, 
                 # we write these out to objects.d/<fqdn>.cfg host checks then service checks
@@ -456,8 +456,8 @@ sub write_object_cfgs{
                 #    }
                 #}
 
-                $self->write_object_cfg( 'host',       $self->{'work'}->{$pollsrv}->{'host'},    "$cnstr->{'dir'}/$pollsrv/host.cfg");
-                $self->write_object_cfg( 'service',    $self->{'work'}->{$pollsrv}->{'service'}, "$cnstr->{'dir'}/$pollsrv/service.cfg");
+                $self->write_object_cfg($self->{'work'}->{$pollsrv}->{'host'},    "$cnstr->{'dir'}/$pollsrv/host.cfg");
+                $self->write_object_cfg($self->{'work'}->{$pollsrv}->{'service'}, "$cnstr->{'dir'}/$pollsrv/service.cfg");
             }
             ################################################################################
         }
@@ -483,9 +483,9 @@ sub write_object_cfgs{
                                 #'servicegroup',
                                 #'servicedependency'
                              )));
-                $self->write_object_cfg( $object_type, $self->{'objects'}->{$object_type},         "$cnstr->{'dir'}/$reportsrv/$object_type.cfg");
-                $self->write_object_cfg( 'host',       $self->{'work'}->{$reportsrv}->{'host'},    "$cnstr->{'dir'}/$reportsrv/host.cfg");
-                $self->write_object_cfg( 'service',    $self->{'work'}->{$reportsrv}->{'service'}, "$cnstr->{'dir'}/$reportsrv/service.cfg");
+                $self->write_object_cfg($self->{'objects'}->{$object_type},         "$cnstr->{'dir'}/$reportsrv/$object_type.cfg");
+                $self->write_object_cfg($self->{'work'}->{$reportsrv}->{'host'},    "$cnstr->{'dir'}/$reportsrv/host.cfg");
+                $self->write_object_cfg($self->{'work'}->{$reportsrv}->{'service'}, "$cnstr->{'dir'}/$reportsrv/service.cfg");
             }
         }
     }
