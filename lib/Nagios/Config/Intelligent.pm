@@ -369,7 +369,7 @@ sub nobject_isa{
        }
    }
    return $type if(defined($type));
-   print STDERR Data::Dumper->Dump([$object]);
+   print STDERR Data::Dumper->Dump([$nobject]);
    return 'unknown';
 }
 
