@@ -428,6 +428,7 @@ sub write_object_cfgs{
         #
         foreach my $pollsrv (@{ $self->list_poll_only_servers }){
             if(! -d "$cnstr->{'dir'}/$pollsrv"){ mkdir("$cnstr->{'dir'}/$pollsrv"); }
+            if(! -d "$cnstr->{'dir'}/$pollsrv/nobjects.d"){ mkdir("$cnstr->{'dir'}/$pollsrv/nobjects.d"); }
             ################################################################################
             #     write out non-host configs (commands, contact, contactgroup)
             foreach my $object_type (keys(%{ $self->{'objects'} })){
@@ -447,16 +448,17 @@ sub write_object_cfgs{
                                 'servicedependency'
                              )));
                 $self->write_object_cfg($self->{'objects'}->{$object_type},       "$cnstr->{'dir'}/$pollsrv/$object_type.cfg");
+
                 ############################################################################
                 # service and host objects are treated differently, 
                 # we write these out to objects.d/<fqdn>.cfg host checks then service checks
                 # then hostextinfo, serviceextinfo, hostdependencies, servicedependencies,
                 foreach my $host_nobject (@{ $self->{'work'}->{$pollsrv}->{'host'} }){
-                    $self->write_object_cfg($host_nobject,"$cnstr->{'dir'}/$pollsrv/".$host_nobject->{'host_name'}.".cfg");
+                    $self->write_object_cfg($host_nobject,"$cnstr->{'dir'}/$pollsrv/nobjects.d".$host_nobject->{'host_name'}.".cfg");
 
                     foreach my $service_nobject (@{ $self->{'work'}->{$pollsrv}->{'service'} }){
                         next if ($service_nobject->{'host_name'} ne $host_nobject->{'host_name'});
-                        $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$pollsrv/".$host_nobject->{'host_name'}.".cfg",1);
+                        $self->write_object_cfg($service_nobject,"$cnstr->{'dir'}/$pollsrv/nobjects.d".$host_nobject->{'host_name'}.".cfg",1);
                     }
                 }
                 #$self->write_object_cfg($self->{'work'}->{$pollsrv}->{'host'},    "$cnstr->{'dir'}/$pollsrv/host.cfg");
