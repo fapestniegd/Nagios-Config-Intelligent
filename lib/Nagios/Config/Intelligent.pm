@@ -353,7 +353,7 @@ sub nobject_isa{
    # find the nagios object types for which all required attributes are present, 
    # if more than one match, (serviceextinfo's reqs are a sub-set of service) 
    # favor the one with the most matches.
-   my $max_matched=0;
+   my $max_matched=-1;
    my $type = undef;
    foreach my $obj_type (keys(%{ $required_attributes })){
        my $matched=-1;
