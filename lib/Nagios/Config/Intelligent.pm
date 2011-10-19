@@ -355,7 +355,7 @@ sub nobject_isa{
    # favor the one with the most matches.
    my $max_matched=0;
    my $type = undef;
-   foreach my $obj_type in (keys(%{ $required_attributes })){
+   foreach my $obj_type (keys(%{ $required_attributes })){
        $all_match=1;
        my $matched=0;
        foreach my $req in (keys(%{ $required_attributes->{$obj_type}  })){
