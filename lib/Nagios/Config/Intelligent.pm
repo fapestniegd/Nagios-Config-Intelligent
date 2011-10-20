@@ -945,13 +945,10 @@ sub add_template{
 # { 'objects' => [ ..list of objects.. ], 'templates' => [ ..list of templates.. ] }
 ################################################################################
 
-# $self->reduce({'objects' => [objects], 'template' =>[ templates] }); # (returns the same hash structure)
 sub reduce {
     my $self = shift;
-    my $things = shift;
-    my $templates = $things->{'templates'}||undef;
-    my $objects   = $things->{'objects'}||undef;
-    return $things unless $objects;
+    my $objects = shift; 
+    return undef unless $objects;
     #
     my $sets = $objects;
     my $template_candidates;
@@ -986,58 +983,56 @@ sub reduce {
             }
         }
         # Add thecandidate to our templates list
-        push(@{$templates},$tpl) if(keys(%{ $tpl }) >= 4); # if you don't remove 4 lines, you're adding lines.
+        $self->add_template($type,$tpl) if(keys(%{ $tpl }) >= 4); # if you don't remove 4 lines, you're adding lines.
     }
-    ############################################################################ 
-#    # now we want to reduce the actual object by the largest template of it's type that will fit it.
-#    my $object_entry;
-#    for(my $i=0; $i<=$#{ $templates };$i++){
-#        my $biggest_count = 0;
-#        my $biggest_name = undef;
-#        # for each template
-#        foreach my $match_candidate (@{ $templates }){
-#           # make a copy...
-#           my $tmpl = $self->clone($match_candidate);
-#           # remvove the items that make it a template from the clone
-#           delete $tmpl->{'name'} if(defined($tmpl->{'name'}));
-#           delete $tmpl->{'host_name'} if(defined($tmpl->{'host_name'}));
-#           delete $tmpl->{'register'} if(defined($tmpl->{'register'}));
-#           # get an element count
-#           my $t_elements = keys(%{ $tmpl });
-#           #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
-#           if(defined($self->{'objects'}->{$type}->[$i]->{'use'})){
-#               # expand the object in case it's already templated
-#               foreach my $t (@{  $templates }){
-#                   if($t->{'name'} eq 
-#               }
-#               $object_entry = $self->detemplate( $type, $self->{'objects'}->{$type}->[$i] ); 
-#           }else{
-#               $object_entry = $self->clone($self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
-#           }
-#           my $intersect = $self->intersection([ $tmpl, $object_entry ]);
-#           # print Data::Dumper->Dump([{
-#           #                 'comparing' => [  $tmpl, $self->{'objects'}->{$type}->[$i] ],
-#           #                 'actually'  => [ $tmpl, $object_entry  ],
-#           #                 'result'    => [ $intersect  ],
-#           #              }]);
-#           my $i_elements = keys(%{ $intersect });
-#           if ($i_elements == $t_elements){ # all of these match, and it's the biggest, save the name
-#               if($biggest_count < $i_elements){
-#                   $biggest_count=$i_elements;
-#                   $biggest_name=$tpl_name;
-#               }
-#           }
-#        }
-#        # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
-#        #print STDERR Data::Dumper->Dump([{ 'biggest_name' => $biggest_name }]);
-#        if(defined($biggest_name)){
-#            foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
-#                delete $object_entry->{$tplkey} if(defined($object_entry->{$tplkey}));
-#            }
-#            $object_entry->{'use'} = $biggest_name;
-#            $sets->[$i] = $self->clone($object_entry);
-#        }
-#    }
+    # now we want to reduce the actual object by the largest template of it's type that will fit it.
+    my $object_entry;
+
+    for(my $i=0; $i<=$#{ $objects };$i++){
+        my $type = $self->nobject_isa( $objects->[$i] );
+        my $biggest_count = 0;
+        my $biggest_name = undef;
+        # for each template of this type
+        foreach my $tpl_name (keys(%{ $self->{'templates'}->{$type} })){
+           # make a copy...
+           my $tmpl = $self->clone($self->{'templates'}->{$type}->{$tpl_name});
+           # remvove the items that make it a template from the clone
+           delete $tmpl->{'name'} if(defined($tmpl->{'name'}));
+           delete $tmpl->{'host_name'} if(defined($tmpl->{'host_name'}));
+           delete $tmpl->{'register'} if(defined($tmpl->{'register'}));
+           # get an element count
+           my $t_elements = keys(%{ $tmpl });
+           #get an element count of the items in this template that intersect with $objects->[$i]
+           if(defined($objects->[$i]->{'use'})){
+               $object_entry = $self->detemplate( $type, $objects->[$i] ); # expand the object in case it's already templated
+           }else{
+               $object_entry = $self->clone($objects->[$i] ); # expand the object in case it's already templated
+           }
+           my $intersect = $self->intersection([ $tmpl, $object_entry ]);
+           # print Data::Dumper->Dump([{
+           # 'comparing' => [ $tmpl, $objects->[$i] ],
+           # 'actually' => [ $tmpl, $object_entry ],
+           # 'result' => [ $intersect ],
+           # }]);
+           my $i_elements = keys(%{ $intersect });
+           if ($i_elements == $t_elements){ # all of these match, and it's the biggest, save the name
+               if($biggest_count < $i_elements){
+                   $biggest_count=$i_elements;
+                   $biggest_name=$tpl_name;
+               }
+           }
+        }
+        # at this point we should have the entry, and the template it can be reduced by ind $tpl_name
+        #print STDERR Data::Dumper->Dump([{ 'biggest_name' => $biggest_name }]);
+        if(defined($biggest_name)){
+            foreach my $tplkey (keys(%{ $self->{'templates'}->{$type}->{$biggest_name} })){
+                delete $object_entry->{$tplkey} if(defined($object_entry->{$tplkey}));
+            }
+            $object_entry->{'use'} = $biggest_name;
+            $sets->[$i] = $self->clone($object_entry);
+        }
+    }
+    return $sets;
 }
 
 #

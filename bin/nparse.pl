@@ -72,13 +72,21 @@ print YAML::DumpFile("/etc/nagios.yaml",[{
 
 #print Data::Dumper->Dump([$n->hostgroup_members("bna_e_drives")]);
 
-$n->delegate();
-#$n->reduce; # this is computationally expensive
 print Data::Dumper->Dump([{ 
                             'templates' => $n->{'templates'}, 
                             'objects' => $n->{'objects'}, 
                             'work' => $n->{'work'}
                         }]);
-
+$n->delegate();
+foreach my $ngsrv (keys(%{ $n->{'work'} })){
+    foreach $type (keys(%{ $n->{'work'} ->{$ngsrv} })){
+        my $newobj = $n->reduce($n->{'work'} ->{$ngsrv}->{$type});
+    }
+}
+print Data::Dumper->Dump([{ 
+                            'templates' => $n->{'templates'}, 
+                            'objects' => $n->{'objects'}, 
+                            'work' => $n->{'work'}
+                        }]);
 
 #$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
