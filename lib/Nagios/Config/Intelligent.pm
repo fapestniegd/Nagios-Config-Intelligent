@@ -953,7 +953,7 @@ sub reduce {
     my $objects   = $things->{'objects'}||undef;
     return $things unless $objects;
     #
-    my $sets = $objects
+    my $sets = $objects;
     my $template_candidates;
 
     for(my $i=0; $i<=$#{$sets};$i++){
