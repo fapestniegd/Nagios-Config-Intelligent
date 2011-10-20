@@ -1038,7 +1038,7 @@ sub reduce {
 #            $sets->[$i] = $self->clone($object_entry);
 #        }
 #    }
-#}
+}
 
 #
 ## Autoload methods go after =cut, and are processed by the autosplit program.
