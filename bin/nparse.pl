@@ -31,6 +31,7 @@ my $n = Nagios::Config::Intelligent->new({
                                            'routers' => $routers,
                                            'topology'=> $nagios_servers,
                                         });
+
 print YAML::DumpFile("/etc/nagios.yaml",[{
                                            'g'        =>  $n->{'g'},
                                            'topology' =>  $n->{'topology'},
@@ -64,8 +65,6 @@ print YAML::DumpFile("/etc/nagios.yaml",[{
 
 ################################################################################
 # template reduction routines
-# $n->reduce_objects; # this is computationally expensive
-# #$n->reduce('contact');
 
 #print $n->dump();
 
@@ -73,7 +72,12 @@ print YAML::DumpFile("/etc/nagios.yaml",[{
 
 #print Data::Dumper->Dump([$n->hostgroup_members("bna_e_drives")]);
 
-#$n->delegate();
+$n->reduce_objects; # this is computationally expensive
+$n->delegate();
+print Data::Dumper->Dump([{ 
+                            'objects' => $n->{'objects'}, 
+                            'work' => $n->{'work'}
+                        }]);
+
+
 #$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
-
-

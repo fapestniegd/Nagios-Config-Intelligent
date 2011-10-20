@@ -919,7 +919,10 @@ sub add_template{
 }
 
 ################################################################################
-# create a matrix of commonalities between all (de-templated) entries
+# given a list of objects, and optionally, a list of templates:
+# 1) de-template all the objects using the templates provided
+
+# 2) create a matrix of commonalities between all (de-templated) entries
 # so if we have 5 sets [a, b, c, d, e] and they each have say, 9 elements, 
 # we'll get a matrix that looks like:
 # _ a b c d e
@@ -929,27 +932,34 @@ sub add_template{
 # d 5 5 4 9 _
 # e 0 4 4 5 9
 
-# we then create template_candidates from each of thes numbers
-# we check each of them against the existing contact templates, 
-# adding them if not exist. ($self->add_template($type,$template)
+# 3) we then create template_candidates from each of thes numbers
+# 4) we check each of them against the existing contact templates, 
+#    adding them to the templates list (if they don't exist.)
 
-# we can then (for each object, iterate through the templates, 
-# find the one that matches the best, tell the object to "use"
-# it and remove it's key/value pairs from the object
+# 5) we can then (for each object, iterate through the templates, 
+#    find the one that matches the best, tell the object to "use"
+#    it and remove it's key/value pairs from the object
 
+# We're left with a normalized list of objects and a 
+# (hopefully) larger list of templates, which we return in the hash:
+# { 'objects' => [ ..list of objects.. ], 'templates' => [ ..list of templates.. ] }
 ################################################################################
 
+# $self->reduce({'objects' => [objects], 'template' =>[ templates] }); # (returns the same hash structure)
 sub reduce {
     my $self = shift;
-    my $type = shift;
-    print STDERR "reducing: [$type]\n";
-    return undef unless $type;
-    my $sets = $self->{'objects'}->{ $type };
+    my $things = shift;
+    my $templates = $things->{'templates'}||undef;
+    my $objects   = $things->{'objects'}||undef;
+    return $things unless $objects;
+    #
+    my $sets = $objects
     my $template_candidates;
+
     for(my $i=0; $i<=$#{$sets};$i++){
         for(my $j=0; $j<=$i;$j++){
             my $intersection = $self->clone($sets->[$i]);
-            delete $intersection->{'host_name'} if($type eq 'service');
+            delete $intersection->{'host_name'} if( $self->nobject_isa($intersection) eq 'service');
             my $s_count = keys(%{ $intersection });
             foreach my $key (keys(%{ $intersection })){
                 if( (!defined($sets->[$j]->{$key})) || ($intersection->{$key} ne $sets->[$j]->{$key}) ){
@@ -966,18 +976,28 @@ sub reduce {
         #print "\n";
     }
     foreach my $tpl (@{ $template_candidates }){
-        delete $tpl->{$type.'_name'} if(defined($tpl->{$type.'_name'}));
-        $self->add_template($type,$tpl) if(keys(%{ $tpl }) >= 4); # if you don't remove 4 lines, you're adding lines.
+        my $type = $self->nobject_isa($tpl);
+        if(defined($type)){
+            delete $tpl->{$type.'_name'} if(defined($tpl->{$type.'_name'}));
+        }else{
+            # template_detection failed (not all required attrs are required in a template)  manually remove the name
+            foreach my $k (keys(%{$tpl})){
+                delete $tpl->{$k} if($k=~m/_name$/);
+            }
+        }
+        # Add thecandidate to our templates list
+        push(@{$templates},$tpl) if(keys(%{ $tpl }) >= 4); # if you don't remove 4 lines, you're adding lines.
     }
+    ############################################################################ 
     # now we want to reduce the actual object by the largest template of it's type that will fit it.
     my $object_entry;
-    for(my $i=0; $i<=$#{ $self->{'objects'}->{$type} };$i++){
+    for(my $i=0; $i<=$#{ $templates };$i++){
         my $biggest_count = 0;
         my $biggest_name = undef;
-        # for each template of this type
-        foreach my $tpl_name (keys(%{ $self->{'templates'}->{$type} })){
+        # for each template
+        foreach my $match_candidate (@{ $templates }){
            # make a copy...
-           my $tmpl = $self->clone($self->{'templates'}->{$type}->{$tpl_name});
+           my $tmpl = $self->clone($match_candidate);
            # remvove the items that make it a template from the clone
            delete $tmpl->{'name'} if(defined($tmpl->{'name'}));
            delete $tmpl->{'host_name'} if(defined($tmpl->{'host_name'}));
@@ -986,7 +1006,11 @@ sub reduce {
            my $t_elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $self->{'objects'}->{$type}->[$i]
            if(defined($self->{'objects'}->{$type}->[$i]->{'use'})){
-               $object_entry = $self->detemplate( $type, $self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
+               # expand the object in case it's already templated
+               foreach my $t (@{  $templates }){
+                   if($t->{'name'} eq 
+               }
+               $object_entry = $self->detemplate( $type, $self->{'objects'}->{$type}->[$i] ); 
            }else{
                $object_entry = $self->clone($self->{'objects'}->{$type}->[$i] ); # expand the object in case it's already templated
            }
@@ -1013,14 +1037,6 @@ sub reduce {
             $object_entry->{'use'} = $biggest_name;
             $sets->[$i] = $self->clone($object_entry);
         }
-    }
-}
-
-sub reduce_objects{
-    my $self = shift;
-    # run reduce() on each object type
-    foreach my $object_type (keys(%{ $self->{'objects'} })){
-        $self->reduce($object_type);
     }
 }
 
