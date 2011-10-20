@@ -72,9 +72,10 @@ print YAML::DumpFile("/etc/nagios.yaml",[{
 
 #print Data::Dumper->Dump([$n->hostgroup_members("bna_e_drives")]);
 
-#$n->reduce_objects; # this is computationally expensive
 $n->delegate();
+#$n->reduce; # this is computationally expensive
 print Data::Dumper->Dump([{ 
+                            'templates' => $n->{'templates'}, 
                             'objects' => $n->{'objects'}, 
                             'work' => $n->{'work'}
                         }]);
