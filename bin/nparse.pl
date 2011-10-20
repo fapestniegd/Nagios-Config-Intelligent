@@ -31,6 +31,13 @@ my $n = Nagios::Config::Intelligent->new({
                                            'routers' => $routers,
                                            'topology'=> $nagios_servers,
                                         });
+print YAML::DumpFile("/etc/nagios.yaml",[{
+                                           'g'        =>  $n->{'g'},
+                                           'topology' =>  $n->{'topology'},
+                                           'objects'  =>  $n->{'objects'},
+                                           'work'     =>  $n->{'objects'},
+                                      }]);
+
 
 ################################################################################
 # take a peek at the network
@@ -66,7 +73,7 @@ my $n = Nagios::Config::Intelligent->new({
 
 #print Data::Dumper->Dump([$n->hostgroup_members("bna_e_drives")]);
 
-$n->delegate();
-$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
+#$n->delegate();
+#$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
 
 
