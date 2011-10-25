@@ -427,11 +427,11 @@ sub write_templates{
         return undef;
     }
     foreach my $type (keys(%{ $self->{'templates'})){
-       # $fh = FileHandle->new("> $path/$type");
-       # if (defined $fh) {
-       #     print $fh "bar\n";
-       #     $fh->close;
-       # }
+        # $fh = FileHandle->new("> $path/$type");
+        # if (defined $fh) {
+        #     print $fh "bar\n";
+        #     $fh->close;
+        # }
         YAML::DumpFile("$path/$type.cfg",[$self->{'templates'}]);
     }
 }
