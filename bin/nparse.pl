@@ -77,12 +77,12 @@ print YAML::DumpFile("/etc/nagios.yaml",[{
 #                            'objects' => $n->{'objects'}, 
 #                            'work' => $n->{'work'}
 #                        }]);
-print STDERR "Delegating\n";
+print STDERR "Delegating...\n";
 $n->delegate();
 foreach my $ngsrv (keys(%{ $n->{'work'} })){
-    print STDERR "Server: $ngsrv\n";
+    print STDERR "Server: $ngsrv...\n";
     foreach $type (keys(%{ $n->{'work'} ->{$ngsrv} })){
-        print STDERR "  Type: $ngsrv\n";
+        print STDERR "  Type: $type...\n";
         my $newobj = $n->reduce($n->{'work'} ->{$ngsrv}->{$type});
     }
 }
