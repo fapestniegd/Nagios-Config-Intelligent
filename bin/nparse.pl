@@ -77,13 +77,15 @@ print YAML::DumpFile("/etc/nagios.yaml",[{
 #                            'objects' => $n->{'objects'}, 
 #                            'work' => $n->{'work'}
 #                        }]);
-print STDERR "Delegating...\n";
+print STDERR "Delegating...";
 $n->delegate();
+print STDERR "Complete.\n";
 foreach my $ngsrv (keys(%{ $n->{'work'} })){
-    print STDERR "Server: $ngsrv...\n";
+    print STDERR "Server: $ngsrv\n";
     foreach $type (keys(%{ $n->{'work'} ->{$ngsrv} })){
-        print STDERR "  Type: $type...\n";
+        print STDERR "  Reducing: $type...";
         my $newobj = $n->reduce($n->{'work'} ->{$ngsrv}->{$type});
+        print STDERR "Complete.\n";
     }
 }
 #print Data::Dumper->Dump([{ 
@@ -91,4 +93,4 @@ foreach my $ngsrv (keys(%{ $n->{'work'} })){
 #                            'objects' => $n->{'objects'}, 
 #                            'work' => $n->{'work'}
 #                        }]);
-#$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
+$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});

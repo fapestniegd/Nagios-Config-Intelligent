@@ -417,6 +417,17 @@ sub write_object_cfg{
     } 
 }
 
+sub write_templates{
+    my $self = shift;
+    my $path = shift if @_;
+    return undef unless(defined($path));
+    if(! -d "$path"){ mkdir($path,0755); }
+    if(! -d "$path"){ 
+        print STDERR "Unable to create $path.\n";
+        return undef;
+    }
+}
+
 sub write_object_cfgs{
     my $self = shift; 
     my $cnstr = shift;
@@ -432,7 +443,9 @@ sub write_object_cfgs{
             if(! -d "$cnstr->{'dir'}/$pollsrv"){ mkdir("$cnstr->{'dir'}/$pollsrv"); }
             if(! -d "$cnstr->{'dir'}/$pollsrv/nobjects.d"){ mkdir("$cnstr->{'dir'}/$pollsrv/nobjects.d"); }
             ################################################################################
-            #     write out non-host configs (commands, contact, contactgroup)
+            # dump the templates (they're global)
+            $self->write_templates("$cnstr->{'dir'}/$pollsrv/templates.d");
+            # write out non-host configs (commands, contact, contactgroup)
             foreach my $object_type (keys(%{ $self->{'objects'} })){
                 next unless $object_type;
                 next if(grep(
@@ -474,6 +487,8 @@ sub write_object_cfgs{
             if(! -d "$cnstr->{'dir'}/$reportsrv"){ mkdir("$cnstr->{'dir'}/$reportsrv"); }
             if(! -d "$cnstr->{'dir'}/$reportsrv/nobjects.d"){ mkdir("$cnstr->{'dir'}/$reportsrv/nobjects.d"); }
             ################################################################################
+            # dump the templates (they're global)
+            $self->write_templates("$cnstr->{'dir'}/$reportsrv/templates.d");
             #     write out non-host configs (commands, contact, contactgroup)
             foreach my $object_type (keys(%{ $self->{'objects'} })){
                 next unless $object_type;
@@ -949,7 +964,7 @@ sub reduce {
     my $self = shift;
     my $objects = shift; 
     return undef unless $objects;
-    #
+
     my $sets = $objects;
     my $template_candidates;
 
@@ -1034,8 +1049,6 @@ sub reduce {
     }
     return $sets;
 }
-
-#
 ## Autoload methods go after =cut, and are processed by the autosplit program.
 #
 1;
