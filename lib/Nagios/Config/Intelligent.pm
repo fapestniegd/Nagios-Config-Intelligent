@@ -426,7 +426,14 @@ sub write_templates{
         print STDERR "Unable to create $path.\n";
         return undef;
     }
-    YAML::DumpFile("$path/templates",[$self->{'templates'}]);
+    foreach my $type (keys(%{ $self->{'templates'})){
+       # $fh = FileHandle->new("> $path/$type");
+       # if (defined $fh) {
+       #     print $fh "bar\n";
+       #     $fh->close;
+       # }
+        YAML::DumpFile("$path/$type.cfg",[$self->{'templates'}]);
+    }
 }
 
 sub write_object_cfgs{
