@@ -72,21 +72,23 @@ print YAML::DumpFile("/etc/nagios.yaml",[{
 
 #print Data::Dumper->Dump([$n->hostgroup_members("bna_e_drives")]);
 
-print Data::Dumper->Dump([{ 
-                            'templates' => $n->{'templates'}, 
-                            'objects' => $n->{'objects'}, 
-                            'work' => $n->{'work'}
-                        }]);
+#print Data::Dumper->Dump([{ 
+#                            'templates' => $n->{'templates'}, 
+#                            'objects' => $n->{'objects'}, 
+#                            'work' => $n->{'work'}
+#                        }]);
+print STDERR "Delegating\n";
 $n->delegate();
 foreach my $ngsrv (keys(%{ $n->{'work'} })){
+    print STDERR "Server: $ngsrv\n";
     foreach $type (keys(%{ $n->{'work'} ->{$ngsrv} })){
+        print STDERR "  Type: $ngsrv\n";
         my $newobj = $n->reduce($n->{'work'} ->{$ngsrv}->{$type});
     }
 }
-print Data::Dumper->Dump([{ 
-                            'templates' => $n->{'templates'}, 
-                            'objects' => $n->{'objects'}, 
-                            'work' => $n->{'work'}
-                        }]);
-
+#print Data::Dumper->Dump([{ 
+#                            'templates' => $n->{'templates'}, 
+#                            'objects' => $n->{'objects'}, 
+#                            'work' => $n->{'work'}
+#                        }]);
 #$n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
