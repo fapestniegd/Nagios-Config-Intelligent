@@ -432,7 +432,7 @@ sub write_templates{
         #     print $fh "bar\n";
         #     $fh->close;
         # }
-        YAML::DumpFile("$path/$type.cfg",[$self->{'templates'}]);
+        YAML::DumpFile("$path/$type.cfg",$self->{'templates'}->{$type});
     }
 }
 
