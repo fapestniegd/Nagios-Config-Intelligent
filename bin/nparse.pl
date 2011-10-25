@@ -93,4 +93,6 @@ foreach my $ngsrv (keys(%{ $n->{'work'} })){
 #                            'objects' => $n->{'objects'}, 
 #                            'work' => $n->{'work'}
 #                        }]);
+print STDERR "Writing Configs...\n";
 $n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
+print STDERR "Done.\n";

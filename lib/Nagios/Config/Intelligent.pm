@@ -371,6 +371,7 @@ sub nobject_isa{
        }
    }
    return $type if(defined($type));
+   print STDERR Data::Dumper->Dump([{ 'unknown object' => $nobject }]); 
    return 'unknown';
 }
 
