@@ -426,7 +426,7 @@ sub write_templates{
         print STDERR "Unable to create $path.\n";
         return undef;
     }
-    foreach my $type (keys(%{ $self->{'templates'})){
+    foreach my $type (keys(%{ $self->{'templates'} })){
         # $fh = FileHandle->new("> $path/$type");
         # if (defined $fh) {
         #     print $fh "bar\n";
