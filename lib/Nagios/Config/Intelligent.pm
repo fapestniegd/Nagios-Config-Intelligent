@@ -426,6 +426,7 @@ sub write_templates{
         print STDERR "Unable to create $path.\n";
         return undef;
     }
+    YAML::DumpFile("$path/templates",[$self->{'templates'}]);
 }
 
 sub write_object_cfgs{
