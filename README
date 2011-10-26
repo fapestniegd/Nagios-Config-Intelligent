@@ -33,3 +33,5 @@ Some thoughts on monitoring:
    if not, and failing that, use the one in 192.168.12.0/24, and so on, for an arbitrarily large network.
 
    When a nagios server or servers become overloaded, just add more nagios servers, and they'll adjust.
+
+test
