@@ -971,16 +971,22 @@ sub add_template{
 
 sub reduce {
     my $self = shift;
+    my $inputs = shift if @_;    
+    if(defined($inputs->
     my $objects = shift; 
     return undef unless $objects;
 
-    my $sets = $objects;
+    my $sets = $objects; # a list of objects
     my $template_candidates;
 
     for(my $i=0; $i<=$#{$sets};$i++){
         for(my $j=0; $j<=$i;$j++){
             my $intersection = $self->clone($sets->[$i]);
+            my $set_type = 
+
+            # we don't want to intersect on host_name, ever
             delete $intersection->{'host_name'} if( $self->nobject_isa($intersection) eq 'service');
+
             my $s_count = keys(%{ $intersection });
             foreach my $key (keys(%{ $intersection })){
                 if( (!defined($sets->[$j]->{$key})) || ($intersection->{$key} ne $sets->[$j]->{$key}) ){
@@ -992,10 +998,9 @@ sub reduce {
                 push(@{ $template_candidates }, $intersection) unless $self->already_in($template_candidates,$intersection);
             }
             my @incommon = keys(%{ $intersection });
-            # print "$#incommon ";
         }
-        #print "\n";
     }
+
     foreach my $tpl (@{ $template_candidates }){
         my $type = $self->nobject_isa($tpl);
         if(defined($type)){
