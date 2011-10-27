@@ -97,11 +97,8 @@ sub delegate {
         $active_check->{'active_checks_enabled'} = 1;
         delete($active_check->{'passive_checks_enabled'});
         if($poll_srv ne $report_srv){
-            $active_check->{'notifications_enabled'} = 0;
-            delete($active_check->{'notification_interval'});
-            delete($active_check->{'notification_options'});
-            delete($active_check->{'notification_period'});
             delete($active_check->{'notifications_enabled'});
+            $active_check->{'notifications_enabled'} = 0;
         }
 
         # add it to the poll server's active work list
@@ -160,11 +157,8 @@ sub delegate {
         $service_check->{'active_checks_enabled'} = 1;
         delete($service_check->{'passive_checks_enabled'});
         if($poll_srv ne $report_srv){
-            $service_check->{'notifications_enabled'} = 0;
-            delete($service_check->{'notification_interval'});
-            delete($service_check->{'notification_options'});
-            delete($service_check->{'notification_period'});
             delete($service_check->{'notifications_enabled'});
+            $service_check->{'notifications_enabled'} = 0;
         }
 
         # add the active check
