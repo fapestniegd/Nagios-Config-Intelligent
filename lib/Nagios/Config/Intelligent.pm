@@ -91,7 +91,7 @@ sub delegate {
         my $report_srv = $self->report_server($host->{'address'});
 
         # make a copy of the host check, de-template it
-        my $active_check = $self->clone($self->detemplate('host',$host));
+        my $active_check = $self->clone($self->detemplate($host,$self->{'templates'}->{'host'}));
 
         # actify the host check (strip out anything that makes it passive, add active traits)
         $active_check->{'active_checks_enabled'} = 1;
@@ -109,7 +109,7 @@ sub delegate {
 
         if($poll_srv ne $report_srv){
             # copy the check for passive acceptance into the report host, de-template it
-            my $passive_check = $self->clone($self->detemplate('host',$host));
+            my $passive_check = $self->clone($self->detemplate($host,$self->{'templates'}->{'host'}));
 
             # passify the host check (strip out anything that makes it active, add passive traits)
             delete($passive_check->{'active_checks_enabled'});
@@ -735,25 +735,34 @@ sub clone {
     return YAML::Load(YAML::Dump($object));
 }
 
+################################################################################
+# given an object and a hash of templates, 
+# iteratively dereference the object until no template references remain
+#
 sub detemplate{
-    my $self = shift; 
-    my $type = shift;
-    my $entry = shift;
+    my ($self, $entry, $templates) = @_;
     return $entry unless(defined($entry->{'use'}));
-    my $template; 
-
-
-    if(defined($self->{'templates'}->{$type}->{$entry->{'use'}})) {
-        $template = $self->clone($self->detemplate($type,$self->{'templates'}->{$type}->{$entry->{'use'}}));
+    unless(defined($templates)){
+        print STDERR "no templates provided\n";
+        return $entry;
+    }
+    # de-template the template if it uses one
+    if(defined($template->{ $entry->{'use'} })){
+        my $template = $self->clone( $self->detemplate($template->{ $entry->{'use'} }, $templates) );
     }else{
         $template = undef;
         warn "no such $type template: $entry->{'use'}\n";
         return $entry;
     }
-    my $new_entry = $self->clone($template);     # start the new entry with the fetched template
-    foreach my $key (keys(%{ $entry })){ # override the template with entries from the entry being templated
+
+    # start the new entry with the fetched template
+    my $new_entry = $self->clone($template);
+
+    # override the template with entries from the entry being templated
+    foreach my $key (keys(%{ $entry })){
         $new_entry->{$key} = $entry->{$key};
     }
+
     # get rid of all the things that indicate this entry is a template
     delete $new_entry->{'name'} if( defined($new_entry->{'name'}) ); # lose the template name
     delete $new_entry->{'register'} if( defined($new_entry->{'register'}) && ($new_entry->{'register'} == 0));
@@ -768,7 +777,7 @@ sub find_objects{
     my $records = undef;      # the list we'll be returning
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
         if(defined($entry->{'use'})){
-            $entry = $self->detemplate($type,$entry);
+            $entry = $self->detemplate($entry,$self->{'templates'}->{$type});
         }
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
@@ -818,7 +827,7 @@ sub find_object_regex{
     my $records = undef;      # the list we'll be returning
     foreach my $entry (@{ $self->{'objects'}->{$type} }){
         if(defined($entry->{'use'})){
-            $entry = $self->detemplate($type, $entry);
+            $entry = $self->detemplate($entry,$self->{'templates'}->{$type});
         }
         my $allmatch=1;       # assume everything matches
         foreach my $needle (keys(%{ $attrs })){
@@ -909,20 +918,21 @@ sub already_in{
     return 0;
 }
 
+################################################################################
 # add a new template unless one exists that matches everything but "name" and "register"
 # add it with a name of <type>_NNNN where NNNN is the next number that doesn't exist as
 # a template, and ensure "register 0" is set.
+#
+# $new_templates = $self->add_template($old_templates,$template_to_add);
 sub add_template{
-    my $self = shift;
-    my $type = shift;
-    my $new_template = shift;
-    return undef unless $type;
-    return undef unless $new_template;
+    my ($self,$templates,$new_template) = @_;
+    return $templates unless $templates;
+    return $templates unless $new_template;
     my $max_nnnn = 0000;
-    foreach my $tname (keys(%{ $self->{'templates'}->{$type} })){
+    foreach my $tname (keys(%{ $templates })){
         my $already_have = 0;
         if($tname=~m/${type}_([0-9]+)/){ $max_nnnn = $1 if($1 > $max_nnnn); } # get the max name so we can increment
-        my $template = $self->clone($self->{'templates'}->{$type});
+        my $template = $self->clone($templates);
         delete $template->{'name'} if $template->{'name'};
         delete $template->{'register'} if $template->{'register'};
         my $existing_count = keys(%{ $template });
@@ -930,16 +940,18 @@ sub add_template{
         next unless($existing_count == $new_count); # they don't match if they have different key counts
         my $intersection = $self->intersection([$template, $new_template]); 
         my $i_count=keys(%{ $intersection });
-        if($i_count == $new_count){ # if their intersection key count is the same as the other two counts, we already have this template
-            return "$tname";
+
+        # if their intersection key count is the same as the other two counts, we already have this template
+        if($i_count == $new_count){ 
+            return $templates;
         }  
     }
     # at this point we don't have already have the template or we would have returned the template name, so we add it
     $max_nnnn++;
     $new_template->{'name'} = "${type}_$max_nnnn";
     $new_template->{'register'} = "0";
-    $self->{'templates'}->{$type}->{$new_template->{'name'}} = $new_template;
-    return "$new_template->{'name'}";
+    $templates->{ $new_template->{'name'} } = $new_template;
+    return $templates;
 }
 
 ################################################################################
@@ -968,7 +980,7 @@ sub add_template{
 # (hopefully) larger list of templates, which we return in the hash:
 # { 'objects' => [ ..list of objects.. ], 'templates' => [ ..list of templates.. ] }
 ################################################################################
-
+# $self->reduce({ 'objects' => [], 'templates' => {} });
 sub reduce {
     my $self = shift;
     my $inputs = shift if @_;    
@@ -980,14 +992,12 @@ sub reduce {
     my $sets = $self->clone($objects); # make a copy
     my $template_candidates;           # where we will add possible new templates
 
-    foreach my $object(@{ $objects} ){
-################################################################################
+    # get an intersection count for every pair of objects, push these intersections into $template_candidtates
     for(my $i=0; $i<=$#{$sets};$i++){
         for(my $j=0; $j<=$i;$j++){
             my $intersection = $self->clone($sets->[$i]);
-            my $set_type = 
 
-            # we don't want to intersect on host_name, ever
+            # we don't want to intersect on host_name if this is a service, would result in not enough normalization
             delete $intersection->{'host_name'} if( $self->nobject_isa($intersection) eq 'service');
 
             my $s_count = keys(%{ $intersection });
@@ -1004,6 +1014,7 @@ sub reduce {
         }
     }
 
+    # look through our template candidates, strip out the type_name
     foreach my $tpl (@{ $template_candidates }){
         my $type = $self->nobject_isa($tpl);
         if(defined($type)){
@@ -1014,9 +1025,11 @@ sub reduce {
                 delete $tpl->{$k} if($k=~m/_name$/);
             }
         }
-        # Add thecandidate to our templates list
-        $self->add_template($type,$tpl) if(keys(%{ $tpl }) >= 4); # if you don't remove 4 lines, you're adding lines.
+        # promote the candidate to a full template if it has more than 4 keys
+        # (if you don't remove 4 lines, you're adding lines)
+        $self->add_template($templates,$tpl) if(keys(%{ $tpl }) >= 4); 
     }
+
     # now we want to reduce the actual object by the largest template of it's type that will fit it.
     my $object_entry;
 
@@ -1036,7 +1049,7 @@ sub reduce {
            my $t_elements = keys(%{ $tmpl });
            #get an element count of the items in this template that intersect with $objects->[$i]
            if(defined($objects->[$i]->{'use'})){
-               $object_entry = $self->detemplate( $type, $objects->[$i] ); # expand the object in case it's already templated
+               $object_entry = $self->detemplate($objects->[$i], $self->{'templates'}->{$type} ); # expand the object in case it's already templated
            }else{
                $object_entry = $self->clone($objects->[$i] ); # expand the object in case it's already templated
            }
