@@ -48,7 +48,7 @@ foreach my $ngsrv (keys(%{ $n->{'work'} })){
 
         print STDERR "  Reducing: $type...\n";
         my $newobj = $n->reduce({
-                                  'objects' => $n->{'work'}->{$ngsrv}->{$type},
+                                  'objects'  => $n->{'work'}->{$ngsrv}->{$type},
                                   'templates' => $n->{'templates'}->{$type}
                                });
 

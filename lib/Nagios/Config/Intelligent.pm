@@ -982,12 +982,35 @@ sub add_template{
 # { 'objects' => [ ..list of objects.. ], 'templates' => [ ..list of templates.. ] }
 ################################################################################
 # $self->reduce({ 'objects' => [], 'templates' => {} });
+#
 sub reduce {
     my $self = shift;
     my $inputs = shift if @_;    
     return $inputs unless (defined($inputs->{'objects'}));
 
     my $objects = $inputs->{'objects'};         # a list of similar objects type
+    my $type_check = {};
+
+    ############################################################################
+    # type detection
+    # sometimes the nagios configs are too sloppy to be detected, so we use some 
+    # democracy here. iterate over the objects, find the most common type.
+    #
+    foreach my $o (@{ $objects }){ 
+        $type_check->{ $self->nobject_isa($o) }++;
+    }
+    print STDERR Data::Dumper->Dump([ $type_check ]);
+    my $type = undef;
+    my $max=-1; 
+    foreach $k (keys(%{ $type_check })){
+        if($#{ $type_check->{$k} } > $max){
+            $max = $#{ $type_check->{$k} };
+            $type = $k;
+        }
+    }
+
+    ############################################################################
+    #
     my $templates = $inputs->{'templates'}||{}; # the existing templates for this object type to reduce against
 
     my $sets = $self->clone($objects); # make a copy
@@ -999,7 +1022,7 @@ sub reduce {
             my $intersection = $self->clone($sets->[$i]);
 
             # we don't want to intersect on host_name if this is a service, would result in not enough normalization
-            delete $intersection->{'host_name'} if( $self->nobject_isa($intersection) eq 'service');
+            delete $intersection->{'host_name'} if( $type eq 'service');
 
             my $s_count = keys(%{ $intersection });
             foreach my $key (keys(%{ $intersection })){
@@ -1017,7 +1040,6 @@ sub reduce {
 
     # look through our template candidates, strip out the type_name
     foreach my $tpl (@{ $template_candidates }){
-        my $type = $self->nobject_isa($tpl);
         if(defined($type)){
             delete $tpl->{$type.'_name'} if(defined($tpl->{$type.'_name'}));
         }else{
