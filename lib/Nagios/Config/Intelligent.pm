@@ -154,7 +154,7 @@ sub delegate {
         my $report_srv = $self->report_server($host->{'address'}); 
 
         # make a copy of the service check, de-template it
-        my $service_check = $self->clone($self->detemplate('service',$service));
+        my $service_check = $self->clone($self->detemplate($service,$self->{'templates'}->{'service'}));
 
         # actify the service check (strip out anything that makes it passive, add active traits)
         $service_check->{'active_checks_enabled'} = 1;
@@ -173,7 +173,7 @@ sub delegate {
         # and the passive check if the report server is not the poll server
         if($poll_srv ne $report_srv){
             # passify the service check (strip out anything that makes it active, add passive traits)
-            my $passive_service_check = $self->clone($self->detemplate('service',$service));
+            my $passive_service_check = $self->clone($self->detemplate($service,$self->{'templates'}->{'service'}));
 
             delete($passive_service_check->{'active_checks_enabled'});
             $passive_service_check->{'passive_checks_enabled'} = 1;
