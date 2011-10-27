@@ -41,11 +41,17 @@ $n->{'g'}->draw("nagios.png");
 print STDERR "Delegating...\n";
 $n->delegate();
 print STDERR "Delegation Complete.\n";
+
 foreach my $ngsrv (keys(%{ $n->{'work'} })){
     print STDERR "Server: $ngsrv\n";
     foreach $type (keys(%{ $n->{'work'} ->{$ngsrv} })){
+
         print STDERR "  Reducing: $type...\n";
-        my $newobj = $n->reduce($n->{'work'} ->{$ngsrv}->{$type});
+        my $newobj = $n->reduce({
+                                  'objects' => $n->{'work'}->{$ngsrv}->{$type},
+                                  'templates' => $n->{'templates'}->{$type}
+                               });
+
         print STDERR "  Reducing Complete.\n";
     }
 }
