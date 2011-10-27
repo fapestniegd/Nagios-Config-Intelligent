@@ -15,6 +15,7 @@ $Getopt::Long::ignorecase = 0;
 use Nagios::Config::Intelligent;
 use Graph::Network;
 use Data::Dumper;
+################################################################################
 
 my $result = GetOptions(
   'help'              => \$opt->{'help'},
@@ -26,57 +27,17 @@ my $nagios_cfg     = $opt->{'config'}  ||"/etc/nagios/nagios.cfg";
 my $routers        = $opt->{'routers'} ||"/etc/routers.cfg";
 my $nagios_servers = $opt->{'nagioses'}||"/etc/topology.cfg";
 
+# load in the nagios.cfg, routers, and nagios server topology
 my $n = Nagios::Config::Intelligent->new({
                                            'cfg'     => $nagios_cfg,
                                            'routers' => $routers,
                                            'topology'=> $nagios_servers,
                                         });
 
-print YAML::DumpFile("/etc/nagios.yaml",[{
-                                           'g'        =>  $n->{'g'},
-                                           'topology' =>  $n->{'topology'},
-                                           'objects'  =>  $n->{'objects'},
-                                           'work'     =>  $n->{'objects'},
-                                      }]);
+# draw the graph of the service checks
+$n->{'g'}->draw("nagios.png");
 
-
-################################################################################
-# take a peek at the network
-#$n->{'g'}->draw("routers.png");
-
-# calculate poll server for target
-# trace hostdependencies from poll server to target, add if not present
-# trace servicedependencies from poll server to target, add if not present
-# for each poll host, write out active checks into cfg_root/hostname/obj.cfg
-# for the report host, write out passive checks into cfg_root/hostname/obj.cfg
-
-################################################################################
-# my $poll;
-# foreach my $host (@{ $n->{'objects'}->{'host'} }){
-#     my $closest = $n->poll_server($host->{'address'});
-#     push(@{ $poll->{$closest} },$host->{'host_name'});
-# }
-# print Data::Dumper->Dump([ $poll ]);
-
-################################################################################
-#print Data::Dumper->Dump(['result',$n->find_object('host',{ 'alias' => 'skrs0019' }) ]);
-#print Data::Dumper->Dump([$n->intersection($n->{'objects'}->{'contact'}) ]);
-
-
-################################################################################
-# template reduction routines
-
-#print $n->dump();
-
-
-
-#print Data::Dumper->Dump([$n->hostgroup_members("bna_e_drives")]);
-
-#print Data::Dumper->Dump([{ 
-#                            'templates' => $n->{'templates'}, 
-#                            'objects' => $n->{'objects'}, 
-#                            'work' => $n->{'work'}
-#                        }]);
+# delegate the work based on proximity
 print STDERR "Delegating...\n";
 $n->delegate();
 print STDERR "Delegation Complete.\n";
@@ -88,11 +49,6 @@ foreach my $ngsrv (keys(%{ $n->{'work'} })){
         print STDERR "  Reducing Complete.\n";
     }
 }
-#print Data::Dumper->Dump([{ 
-#                            'templates' => $n->{'templates'}, 
-#                            'objects' => $n->{'objects'}, 
-#                            'work' => $n->{'work'}
-#                        }]);
 print STDERR "Writing Configs...\n";
 $n->write_object_cfgs({ 'dir' => '/tmp/nagios.d/'});
 print STDERR "Done.\n";
