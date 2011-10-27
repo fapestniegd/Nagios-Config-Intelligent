@@ -747,8 +747,9 @@ sub detemplate{
         return $entry;
     }
     # de-template the template if it uses one
+    my $template;
     if(defined($templates->{ $entry->{'use'} })){
-        my $template = $self->clone( $self->detemplate($templates->{ $entry->{'use'} }, $templates) );
+        $template = $self->clone( $self->detemplate($templates->{ $entry->{'use'} }, $templates) );
     }else{
         $template = undef;
         warn "no such $type template: $entry->{'use'}\n";
