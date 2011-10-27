@@ -996,6 +996,7 @@ sub reduce {
     # sometimes the nagios configs are too sloppy to be detected, so we use some 
     # democracy here. iterate over the objects, find the most common type.
     #
+    print STDERR Data::Dumper->Dump([$objects]);
     foreach my $o (@{ $objects }){ 
         $type_check->{ $self->nobject_isa($o) }++;
     }
