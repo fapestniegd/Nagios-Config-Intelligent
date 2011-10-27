@@ -1003,8 +1003,8 @@ sub reduce {
     my $type = undef;
     my $max=-1; 
     foreach my $k (keys(%{ $type_check })){
-        if($#{ $type_check->{$k} } > $max){
-            $max = $#{ $type_check->{$k} };
+        if($type_check->{$k} > $max){
+            $max = $type_check->{$k};
             $type = $k;
         }
     }
