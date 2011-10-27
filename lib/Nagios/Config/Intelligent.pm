@@ -926,7 +926,7 @@ sub already_in{
 #
 # $new_templates = $self->add_template($old_templates,$template_to_add);
 sub add_template{
-    my ($self,$templates,$new_template) = @_;
+    my ($self,$templates,$new_template,$type) = @_;
     return $templates unless $templates;
     return $templates unless $new_template;
     my $max_nnnn = 0000;
@@ -1028,7 +1028,7 @@ sub reduce {
         }
         # promote the candidate to a full template if it has more than 4 keys
         # (if you don't remove 4 lines, you're adding lines)
-        $self->add_template($templates,$tpl) if(keys(%{ $tpl }) >= 4); 
+        $self->add_template($templates,$tpl,$type) if(keys(%{ $tpl }) >= 4); 
     }
 
     # now we want to reduce the actual object by the largest template of it's type that will fit it.
