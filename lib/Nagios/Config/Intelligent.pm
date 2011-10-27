@@ -994,7 +994,6 @@ sub reduce {
     foreach my $o (@{ $objects }){ 
         $type_check->{ $self->nobject_isa($o) }++;
     }
-    print STDERR Data::Dumper->Dump([ $type_check ]);
     my $type = undef;
     my $max=-1; 
     foreach my $k (keys(%{ $type_check })){
