@@ -752,7 +752,7 @@ sub detemplate{
         $template = $self->clone( $self->detemplate($templates->{ $entry->{'use'} }, $templates) );
     }else{
         $template = undef;
-        warn "no such $type template: $entry->{'use'}\n";
+        warn "no such template: $entry->{'use'}\n";
         return $entry;
     }
 
