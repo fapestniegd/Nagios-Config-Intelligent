@@ -972,13 +972,16 @@ sub add_template{
 sub reduce {
     my $self = shift;
     my $inputs = shift if @_;    
-    if(defined($inputs->
-    my $objects = shift; 
-    return undef unless $objects;
+    return $inputs unless (defined($inputs->{'objects'}));
 
-    my $sets = $objects; # a list of objects
-    my $template_candidates;
+    my $objects = $inputs->{'objects'};         # a list of similar objects type
+    my $templates = $inputs->{'templates'}||{}; # the existing templates for this object type to reduce against
 
+    my $sets = $self->clone($objects); # make a copy
+    my $template_candidates;           # where we will add possible new templates
+
+    foreach my $object(@{ $objects} ){
+################################################################################
     for(my $i=0; $i<=$#{$sets};$i++){
         for(my $j=0; $j<=$i;$j++){
             my $intersection = $self->clone($sets->[$i]);
