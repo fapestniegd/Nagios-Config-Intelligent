@@ -989,6 +989,7 @@ sub reduce {
     # type detection
     # sometimes the nagios configs are too sloppy to be detected, so we use some 
     # democracy here. iterate over the objects, find the most common type.
+    # this should work for "sloppy" but not for "completely fucked"
     #
     foreach my $o (@{ $objects }){ 
         $type_check->{ $self->nobject_isa($o) }++;
@@ -1001,7 +1002,7 @@ sub reduce {
             $type = $k;
         }
     }
-    print STDERR "Going with $type.\n";
+    print STDERR "  type of [ $type ] detected.\n";
 
     ############################################################################
     #
@@ -1044,7 +1045,7 @@ sub reduce {
         }
         # promote the candidate to a full template if it has more than 4 keys
         # (if you don't remove 4 lines, you're adding lines)
-        $self->add_template($templates,$tpl,$type) if(keys(%{ $tpl }) >= 4); 
+        $templates = $self->add_template($templates,$tpl,$type) if(keys(%{ $tpl }) >= 4); 
     }
 
     # now we want to reduce the actual object by the largest template of it's type that will fit it.
@@ -1094,7 +1095,7 @@ sub reduce {
             $sets->[$i] = $self->clone($object_entry);
         }
     }
-    return $sets;
+    return { 'objects' => $sets, 'templates' => $templates };
 }
 ## Autoload methods go after =cut, and are processed by the autosplit program.
 #
