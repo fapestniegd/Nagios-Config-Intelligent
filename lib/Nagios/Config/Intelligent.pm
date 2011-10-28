@@ -1095,8 +1095,7 @@ sub reduce {
             $sets->[$i] = $self->clone($object_entry);
         }
     }
-    return { 'objects' => $sets, 'templates' => $templates };
-}
+    return $inputs = { 'objects' => $sets, 'templates' => $templates };
 ## Autoload methods go after =cut, and are processed by the autosplit program.
 #
 1;
