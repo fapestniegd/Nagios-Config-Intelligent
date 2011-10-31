@@ -1096,6 +1096,7 @@ sub reduce {
         }
     }
     return $inputs = { 'objects' => $sets, 'templates' => $templates };
+}
 ## Autoload methods go after =cut, and are processed by the autosplit program.
 #
 1;
